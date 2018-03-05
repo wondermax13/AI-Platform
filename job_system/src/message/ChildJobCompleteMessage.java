@@ -1,6 +1,6 @@
 package message;
 
-public class ChildJobCompleteMessage extends AbstractJobResponseMessage {
+public class ChildJobCompleteMessage extends GenericMessage {
 
     private long childJobId;
     private long parentJobId;

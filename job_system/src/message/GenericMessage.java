@@ -1,6 +1,6 @@
 package message;
 
-public class AbstractJobResponseMessage {
+public class GenericMessage {
 
 	//TODO - Handle sending of messages 
 	
@@ -8,8 +8,7 @@ public class AbstractJobResponseMessage {
     
     private long requestId;
 
-
-    protected AbstractJobResponseMessage(long requestId) {
+    protected GenericMessage(long requestId) {
         
     	this.requestId = requestId;
     }
@@ -28,3 +27,4 @@ public class AbstractJobResponseMessage {
 
     }
 }
+
