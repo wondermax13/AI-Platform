@@ -1,6 +1,7 @@
 package job;
 
-public enum JobStateType {
+//TODO - Maybe rename this to JobState
+public enum JobState {
 
     CANCELLED,
     COMPLETED_SUCCESS,

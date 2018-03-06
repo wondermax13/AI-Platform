@@ -23,21 +23,11 @@ import resource.Resource;
 
 public abstract class AbstractJob {
 
-    private long id;
-
-    private Date createDateTime;
-
-    private Date expectedAllocationDateTimeLimit;
-
-    private Date expectedExecutionDateTimeLimit;
-
-    private Date startDateTime;
-
-    private Date completeDateTime;
-
-    private JobStateType currentJobState;
-
-    private AbstractJobState jobState;
+	/******* IMPORTANT JOB ATTRIBUTES  ***************/
+	
+	private long id;
+	
+    private JobState jobState;
 
     private JobType jobType;
 
@@ -47,19 +37,30 @@ public abstract class AbstractJob {
 
     private List<AbstractJob> childJobs;
 
-    private List<Resource> resources;
+    private List<Resource> resources;		//Resources are not being used as of now
 
     private Request request;
 
-    private double elapsedTime;
-
-    private long version;
-
     private transient JobServiceProviderInterface jobServiceProvider;
 
-    private int iterationCount;
+    
+    /******* MISCELLANOUS JOB PARAMETERS **************/
+    
+    private Date createDateTime;
 
+    private Date expectedAllocationDateTimeLimit;
+
+    private Date expectedExecutionDateTimeLimit;
+
+    private Date startDateTime;
+
+    private Date completeDateTime;
+    
+    private double elapsedTime;
+    
     private int originalIterationCount;
+    
+    private int iterationCount;
 
     private boolean markedForCancellation;
 
@@ -69,18 +70,12 @@ public abstract class AbstractJob {
 
     private long percentComplete;
 
-    private String description;
-    
-    private static final String ITERATION_COUNT_KEY = "ITERATION_COUNT";
-
+    //TODO - Add other priorities eventually
     public static final int DEFAULT_PRIORITY = 5;
-    public static final int RECOVERY_PRIORITY = 3;
-    public static final int HIGHEST_PRIORITY = 1;
-    public static final int LOWEST_PRIORITY = 10;
 
     Logger LOGGER = Logger.getLogger("AbstractJob");
 
-    public static final int MAXIMUM_EXPECTED_DEVICE_RESPONSE_DURATION = 6 * 60 * 1000; //In milliseconds
+    public static final int MAXIMUM_EXPECTED_AI_RESPONSE_DURATION = 6 * 60 * 1000; //In milliseconds
 
     public static final int MAXIMUM_EXPECTED_ALLOCATION_DURATION = 4 * 60 * 1000; //In milliseconds - not dangerous if we want
                                                                                  //to make lower since it just cause re-eval
@@ -91,32 +86,7 @@ public abstract class AbstractJob {
     public static final int MAXIMUM_EXPECTED_EXECUTION_TIME_DURATION = 10 * 60 * 1000; //In milliseconds
                                                                                       // - really big because of init.
                                                                                       //More dangerous because jobs will
-                                                                                      //be shut down when exceeded.
-    public static final int MAXIMUM_EXPECTED_MOVE_JOB_EXECUTION_TIME_DURATION = 20 * 60 * 1000; //In milliseconds
-                                                                                               // - really big because of init.
-                                                                                               //More dangerous because jobs will
-                                                                                               //be shut down when exceeded.
-
-    public static final int MAXIMUM_EXPECTED_LONG_RUNNING_JOB_EXECUTION_TIME_DURATION = 30 * 60 * 1000; //In milliseconds
-                                                                                                       // - really big because of init.
-                                                                                                       //More dangerous because jobs will
-                                                                                                       //be shut down when exceeded.
-
-    public static final int STORAGE_MAXIMUM_EXPECTED_LONG_RUNNING_JOB_EXECUTION_TIME_DURATION = 24 * 60 * 60 * 1000; //In milliseconds
-                                                                                                        // - really big because of Storage (LOH).
-                                                                                                        //More dangerous because jobs will
-                                                                                                        //be shut down when exceeded.
-
-    public static final int ADD_NODE_MAXIMUM_EXPECTED_LONG_RUNNING_JOB_EXECUTION_TIME_DURATION = 90 * 60 * 1000; //In milliseconds
-                                                                                                                //More dangerous because jobs will
-                                                                                                                //be shut down when exceeded.
-
-    public static final int REMOVE_NODE_MAXIMUM_EXPECTED_LONG_RUNNING_JOB_EXECUTION_TIME_DURATION = 30 * 60 * 1000; //In milliseconds
-                                                                                                                //More dangerous because jobs will
-                                                                                                                //be shut down when exceeded.
-
-    public static final int MAX_DESCRIPTION_LENGTH = 255;
-
+    
     //Delete and update queries
     public static final String UPDATE_STATE_FOR_JOBS_NOTINSTATES_QUERY = "update AbstractJob j"
         + " set j.currentJobState = :aNewJobStateType, j.completeDateTime = :aDate"
@@ -136,8 +106,12 @@ public abstract class AbstractJob {
         this.initializeParameters();
     }
 
+    /**
+     * To be overriden to add custom job parameters
+     */
     protected void createParameters() {
 
+    	//Eg. this.getJobParameters().put("Parameter_Type", JobParameter);
     }
 
     /**
@@ -148,10 +122,9 @@ public abstract class AbstractJob {
         this.setIterationCounters(0);
         this.setTimeLimit(0);
         this.setPriority(DEFAULT_PRIORITY);
-
     }
 
-    public AbstractJob(JobType jobType, AbstractJob parentJob, Request request) {
+    public AbstractJob(JobType jobType, AbstractJob parentJob, long requestId) {
 
         this();
         this.setCreateDateTime(new Date());
@@ -183,159 +156,12 @@ public abstract class AbstractJob {
         }
     }
 
-    protected Logger getLogger() {
-
-        return LOGGER;
-    }
-
-    /**
-     * Populate my relationships
-     */
-    public void populateRelationships() {
-
-        this.getId();
-        this.getJobState();
-        this.getParentJob();
-        this.getJobType();
-
-        for (AbstractJob aJob : this.getChildJobs()) {
-            aJob.populateRelationships();
-        }
-
-        for (Map.Entry<String, JobParameter> entry : this.getJobParameters().entrySet()) {
-            //entry.getValue().populateRelationships();
-        }
-
-        for (Resource aResource : this.getResources()) {
-            aResource.getId();
-        }
-    }
-
-    public String getIdName() {
-
-        return "jobId";
-    }
-
     public String toString() {
 
     	//TODO
     	return new String();
     }
 
-    public Date getCreateDateTime() {
-
-        return createDateTime;
-    }
-
-    public void setCreateDateTime(Date createDateTime) {
-
-        this.createDateTime = createDateTime;
-    }
-
-    public long getId() {
-
-        return id;
-    }
-
-    /**
-     * Answer my job state
-     *
-     * @return AbstractJobState
-     */
-    public AbstractJobState getJobState() {
-
-        if (jobState == null) {
-            //TODO
-        }
-
-        return jobState;
-    }
-
-    /**
-     * Set my job state
-     *
-     * @param jobState
-     */
-    private void setJobState(AbstractJobState jobState) {
-
-        this.jobState = jobState;
-        this.setCurrentJobState(jobState.getStateType());
-
-    }
-
-    /**
-     * Answer my job type
-     *
-     * @return JobType
-     */
-    public JobType getJobType() {
-
-        return jobType;
-    }
-
-    private void setJobType(JobType jobType) {
-
-        this.jobType = jobType;
-    }
-
-    public Map<String, JobParameter> getJobParameters() {
-
-        return jobParameters;
-    }
-
-    private void setJobParameters(Map<String, JobParameter> jobParameters) {
-
-        this.jobParameters = jobParameters;
-    }
-
-    public JobParameter addParameter(JobParameter jobParameter) {
-
-        jobParameter.setJob(this);
-        getJobParameters().put(jobParameter.getName(), jobParameter);
-        return jobParameter;
-    }
-
-    protected JobParameter removeParameter(JobParameter jobParameter) {
-
-        getJobParameters().remove(jobParameter.getName());
-        return jobParameter;
-    }
-
-    protected JobParameter removeParameter(String parameterName) {
-
-        JobParameter jobParameter = getJobParameters().remove(parameterName);
-        return jobParameter;
-    }
-
-    protected boolean hasParameter(JobParameter jobParameter) {
-
-        return this.getJobParameters().containsValue(jobParameter);
-    }
-
-    protected boolean hasParameter(String parameterName) {
-
-        return this.getJobParameters().containsKey(parameterName);
-    }
-
-    public AbstractJob getParentJob() {
-
-        return parentJob;
-    }
-
-    public void setParentJob(AbstractJob job) {
-
-        this.parentJob = job;
-    }
-
-    /**
-     * Answer whether or not I have any child jobs
-     *
-     * @return boolean
-     */
-    public boolean hasChildJobs() {
-
-        return !this.getChildJobs().isEmpty();
-    }
 
     /**
      * Answer whether or not I have child jobs that are not complete
@@ -358,7 +184,11 @@ public abstract class AbstractJob {
 
         for (AbstractJob aJob : this.getChildJobs()) {
 
-            if (!aJob.isComplete()) {
+        	JobState jobState = aJob.getJobState();
+        	
+            if (!(jobState == JobState.COMPLETED_ERROR)
+            		&&(jobState == JobState.COMPLETED_SUCCESS)
+            		&&(jobState == JobState.CANCELLED)) {
                 tempResults.add(aJob);
             }
         }
@@ -402,20 +232,7 @@ public abstract class AbstractJob {
         return tempResults;
     }
 
-    /**
-     * Answer my child jobs
-     *
-     * @return List<AbstractJob>
-     */
-    public List<AbstractJob> getChildJobs() {
 
-        return childJobs;
-    }
-
-    private void setChildJobs(List<AbstractJob> childJobs) {
-
-        this.childJobs = childJobs;
-    }
 
     /**
      * Add a child job to me
@@ -428,70 +245,6 @@ public abstract class AbstractJob {
         getChildJobs().add(job);
         job.setParentJob(this);
         return job;
-    }
-
-    public List<Resource> getResources() {
-
-        return resources;
-    }
-
-    /**
-     * Clear resources
-     *
-     * @param resources
-     */
-    public void clearResources() {
-
-        this.setResources(new ArrayList<Resource>());
-    }
-
-    private void setResources(List<Resource> resources) {
-
-        this.resources = resources;
-    }
-
-    public Resource addResource(Resource resource) {
-
-        getResources().add(resource);
-        resource.setJob(this);
-        return resource;
-    }
-
-    public void removeResource(Resource resource) {
-
-        this.getResources().remove(resource);
-        resource.setJob(null);
-
-    }
-
-    public String getResourcesString() {
-        List<Resource> tempResources;
-        String         returnString = "job resources: ";
-        //TODO
-
-        return returnString;
-    }
-
-    public Request getRequest() {
-
-        return request;
-    }
-
-    public void setRequest(Request request) {
-
-        this.request = request;
-    }
-
-    private Resource getResource(String name) {
-
-        for (Resource resource : this.getResources()) {
-
-            if (resource.isForName(name)) {
-                return resource;
-            }
-
-        }
-        return null;
     }
 
     /**
@@ -511,27 +264,6 @@ public abstract class AbstractJob {
     }
 
     /**
-     * Answer whether or not I have a parent
-     *
-     * @return boolean
-     */
-    public boolean hasParentJob() {
-
-        return this.getParentJob() != null;
-    }
-
-    /**
-     * Answer whether I am aJobType
-     *
-     * @param aJobType JobType
-     * @return boolean
-     */
-    public boolean isJobType(JobType aJobType) {
-
-        return this.getJobType() != null && this.getJobType().equals(aJobType);
-    }
-
-    /**
      * Answer whether or not I am a single action job. Job of this type will go to the runnable state,
      * take a single action, and then
      * terminate. Default is false. Subclasses can override if they are a job of this type
@@ -542,37 +274,14 @@ public abstract class AbstractJob {
     }
 
     /**
-     * Execute
-     *
-     * @return JobExecutionResult
-     */
-    public JobExecutionResult execute() throws Exception {
-
-        return this.getJobState().execute(this);
-    }
-
-    /**
-     * Execute with device response
-     *
-     * @param aDeviceResponse JobDeviceResponse
-     * @return JobExecutionResult
-     */
-/*   
- * TODO 
-    public JobExecutionResult execute(DeviceResponseJmsMessage aDeviceResponse) throws Exception {
-
-        return this.getJobState().execute(this, aDeviceResponse);
-    }*/
-
-    /**
      * Handle a timed out condition sent by the job scheduler
      *
      * @param anExpectedExecutionDateTimeLimit Date
      */
     public void timedOut(Date anExpectedExecutionDateTimeLimit) throws Exception {
 
-        this.getJobState().timedOut(this, anExpectedExecutionDateTimeLimit);
-
+    	//TODO - Handle time out logic on the job itself
+        this.setJobState(JobState.COMPLETED_ERROR);
     }
 
     /**
@@ -591,104 +300,14 @@ public abstract class AbstractJob {
     }
 
 
-    /**
-     * Set next allocation timeout time
-     */
-    public void setNextJobAllocationTimeoutTime() {
 
-        this.setNextExpectedAllocationDuration(AbstractJob.MAXIMUM_EXPECTED_ALLOCATION_DURATION);
-    }
-
-
-    /**
-     * Set next execution time limit for device response. Subclasses should override this
-     * if they want a time lower than the maximum
-     *
-     */
-    public void setNextExecutionTimeForDeviceResponse() {
-
-        this.setNextExpectedExecutionDuration(AbstractJob.MAXIMUM_EXPECTED_EXECUTION_TIME_DURATION);
-    }
-
-    /**
-     * Set next execution time limit for child job complete. Subclasses should override this
-     * if they want a time lower than the maximum
-     *
-     */
-    public void setNextExecutionTimeForChildJobCompleted() {
-
-        this.setNextExpectedExecutionDuration(AbstractJob.MAXIMUM_EXPECTED_EXECUTION_TIME_DURATION);
-    }
-
-    /**
-     * Answer whether or not this job is completed
-     *
-     * @return boolean
-     */
-    public boolean isComplete() {
-
-        return this.getJobState().isComplete();
-    }
-
-    /**
-     * Answer whether or not this job is errored off
-     *
-     * @return boolean
-     */
-    public boolean isCompleteWithError() {
-
-        return this.getJobState().isCompleteWithError();
-    }
-
-    /**
-     * Answer whether or not I am still in a running state
-     *
-     * @return boolean
-     */
-    public boolean isRunning() {
-
-        return this.getJobState().isRunning();
-    }
-
-    /**
-     * Answer whether or not I am canceled (i.e I am in a cancelled state).
-     *
-     * @return boolean
-     */
-    public boolean isCancelled() {
-
-        return this.getJobState().isCancelled();
-    }
-
-    /**
-     * Answer whether or not I need resources. Subclasses should override if they represent a state that
-     * is "needs resources":
-     *
-     * @return boolean
-     */
-    public boolean needsResources() {
-
-        return this.getJobState().isNeedsResources();
-    }
 
     /**
      * Make job complete.
      */
     public void makeJobComplete() {
-        //        RequestOutputMessage requestOutputMessage;
-
-        this.getJobState().makeJobComplete(this);
-
-        //        requestOutputMessage = this.createJobCompletedMessage(this.getRequest(),
-        //                                                              this.getId(),
-        //                                                              this.getJobType());
-        //
-        //        RequestMessageUtilities.getInstance().
-        //                    saveOutputMessageLogItAndUpdateRequest(this.getJobServiceProvider(),
-        //                                                            this.getRequest(),
-        //                                                            requestOutputMessage,
-        //                                                            Level.INFO);
-
+    	
+    	this.setJobState(JobState.COMPLETED_SUCCESS);
         this.safelyCompleteRequest(true);
     }
 
@@ -696,20 +315,8 @@ public abstract class AbstractJob {
      * Make job complete with error
      */
     public void makeJobCompleteWithError() {
-        //        RequestOutputMessage requestOutputMessage;
 
-        this.getJobState().makeJobCompleteWithError(this);
-
-        //        requestOutputMessage = this.createJobErrorMessage(this.getRequest(),
-        //                                                          this.getId(),
-        //                                                          this.getJobType());
-        //
-        //        RequestMessageUtilities.getInstance().
-        //                    saveOutputMessageLogItAndUpdateRequest(this.getJobServiceProvider(),
-        //                                                           this.getRequest(),
-        //                                                           requestOutputMessage,
-        //                                                           Level.INFO);
-
+        this.setJobState(JobState.COMPLETED_ERROR);
         this.safelyCompleteRequest(false);
     }
 
@@ -718,7 +325,8 @@ public abstract class AbstractJob {
      */
     public void makeJobCompleteWithError(ValidationException e) {
 
-        this.getJobState().makeJobCompleteWithError(this);
+    	this.setJobState(JobState.COMPLETED_ERROR);
+        //this.getJobState().makeJobCompleteWithError(this);
         
         //TODO - Log
         
@@ -740,17 +348,19 @@ public abstract class AbstractJob {
     }
 
     /**
-     * Make child job complete
+     * Make child job complete by setting its state
      *
      * @param aChildJob Job
      * @param aMessage ChildJobCompleteJmsMessage
      * @return JobExecutionResult
      */
-    public JobExecutionResult makeChildJobComplete(AbstractJob aChildJob, ChildJobCompleteMessage aMessage)
+    public void makeChildJobComplete(AbstractJob aChildJob, ChildJobCompleteMessage aMessage)
         throws Exception {
 
-    	//TODO
-    	return new JobExecutionResult();
+    	JobState childJobState = aMessage.isChildJobSuccess() 
+    			? JobState.COMPLETED_SUCCESS : JobState.COMPLETED_ERROR;
+    	
+    	aChildJob.setJobState(childJobState);
     }
 
     /**
@@ -758,7 +368,7 @@ public abstract class AbstractJob {
      */
     public void markForCancellation() {
 
-        this.getJobState().markForCancellation(this);
+        this.setJobState(JobState.CANCELLED);
     }
 
     /**
@@ -767,9 +377,9 @@ public abstract class AbstractJob {
      *
      * @return JobExecutionResult
      */
-    public JobExecutionResult startJob() throws Exception {
+    public void startJob() throws Exception {
 
-        return this.getJobState().startJob(this);
+        this.setJobState(JobState.RUNNABLE);
     }
 
     /**
@@ -821,9 +431,11 @@ public abstract class AbstractJob {
      *
      * @return JobExecutionResult
      */
-    public JobExecutionResult cancel() {
+    public void cancel() {
 
-        return this.getJobState().cancel(this);
+        this.setJobState(JobState.CANCELLED);
+        this.setCompleteDateTime(new Date());
+        this.freeMyResources();
     }
 
     /**
@@ -837,7 +449,476 @@ public abstract class AbstractJob {
     }
 
     /**
-     * SEt my start date time. THIS METHOD SHOULD ONLY BE INVOKED DIRECTLY BY JOB STATES.
+     * Transition to start state. Subclasses should override this if they need to
+     */
+    public void transitionToStartState() {
+
+        this.setJobState(JobState.NEEDS_RESOURCES);
+    }
+
+    /**
+     * Transition to complete with error state. Since we don't know the parent of the strategy of the parent job
+     * we should just trigger the parent job to go look at the issue
+     *
+     * @parameter anException Exception
+     */
+    public void transitionToErrorState(Exception anException) {
+
+        this.makeJobCompleteWithError();
+
+        if (this.hasParentJob()) {
+            this.getJobServiceProvider().passControlToParentJobOnChildComplete(this, anException);
+        } else {
+            this.safelyCompleteRequest(false);
+        }
+
+    }
+
+    /**
+     * Transition to next state named aStateType. Set the job's current state to this state if it exists.
+     * THIS METHOD SHOULD ONLY BE INVOKED DIRECTLY BY JOB STATES.
+     *
+     * @param aStateType JobStateType
+     * @return AbstractJobState
+     */
+    public JobState transitionToJobStateNamed(JobState aState) {
+
+        this.setJobState(aState);
+        
+        return aState;
+    }
+
+    /**
+     * Has passed time limit. The time limit is measured from my starting time. If the time limit is not
+     * set, I answer false for expiration
+     *
+     * @return boolean
+     */
+    public boolean hasTimeLimitExpired() {
+
+        boolean tempExpiration = false;
+
+        //Either time limit is not defined or job has not yet started(resources not allocated)
+        //then the job time limit is not expired
+        if (this.getTimeLimit() > 0 && this.getStartDateTime() != null) {
+
+            Date tempTimeCompare = new Date(this.getStartDateTime().getTime() + this.getTimeLimit());
+            tempExpiration = tempTimeCompare.before(new Date());
+        }
+
+        return tempExpiration;
+    }
+
+    public void validateParametersAndInitializeResources() throws ValidationException {
+
+        try {
+            this.validateParameters();
+            this.createInitialResources();
+        } catch (ValidationException e) {
+
+            this.makeJobCompleteWithError(e);
+            throw e;
+
+        }
+    }
+
+    protected void validateParameters() throws ValidationException {
+
+    }
+
+    protected void validateNonNull(Object object, String objectName) throws Exception {
+
+        if (object == null) {
+            throw new Exception(objectName + " must be non null.");
+        }
+    }
+
+    protected abstract void createInitialResources();
+
+    public boolean allocateResources() throws Exception {
+
+        return true;
+    }
+    /**
+     * Request start job start. Used only by states
+     */
+    public void requestJobStartBasic() {
+
+        this.getJobServiceProvider().requestJobStart(this);
+    }
+
+    /**
+     * Used only by the state - double dispatch
+     *
+     * @return List<AbstractJob>
+     */
+    public List<AbstractJob> startJobBasic() throws Exception {
+
+        // Make sure singleAction jobs get a valid startTime.
+        this.setStartDateTime(new Date());
+
+        return null;
+    }
+
+    /**
+     * Used only by the state - double dispatch
+     *
+     * @return List<AbstractJob>
+     */
+    public List<AbstractJob> childCompleteBasic(AbstractJob childJob, ChildJobCompleteMessage aMessage)
+        throws Exception {
+
+        this.handleErrorsOnChildJobComplete(aMessage);
+
+        return new ArrayList<AbstractJob>();
+
+    }
+
+    /**
+     * Handle errors on child complete. Subclasses should override if they want to handle their own errors. For example,
+     * they may want to
+     * take recovery actions and suppress the exception raised by the child job. The default behavior is to fail me (the
+     * parent job).
+     *
+     * @param aMessage ChildJobConmpleteJmsMessage
+     */
+    protected void handleErrorsOnChildJobComplete(ChildJobCompleteMessage aMessage) throws Exception {
+
+        Exception tempExp;
+
+        if (!aMessage.isChildJobSuccess()) {
+        	
+        	tempExp = aMessage.getException();
+            this.getLogger().info("Child job failed for " + this.getClass().getSimpleName() + ": {" + this + "}"
+                + " parent job transitioning to error state");
+            this.getLogger().info(" Child job failed due to: "  + aMessage.getException());
+
+            throw tempExp;
+        }
+    }
+
+    /**
+     * Used only by the state - double dispatch
+     *
+     * @return List<AbstractJob>
+     * @param jobDeviceResponse
+     */
+    public List<AbstractJob> deviceResponseBasic(AIResponseMessage jobDeviceResponse)
+        throws Exception {
+
+    	//TODO - Maybe override this in inherited jobs
+    	throw new Exception();
+    }
+
+    /**
+     * Log who called me. Debug method to be used on jobs. Method dumps the stack trace up to this point
+     */
+    protected void logWhoCalledMe(String aMsg) {
+
+        Exception tempExp;
+
+        tempExp = new Exception();
+        System.out.println(aMsg);
+        tempExp.printStackTrace();
+    }
+
+    /**
+     * Answer all of my parent jobs. This method returns parents in their "closest ancestor first" order
+     *
+     * @return List<AbstractJob>
+     */
+
+    public List<AbstractJob> getAllParentJobs() {
+
+        AbstractJob tempTop = this;
+        List<AbstractJob> tempParents = new ArrayList<AbstractJob>();
+
+        while (tempTop.hasParentJob()) {
+            tempTop = tempTop.getParentJob();
+            tempParents.add(tempTop);
+        }
+
+        return tempParents;
+    }
+
+
+    /**
+     * Answer whether or not I accept aDeviceResponse in aStateType. Default
+     * behavior is to answer false. Subclasses can override
+     *
+     * @param aDeviceResponse DeviceResponseJmsMessage
+     * @param aStateType JobStateType
+     */
+    public boolean acceptsUnexpectedAIResponseInState(AIResponseMessage aDeviceResponse,
+        JobState aStateType) {
+
+        return false;
+
+    }
+
+
+    /**
+     * Answer whether my number of allocation attempts has been exceeded
+     * @return boolean
+     */
+    public boolean isMaximumAllowedAllocationTimeExceeded() {
+
+        return false; //Currently default behavior for all jobs
+                      //is not to timeout on allocation. Subclasses
+                      //need to override this
+    }
+
+    /**
+     * Evaluate maximum allocation timeout
+     * @return boolean
+     */
+    protected boolean basicEvaluateMaximumAllocationTimeout() {
+
+        return this.basicEvaluateAllocationTimeout(MAXIMUM_ALLOWED_ALLOCATION_DURATION);
+
+    }
+    
+    /**
+     * Evaluate whether or not anAllocationTimeout has passed
+     * @param anAllocationTimeout long
+     */
+    protected boolean basicEvaluateAllocationTimeout(long anAllocationTimeout) {
+        
+        long    tempCurrentAllocationDuration;
+
+        tempCurrentAllocationDuration = (new Date()).getTime() - this.getCreateDateTime().getTime();
+
+        return tempCurrentAllocationDuration > anAllocationTimeout;
+        
+    }
+
+
+    /**
+     * Terminate aJob with error
+     * @param aJob AbstractJob
+     * @param aProvider JobServiceProviderInterface
+     */
+    public void terminateJobWithErrorToParentJob(Exception anException,
+                                                 JobServiceProviderInterface aProvider) {
+
+        this.setJobServiceProvider(aProvider);
+        this.makeJobCompleteWithError();
+
+        if (this.hasParentJob()) {
+            this.getJobServiceProvider().passControlToParentJobOnChildComplete(this, anException);
+        }
+
+    }
+
+    /**
+     * Change job state to completed success and notify parent of completion
+     */
+    protected void makeJobSuccessfulAndNotifyParentOfCompletion() {
+
+
+        this.makeJobComplete();
+        if (this.hasParentJob()) {
+            this.getJobServiceProvider().passControlToParentJobOnChildComplete(this);
+        }
+
+    }
+
+    
+    
+    /*********** GETTERS AND SETTERS AND OTHER MISCELLANOUS METHODS ****************************/
+    
+    protected Logger getLogger() {
+
+        return LOGGER;
+    }
+    
+    public Date getCreateDateTime() {
+
+        return createDateTime;
+    }
+
+    public void setCreateDateTime(Date createDateTime) {
+
+        this.createDateTime = createDateTime;
+    }
+
+    public long getId() {
+
+        return id;
+    }
+
+    /**
+     * Answer my job state
+     *
+     * @return AbstractJobState
+     */
+    public JobState getJobState() {
+
+        if (jobState == null) {
+            //TODO
+        }
+
+        return jobState;
+    }
+
+    /**
+     * Set my job state
+     *
+     * @param jobState
+     */
+    private void setJobState(JobState jobState) {
+
+        this.jobState = jobState;
+    }
+
+    /**
+     * Answer my job type
+     *
+     * @return JobType
+     */
+    public JobType getJobType() {
+
+        return jobType;
+    }
+
+    private void setJobType(JobType jobType) {
+
+        this.jobType = jobType;
+    }
+
+    public Map<String, JobParameter> getJobParameters() {
+
+        return jobParameters;
+    }
+
+    private void setJobParameters(Map<String, JobParameter> jobParameters) {
+
+        this.jobParameters = jobParameters;
+    }
+
+    public AbstractJob getParentJob() {
+
+        return parentJob;
+    }
+
+    public void setParentJob(AbstractJob job) {
+
+        this.parentJob = job;
+    }
+
+    /**
+     * Answer my child jobs
+     *
+     * @return List<AbstractJob>
+     */
+    public List<AbstractJob> getChildJobs() {
+
+        return childJobs;
+    }
+
+    private void setChildJobs(List<AbstractJob> childJobs) {
+
+        this.childJobs = childJobs;
+    }
+
+
+    public List<Resource> getResources() {
+
+        return resources;
+    }
+
+    /**
+     * Clear resources
+     *
+     * @param resources
+     */
+    public void clearResources() {
+
+        this.setResources(new ArrayList<Resource>());
+    }
+
+    private void setResources(List<Resource> resources) {
+
+        this.resources = resources;
+    }
+
+    public Resource addResource(Resource resource) {
+
+        getResources().add(resource);
+        resource.setJob(this);
+        return resource;
+    }
+
+    public void removeResource(Resource resource) {
+
+        this.getResources().remove(resource);
+        resource.setJob(null);
+
+    }
+
+    public Request getRequest() {
+
+        return request;
+    }
+
+    public void setRequest(Request request) {
+
+        this.request = request;
+    }
+
+    /**
+     * Answer whether or not I have a parent
+     *
+     * @return boolean
+     */
+    public boolean hasParentJob() {
+
+        return this.getParentJob() != null;
+    }
+
+    /**
+     * Answer whether I am aJobType
+     *
+     * @param aJobType JobType
+     * @return boolean
+     */
+    public boolean isJobType(JobType aJobType) {
+
+        return this.getJobType() != null && this.getJobType().equals(aJobType);
+    }
+
+
+    /**
+     * Set next allocation timeout time
+     */
+    public void setNextJobAllocationTimeoutTime() {
+
+        this.setNextExpectedAllocationDuration(AbstractJob.MAXIMUM_EXPECTED_ALLOCATION_DURATION);
+    }
+
+
+    /**
+     * Set next execution time limit for device response. Subclasses should override this
+     * if they want a time lower than the maximum
+     *
+     */
+    public void setNextExecutionTimeForDeviceResponse() {
+
+        this.setNextExpectedExecutionDuration(AbstractJob.MAXIMUM_EXPECTED_EXECUTION_TIME_DURATION);
+    }
+
+    /**
+     * Set next execution time limit for child job complete. Subclasses should override this
+     * if they want a time lower than the maximum
+     *
+     */
+    public void setNextExecutionTimeForChildJobCompleted() {
+
+        this.setNextExpectedExecutionDuration(AbstractJob.MAXIMUM_EXPECTED_EXECUTION_TIME_DURATION);
+    }
+
+    /**
+     * Set my start date time. THIS METHOD SHOULD ONLY BE INVOKED DIRECTLY BY JOB STATES.
      *
      * @param startDateTime
      */
@@ -900,58 +981,6 @@ public abstract class AbstractJob {
     public void setElapsedTime(double elapsedTime) {
 
         this.elapsedTime = elapsedTime;
-    }
-
-    /**
-     * Transition to start state. Subclasses should override this if they need to
-     */
-    public void transitionToStartState() {
-
-        this.transitionToJobStateNamed(JobStateType.NEEDS_RESOURCES);
-    }
-
-    /**
-     * Transition to complete with error state. Since we don't know the parent of the strategy of the parent job
-     * we should just trigger the parent job to go look at the issue
-     *
-     * @parameter anException Exception
-     */
-    public void transitionToErrorState(Exception anException) {
-
-        this.makeJobCompleteWithError();
-
-        if (this.hasParentJob()) {
-            this.getJobServiceProvider().passControlToParentJobOnChildComplete(this, anException);
-        } else {
-            this.safelyCompleteRequest(false);
-        }
-
-    }
-
-    /**
-     * Transition to next state named aStateType. Set the job's current state to this state if it exists.
-     * THIS METHOD SHOULD ONLY BE INVOKED DIRECTLY BY JOB STATES.
-     *
-     * @param aStateType JobStateType
-     * @return AbstractJobState
-     */
-    public AbstractJobState transitionToJobStateNamed(JobStateType aStateType) {
-
-        AbstractJobState tempState = this.getPossibleStateFor(aStateType);
-        this.setJobState(tempState); //Not checking if null -- want it to blow up if it is null. should result
-                                    //in an integrity constraint error
-        return tempState;
-    }
-
-    /**
-     * Answer my state for aStateType
-     *
-     * @param aStateType
-     * @return AbstractJobState
-     */
-    protected AbstractJobState getPossibleStateFor(JobStateType aStateType) {
-
-        return JobStateFactory.getInstance().getJobState(this.getJobType(), aStateType);
     }
 
     /**
@@ -1124,203 +1153,6 @@ public abstract class AbstractJob {
     }
 
     /**
-     * Has passed time limit. The time limit is measured from my starting time. If the time limit is not
-     * set, I answer false for expiration
-     *
-     * @return boolean
-     */
-    public boolean hasTimeLimitExpired() {
-
-        boolean tempExpiration = false;
-
-        //Either time limit is not defined or job has not yet started(resources not allocated)
-        //then the job time limit is not expired
-        if (this.getTimeLimit() > 0 && this.getStartDateTime() != null) {
-
-            Date tempTimeCompare = new Date(this.getStartDateTime().getTime() + this.getTimeLimit());
-            tempExpiration = tempTimeCompare.before(new Date());
-        }
-
-        return tempExpiration;
-    }
-
-    /**
-     * Set time limit in milliseconds
-     *
-     * @param timeLimit
-     */
-    public void setTimeLimit(long timeLimit) {
-
-        this.timeLimit = timeLimit;
-    }
-
-    /**
-     * Answer my time limit in milliseconds
-     *
-     * @return
-     */
-    public long getTimeLimit() {
-
-        return timeLimit;
-    }
-
-    public void setOriginalIterationCount(int originalIterationCount) {
-
-        this.originalIterationCount = originalIterationCount;
-    }
-
-    protected int getOriginalIterationCount() {
-
-        return originalIterationCount;
-    }
-
-    public int getPriority() {
-
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-
-        this.priority = priority;
-    }
-
-    protected void addNewParameter(String parameterName, ParameterType parameterType, Object parameterValue) {
-
-        JobParameter jobParameter = new JobParameter();
-        jobParameter.setJob(this);
-        jobParameter.setName(parameterName);
-        jobParameter.setType(parameterType);
-        jobParameter.setValue(String.valueOf(parameterValue));
-        this.addParameter(jobParameter);
-    }
-
-    protected void addNewNullParameter(String parameterName, ParameterType parameterType) {
-
-        this.addNewParameter(parameterName, parameterType, null);
-    }
-
-    public void validateParametersAndInitializeResources() throws ValidationException {
-
-        try {
-            this.validateParameters();
-            this.createInitialResources();
-        } catch (ValidationException e) {
-
-            this.makeJobCompleteWithError(e);
-            throw e;
-
-        }
-    }
-
-    protected void validateParameters() throws ValidationException {
-
-    }
-
-    protected void validateNonNull(Object object, String objectName) throws Exception {
-
-        if (object == null) {
-            throw new Exception(objectName + " must be non null.");
-        }
-    }
-
-    protected abstract void createInitialResources();
-
-    public boolean allocateResources() throws Exception {
-
-        return true;
-    }
-    /**
-     * Request start job start. Used only by states
-     */
-    public void requestJobStartBasic() {
-
-        this.getJobServiceProvider().requestJobStart(this);
-    }
-
-    /**
-     * Used only by the state - double dispatch
-     *
-     * @return List<AbstractJob>
-     */
-    public List<AbstractJob> startJobBasic() throws Exception {
-
-        // Make sure singleAction jobs get a valid startTime.
-        this.setStartDateTime(new Date());
-
-        return new ArrayList<AbstractJob>();
-    }
-
-    /**
-     * Used only by the state - double dispatch
-     *
-     * @return List<AbstractJob>
-     */
-    public List<AbstractJob> childCompleteBasic(AbstractJob childJob, ChildJobCompleteMessage aMessage)
-        throws Exception {
-
-        this.handleErrorsOnChildJobComplete(aMessage);
-
-        return new ArrayList<AbstractJob>();
-
-    }
-
-    /**
-     * Handle errors on child complete. Subclasses should override if they want to handle their own errors. For example,
-     * they may want to
-     * take recovery actions and suppress the exception raised by the child job. The default behavior is to fail me (the
-     * parent job).
-     *
-     * @param aMessage ChildJobConmpleteJmsMessage
-     */
-    protected void handleErrorsOnChildJobComplete(ChildJobCompleteMessage aMessage) throws Exception {
-
-        Exception tempExp;
-
-        if (!aMessage.isChildJobSuccess()) {
-        	
-        	tempExp = aMessage.getException();
-            this.getLogger().info("Child job failed for " + this.getClass().getSimpleName() + ": {" + this + "}"
-                + " parent job transitioning to error state");
-            this.getLogger().info(" Child job failed due to: "  + aMessage.getException());
-
-            throw tempExp;
-        }
-    }
-
-    /**
-     * Used only by the state - double dispatch
-     *
-     * @return List<AbstractJob>
-     * @param jobDeviceResponse
-     */
-    public List<AbstractJob> deviceResponseBasic(AIResponseMessage jobDeviceResponse)
-        throws Exception {
-
-    	//TODO
-    	throw new Exception();
-    }
-
-    /**
-     * Answer my currentJobState
-     *
-     * @return JobStateType
-     */
-    protected JobStateType getCurrentJobState() {
-
-        return currentJobState;
-    }
-
-    /**
-     * Set my currentJobState
-     *
-     * @param currentJobState JobStateType
-     */
-    protected void setCurrentJobState(JobStateType currentJobState) {
-
-        this.currentJobState = currentJobState;
-    }
-
-    /**
      * Answer the time component of aDate
      *
      * @param aDate Date
@@ -1342,37 +1174,6 @@ public abstract class AbstractJob {
 
         return tempBuilder.toString();
 
-    }
-
-    /**
-     * Log who called me. Debug method to be used on jobs. Method dumps the stack trace up to this point
-     */
-    protected void logWhoCalledMe(String aMsg) {
-
-        Exception tempExp;
-
-        tempExp = new Exception();
-        System.out.println(aMsg);
-        tempExp.printStackTrace();
-    }
-
-    /**
-     * Answer all of my parent jobs. This method returns parents in their "closest ancestor first" order
-     *
-     * @return List<AbstractJob>
-     */
-
-    public List<AbstractJob> getAllParentJobs() {
-
-        AbstractJob tempTop = this;
-        List<AbstractJob> tempParents = new ArrayList<AbstractJob>();
-
-        while (tempTop.hasParentJob()) {
-            tempTop = tempTop.getParentJob();
-            tempParents.add(tempTop);
-        }
-
-        return tempParents;
     }
 
     /**
@@ -1452,125 +1253,51 @@ public abstract class AbstractJob {
     }
 
     /**
-     * Answer whether or not I accept aDeviceResponse in aStateType. Default
-     * behavior is to answer false. Subclasses can override
-     *
-     * @param aDeviceResponse DeviceResponseJmsMessage
-     * @param aStateType JobStateType
-     */
-    public boolean acceptsUnexpectedAIResponseInState(AIResponseMessage aDeviceResponse,
-        JobStateType aStateType) {
-
-        return false;
-
-    }
-
-    /**
      * Answer my percentComplete
      * @return long
      */
     protected long getPercentComplete() {
         return percentComplete;
     }
-
-    /**
-     * Answer whether my number of allocation attempts has been exceeded
-     * @return boolean
-     */
-    public boolean isMaximumAllowedAllocationTimeExceeded() {
-
-        return false; //Currently default behavior for all jobs
-                      //is not to timeout on allocation. Subclasses
-                      //need to override this
-
-    }
-
-    /**
-     * Evaluate maximum allocation timeout
-     * @return boolean
-     */
-    protected boolean basicEvaluateMaximumAllocationTimeout() {
-
-        return this.basicEvaluateAllocationTimeout(MAXIMUM_ALLOWED_ALLOCATION_DURATION);
-
-    }
     
     /**
-     * Evaluate whether or not anAllocationTimeout has passed
-     * @param anAllocationTimeout long
+     * Set time limit in milliseconds
+     *
+     * @param timeLimit
      */
-    protected boolean basicEvaluateAllocationTimeout(long anAllocationTimeout) {
-        
-        long    tempCurrentAllocationDuration;
+    public void setTimeLimit(long timeLimit) {
 
-        tempCurrentAllocationDuration = (new Date()).getTime() - this.getCreateDateTime().getTime();
-
-        return tempCurrentAllocationDuration > anAllocationTimeout;
-        
-    }
-
-
-    /**
-     * Terminate aJob with error
-     * @param aJob AbstractJob
-     * @param aProvider JobServiceProviderInterface
-     */
-    public void terminateJobWithErrorToParentJob(Exception anException,
-                                                 JobServiceProviderInterface aProvider) {
-
-        this.setJobServiceProvider(aProvider);
-        this.makeJobCompleteWithError();
-
-        if (this.hasParentJob()) {
-            this.getJobServiceProvider().passControlToParentJobOnChildComplete(this, anException);
-        }
-
+        this.timeLimit = timeLimit;
     }
 
     /**
-     * Change job state to completed success and notify parent of completion
+     * Answer my time limit in milliseconds
+     *
+     * @return
      */
-    protected void makeJobSuccessfulAndNotifyParentOfCompletion() {
+    public long getTimeLimit() {
 
-
-        this.makeJobComplete();
-        if (this.hasParentJob()) {
-            this.getJobServiceProvider().passControlToParentJobOnChildComplete(this);
-        }
-
+        return timeLimit;
     }
 
-    /**
-     * Answer whether or not I have a common ancestor with anotherJob
-     * @param anotherJob AbstractJob
-     * @return boolean
-     */
-    public boolean hasCommonAncestor(AbstractJob anotherJob) {
-        
-        List<AbstractJob>   tempAllJobs;
-        boolean             tempResult = false;
-        
-        if (anotherJob != null) {
-            
-            //Include another job's parents and anotherJob as well
-            tempAllJobs = anotherJob.getAllParentJobs();
-            tempAllJobs.add(anotherJob);
-            
-            //Walk my parental tree to see if I have any common ancestor with anotherJob (including anotherJob)
-            if (this.hasParentJob()) {
-                
-                tempResult = tempAllJobs.contains(this.getParentJob());
-                if (!tempResult) {
-                    
-                    this.getParentJob().hasCommonAncestor(anotherJob);
-                }
-            }
-            
-        }
-       
-        return tempResult;
-        
+    public void setOriginalIterationCount(int originalIterationCount) {
+
+        this.originalIterationCount = originalIterationCount;
     }
-    
+
+    protected int getOriginalIterationCount() {
+
+        return originalIterationCount;
+    }
+
+    public int getPriority() {
+
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+
+        this.priority = priority;
+    }
 }
 
