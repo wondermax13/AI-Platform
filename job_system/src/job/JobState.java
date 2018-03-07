@@ -9,6 +9,7 @@ public enum JobState {
     NEEDS_RESOURCES,
     RUNNABLE,
     DEV_FAILED,
+    WAITING,
     WAITING_FOR_AI_RESPONSE,
     WAITING_FOR_SUBJOB,
     UNKNOWN;
