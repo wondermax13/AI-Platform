@@ -18,7 +18,7 @@ public enum JobState {
         return name();
     }
 
-    public static JobStateType fromValue(String v) {
+    public static JobState fromValue(String v) {
         return valueOf(v);
     }
 }

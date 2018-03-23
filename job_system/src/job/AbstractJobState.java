@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 import message.AIResponseMessage;
 import message.ChildJobCompleteMessage;
 
-public abstract class AbstractJobState implements Serializable {
-
+public abstract class AbstractJobState implements Serializable { }
+/*
     private JobStateType stateType;
     private JobType jobType;
 
@@ -23,10 +23,10 @@ public abstract class AbstractJobState implements Serializable {
     //Constants
     private static final long serialVersionUID = 1L;
 
-    /**
+    *//**
      * Answer the exception classes to be passed on to the job framework
      * @return List<Class<?>>
-     */
+     *//*
     public synchronized static List<Class<?>> getExceptionClassesToBePassedOnToJobFramework() {
         
         if (exceptionClassesToBePassedOnToJobFramework == null) {
@@ -39,11 +39,11 @@ public abstract class AbstractJobState implements Serializable {
     
     
     
-    /**
+    *//**
      * Answer whether anException should be passed on to the job framework
      * @param anException Exception
      * @return boolean
-     */
+     *//*
     protected boolean shouldBePassedOnToJobFramework(Exception anException) {
         
         boolean tempResult;
@@ -55,13 +55,13 @@ public abstract class AbstractJobState implements Serializable {
     }
     
     
-    /**
+    *//**
      * Answer whether anException is of the classes contained in anExceptionClassesToHandle or whether it wraps one of
      * these
      * @param anException Throwable
      * @param anExceptionClassesToHandle List<Class<?>
      * @return boolean
-     */
+     *//*
     private boolean shouldHandle(Throwable anException, 
                                    List<Class<?>> anExceptionClassesToHandle) {
         
@@ -83,9 +83,9 @@ public abstract class AbstractJobState implements Serializable {
     
     
     
-    /**
+    *//**
      * Answer a default instance
-     */
+     *//*
     public AbstractJobState() {
         super();
     }
@@ -93,32 +93,32 @@ public abstract class AbstractJobState implements Serializable {
 
 
 
-    /**
+    *//**
      * Start Job. Subclasses should override if they need since the default behavior is to throw an exception
      * @param aJob Job
      * @return JobExecutionResult
-     */
+     *//*
     public JobExecutionResult startJob(AbstractJob aJob) throws Exception {
         throw new IllegalStateException("Job: jobId: " + aJob.getId() + " is in a improper state to be started");
     }
 
-    /**
+    *//**
      * Execute aJob
      * @param aJob Job
-     */
+     *//*
     public abstract JobExecutionResult execute(AbstractJob aJob) throws Exception;
 
-    /**
+    *//**
      * Execute aJob for aJob
      * @param aJob Job
      * @param aDeviceResponse JobDeviceResponse
-     */
+     *//*
     public abstract JobExecutionResult execute(AbstractJob aJob, AIResponseMessage aDeviceResponse)
         throws Exception;
     
-    /**
+    *//**
      * Basic handle device response
-     */
+     *//*
     protected JobExecutionResult basicHandleAIResponse(
     		AbstractJob aJob, 
     		AIResponseMessage aDeviceResponse) 
@@ -142,20 +142,20 @@ public abstract class AbstractJobState implements Serializable {
     }
     
     
-    /**
+    *//**
      * Notify aJob that it has timed out. This may or may not be an error. aJob will handle its 
      * own timeout behavior
      * @param aJob Job
      * @param anExpectedExecutionDateTimeLimit Date
-     */
+     *//*
     public abstract void timedOut(AbstractJob aJob, Date anExpectedExecutionDateTimeLimit)
         throws Exception;
     
 
-    /**
+    *//**
      * Make job complete.
      * @return JobExecutionResult
-     */
+     *//*
     public JobExecutionResult makeJobComplete(AbstractJob aJob) {
 
         this.basicMakeJobComplete(aJob);
@@ -163,10 +163,10 @@ public abstract class AbstractJobState implements Serializable {
 
     }
 
-    /**
+    *//**
      * Make job complete.
      * @return JobExecutionResult
-     */
+     *//*
     public JobExecutionResult makeJobCompleteWithError(AbstractJob aJob) {
 
         this.basicMakeJobCompleteWithError(aJob);
@@ -175,13 +175,13 @@ public abstract class AbstractJobState implements Serializable {
     }
 
 
-    /**
+    *//**
      * Make child job complete
      * @param aJob Job
      * @param aChildJob boolean
      * @param aMessage ChildJobCompleteJmsMessage
      * @return List<Job>
-     */
+     *//*
     public JobExecutionResult makeChildJobComplete(AbstractJob aJob,
                                                    AbstractJob aChildJob,
                                                    ChildJobCompleteMessage aMessage) throws Exception {
@@ -189,28 +189,28 @@ public abstract class AbstractJobState implements Serializable {
         return new JobExecutionResult();
     }
 
-    /**
+    *//**
      * Mark my job for cancellation. Iterate recursively over aJob and its children to mark for cancellation
      * @param aJob Job
-     */
+     *//*
     public void markForCancellation(AbstractJob aJob) {
 
         aJob.setMarkedForCancellation(true);
-       /* for (AbstractJob tempJob : aJob.getChildJobs()) {
+        for (AbstractJob tempJob : aJob.getChildJobs()) {
 
             this.markForCancellation(tempJob);
-        }*/
+        }
 
     }
 
 
-    /**
+    *//**
      * Cancel aJob. All substates respond to a cancel by just doing it.
      * Subclasses could override this if they need to. The job would have previously been markedForCancel
      * before this transition is taken
      * @param aJob Job
      * @return JobExecutionResult
-     */
+     *//*
     public JobExecutionResult cancel(AbstractJob aJob) {
 
         if (aJob.isMarkedForCancellation()) {
@@ -224,10 +224,10 @@ public abstract class AbstractJobState implements Serializable {
     }
 
 
-    /**
+    *//**
      * Perform make job complete
      * @param aJob AbstractJob
-     */
+     *//*
     protected void performMakeJobComplete(AbstractJob aJob, boolean aStatus) {
 
         this.basicMakeJobComplete(aJob);
@@ -235,10 +235,10 @@ public abstract class AbstractJobState implements Serializable {
 
     }
 
-    /**
+    *//**
      * Perform job completion steps without request completion
      * @param aJob
-     */
+     *//*
     protected void basicMakeJobComplete(AbstractJob aJob) {
 
         aJob.transitionToJobStateNamed(JobStateType.COMPLETED_SUCCESS);
@@ -248,10 +248,10 @@ public abstract class AbstractJobState implements Serializable {
     }
 
 
-    /**
+    *//**
      * Perform job completion steps without request completion
      * @param aJob
-     */
+     *//*
     protected void basicMakeJobCompleteWithError(AbstractJob aJob) {
 
         aJob.transitionToJobStateNamed(JobStateType.COMPLETED_ERROR);
@@ -265,10 +265,10 @@ public abstract class AbstractJobState implements Serializable {
 
     }
 
-    /**
+    *//**
      * Answer whether or not I represent a completed state.
      * @return boolean
-     */
+     *//*
     public boolean isComplete() {
 
         return this.getStateType() != null &&
@@ -279,20 +279,20 @@ public abstract class AbstractJobState implements Serializable {
                  this.getStateType().equals(JobStateType.CANCELLED));
     }
     
-    /**
+    *//**
      * Answer whether or not I represent a completed state with an error.
      * @return boolean
-     */
+     *//*
     public boolean isCompleteWithError() {
 
         return this.getStateType() != null &&
                 this.getStateType().equals(JobStateType.COMPLETED_ERROR);
     }
     
-    /**
+    *//**
      * Answer whether or not I represent error state.
      * @return boolean
-     */
+     *//*
     public boolean isError() {
 
         return this.getStateType() != null
@@ -301,46 +301,46 @@ public abstract class AbstractJobState implements Serializable {
     }
     
     
-    /**
+    *//**
      * Answer whether or not I am running
      * @return boolean
-     */
+     *//*
     public boolean isRunning() {
         return false;
     }
     
 
 
-    /**
+    *//**
      * Answer whether or not I represent a state that needs resources.
      * @return boolean
-     */
+     *//*
     public boolean isNeedsResources() {
        return this.getStateType() != null && this.getStateType().equals(JobStateType.NEEDS_RESOURCES);
     }
 
-    /**
+    *//**
      * Answer whether or not I am canceled (i.e I am a cancelled state)
      * @return boolean
-     */
+     *//*
     public boolean isCancelled() {
         return this.getStateType() != null && this.getStateType().equals(JobStateType.CANCELLED);
     }
 
-    /**
+    *//**
      * Set my job type. This is used to establish what states are actually used by a given Job Type. In this
      * way we can have separate state models for Jobs.
      * @param jobType JobType
-     */
+     *//*
     protected void setJobType(JobType jobType) {
         this.jobType = jobType;
     }
 
-    /**
+    *//**
      * Answer my job type. This is used to establish what states are actually used by a given Job Type. In this
      * way we can have separate state models for Jobs.
      * @return JobType
-     */
+     *//*
     public JobType getJobType() {
         return jobType;
     }
@@ -354,45 +354,45 @@ public abstract class AbstractJobState implements Serializable {
                 + ", needsResources: " + this.isNeedsResources();
     }
 
-    /**
+    *//**
      * Answer my logger
      * @return
-     */
+     *//*
     protected Logger getLogger() {
         return LOGGER;
     }
 
-    /**
+    *//**
      * Answer whether I am for aStateType
      * @param aType JobStateType
      * @return boolean
-     */
+     *//*
     public boolean isForType(JobStateType aType) {
         return this.getStateType() != null && this.getStateType().equals(aType);
     }
 
 
-    /**
+    *//**
      * Answer my stateType
      * @return JobStateType
-     */
+     *//*
     public JobStateType getStateType() {
         return stateType;
     }
 
-    /**
+    *//**
      * Set my stateType
      * @param stateType JobStateType
-     */
+     *//*
     protected void setStateType(JobStateType stateType) {
         this.stateType = stateType;
     }
 
-    /**
+    *//**
      * Handle unrecoverable job exception
      * @param aJob AbstractJob
      * @param anException DevieErrorException
-     */
+     *//*
     protected void handleUnRecoverableJobException(AbstractJob aJob, Exception anException) {
 
     	//TODO
@@ -407,14 +407,14 @@ public abstract class AbstractJobState implements Serializable {
 
     }
 
-    /**
+    *//**
      * Handle exception encountered in job state. This method is currently used in
      * the catch clause of states that must deal with exceptions coming back from aJob
      * 
      * @param aJob AbstractJob
      * @param e
      * @throws Exception
-     */
+     *//*
     protected void handleExceptionEncounteredByJobState(AbstractJob aJob,
                                                         Exception e)
                                                         throws Exception {
@@ -422,11 +422,11 @@ public abstract class AbstractJobState implements Serializable {
     	throw e;
     }
 
-    /**
+    *//**
      * Handle unrecoverable job exception
      * @param aJob AbstractJob
      * @param anException DevieErrorException
-     */
+     *//*
     protected void handleUnexpectedUnRecoverableJobException(AbstractJob aJob, Exception anException) {
 
         //Log exception
@@ -443,3 +443,4 @@ public abstract class AbstractJobState implements Serializable {
     }
 }
 
+*/

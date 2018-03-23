@@ -444,7 +444,7 @@ public abstract class AbstractJob {
     public void freeMyResources() {
 
         for (Resource aResource : getResources()) {
-            aResource.freeResource();
+            //aResource.freeResource();
         }
     }
 
@@ -845,14 +845,14 @@ public abstract class AbstractJob {
     public Resource addResource(Resource resource) {
 
         getResources().add(resource);
-        resource.setJob(this);
+        //resource.setJob(this);
         return resource;
     }
 
     public void removeResource(Resource resource) {
 
         this.getResources().remove(resource);
-        resource.setJob(null);
+        //resource.setJob(null);
 
     }
 

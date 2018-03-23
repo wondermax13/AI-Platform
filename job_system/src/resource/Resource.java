@@ -4,7 +4,7 @@ import job.AbstractJob;
 import java.util.Date;
 import java.util.logging.Logger;
 
-public class Resource {
+public class Resource {/*
 
 	private long id;
 
@@ -77,10 +77,10 @@ public class Resource {
         this.state = state;
     }
 
-    /**
+    *//**
      * Answer whether or not I am allocated
      * @return boolean
-     */
+     *//*
     public boolean isAllocated() {
         return this.getState() != null && this.getState().equals(ResourceState.ALLOCATED);
     }
@@ -122,11 +122,11 @@ public class Resource {
         return resourceType;
     }
 
-    /**
+    *//**
      * Answer whether or not a Resource is for aType
      * @param aType ResourceType
      * @return boolean
-     */
+     *//*
     public boolean isForType(ResourceType aType) {
 
         return this.getResourceType() != null
@@ -134,34 +134,34 @@ public class Resource {
 
     }
     
-    /**
+    *//**
      * Answer whether or not I am allocated to aJob of aJobType
      * @param aJobType JobType
      * @return boolean
-     */
+     *//*
     public boolean isAllocatedToJobOfType(JobType aJobType) {
         
         return this.isAllocated() && this.isForJobType(aJobType);
     }
     
     
-    /**
+    *//**
      * Answer whether or not I am associated with aJob of 
      * aJobType
      * @param aJobType JobType
      * @return boolean
-     */
+     *//*
     public boolean isForJobType(JobType aJobType) {
         
         return this.getJob() != null
                 && this.getJob().getJobType().equals(aJobType);
     }
 
-    /**
+    *//**
      * Answer whether or not I am for aName
      * @param aName ResourceName
      * @return boolean
-     */
+     *//*
     public boolean isForName(String aName) {
 
         return this.getName() != null
@@ -192,11 +192,11 @@ public class Resource {
         return this.version;
     }
 
-    /**
+    *//**
      * Clear resource. Free the resource and detach it from what it holds. Subclasses should extend
-     */
+     *//*
     public void clearResource() {
         
         //do nothing at this level for now
-    }
+    }*/
 }
