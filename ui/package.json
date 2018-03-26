@@ -1,0 +1,71 @@
+{
+  "name": "ai2ai",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "",
+  "author": "ai2ai",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf dist **/__snapshots__/**",
+    "build": "npm run clean && webpack",
+    "buildFast": "webpack",
+    "start": "npm run clean && webpack-dev-server --hot --inline --open",
+    "startFast": "webpack-dev-server --hot --no-inline --open",
+    "test": "jest --coverage",
+    "test-bail": "jest --coverage --bail",
+    "startTest": "jest --coverage --watchAll"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": ".*\\.test\\.(ts|tsx|js)$"
+  },
+  "devDependencies": {
+    "@types/enzyme": "^3.1.9",
+    "@types/enzyme-adapter-react-16": "^1.0.2",
+    "@types/jest": "^22.2.0",
+    "@types/prop-types": "^15.5.2",
+    "@types/react": "^16.0.40",
+    "@types/react-dom": "^16.0.4",
+    "@types/react-test-renderer": "^16.0.1",
+    "awesome-typescript-loader": "3.5.0",
+    "copy-webpack-plugin": "^4.5.0",
+    "css-loader": "^0.28.11",
+    "dts-generator": "^2.1.0",
+    "enzyme": "3.2.0",
+    "enzyme-adapter-react-16": "1.1.1",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^1.1.11",
+    "jest": "22.4.0",
+    "office-ui-fabric-react": "^5.64.4",
+    "react-layout-pane": "0.1.16",
+    "react-test-renderer": "^16.2.0",
+    "remove-webpack-plugin": "^1.2.2",
+    "source-map-loader": "^0.2.3",
+    "style-loader": "^0.20.3",
+    "ts-jest": "^22.4.1",
+    "tslint": "^5.9.1",
+    "tslint-loader": "^3.6.0",
+    "tslint-microsoft-contrib": "^5.0.3",
+    "tslint-react": "^3.5.1",
+    "typescript": "2.6.2",
+    "typings-for-css-modules-loader": "^1.7.0",
+    "webpack": "3.11.0",
+    "webpack-cli": "2.0.4",
+    "webpack-dev-server": "2.11.1",
+    "write-file-webpack-plugin": "^4.2.0",
+    "sass-loader": "^6.0.7",
+    "node-sass": "^4.8.3"
+  },
+  "dependencies": {
+    "global": "^4.3.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  }
+}
