@@ -1,5 +1,25 @@
 # AICommunicator
 
+Data Model
+
+AI
+{
+	Address
+	Version
+	Public Key
+	Priority
+	Channels
+}
+
+QuestionAnswer{
+
+	String question
+	List<String, String> AIAnswers
+}
+
+
+
+
 Parts of the system
 
 JobInterface: Entry point for the UI. Implementation figures out the jobs to be scheduled
