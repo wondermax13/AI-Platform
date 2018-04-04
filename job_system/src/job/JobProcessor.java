@@ -33,14 +33,6 @@ public class JobProcessor {
 		return instance;
 	}
 	
-	public void addNewJobToProcessor(GenericJob job) {
-		
-		//TODO - Validation
-		
-		jobMap.put(job.id_, job);
-		newJobs.add(job.id_);
-	}
-	
 	JobProcessor() {
 		
 		activeJobIds = new ArrayList<Long>();
@@ -80,13 +72,18 @@ public class JobProcessor {
 		
 		for(Question question : newQuestions) {
 		
-			List<Long> questionJobFamilyIds = createAskQuestionJob(question);
+			AskQuestionJob questionJob = new AskQuestionJob(0, question);
 			
-			for(long id : questionJobFamilyIds) {
-				
-				newJobs.add(id);
-			}
+			this.addNewJobToProcessor(questionJob);
 		}
+	}
+	
+	public void addNewJobToProcessor(GenericJob job) {
+		
+		//TODO - Validation
+		
+		jobMap.put(job.id_, job);
+		newJobs.add(job.id_);
 	}
 
 	public void processActiveJobs() {
@@ -99,7 +96,9 @@ public class JobProcessor {
 			
 			if(job.needsToBeChecked()) {
 				
-				job.invokeMethodForState();
+				ExecutionResult execResult = job.invokeMethodForState();
+				
+				this.processExecutionResult(execResult);
 			}
 			
 			if(job.needsToBeCleared()) {
@@ -111,6 +110,19 @@ public class JobProcessor {
 
 		this.handleJobClearing();
 		this.handleNewJobsAddition();
+	}
+	
+	public void processExecutionResult(ExecutionResult execResult) {
+		
+		if(execResult != null
+			&& execResult.childJobs_ != null) {
+			
+			//This might be a lot of copying but get it working first
+			for(GenericJob childJob : execResult.childJobs_) {
+				
+				this.addNewJobToProcessor(childJob);
+			}
+		}
 	}
 	
 	public void handleJobClearing() {
@@ -127,7 +139,7 @@ public class JobProcessor {
 		
 		for(int index = 0; index < newJobs.size(); index++) {
 			
-			activeJobIds.remove(newJobs.get(index));
+			activeJobIds.add(newJobs.get(index));
 		}
 		
 		newJobs.clear();
@@ -146,18 +158,6 @@ public class JobProcessor {
 			GenericJob childJob = jobMap.get(topLevelJob.childJobIds.get(index));
 			
 			handleJobFamilyClearing(childJob);
-		}
-	}
-	
-
-	List<Long> createAskQuestionJob(Question question)
-	{
-		List<Long> questionJobFamilyIds = new ArrayList<Long>(); 
-	
-		List<AI> relevantAIs = documentClient.getAIForChannels(question.channels);
-		
-		for(AI ai : relevantAIs) {
-			question
 		}
 	}
 }

@@ -6,27 +6,27 @@ import request.Request;
 
 import javax.xml.bind.ValidationException;
 
+import dbclient.DocumentClient;
 import entities.AI;
 import entities.Question;
 import message.AIResponseMessage;
 
-public class AskSingleAIJob extends GenericJob {
+public class AskQuestionJob extends GenericJob {
 	
-	AskSingleAIJob(long requestId, AI ai, Question question) {
+	AskQuestionJob(
+			long requestId, Question question) {
 		
-		super(JobType.QUESTION_SINGLE_AI, requestId);
-		this.ai_ = ai;
-		this.question_ = question;
+		super(JobType.ASK_QUESTION, requestId);
+		myQuestion_ = question;
 	}
 	
-	AskSingleAIJob(long requestId) {
-		super(JobType.QUESTION_SINGLE_AI, requestId);
+	AskQuestionJob(long requestId) {
+		super(JobType.ASK_QUESTION, requestId);
 	}
-
-	private String AI_KEY       = "AI_KEY";
+	
 	private String QUESTION_KEY = "QUESTION_KEY";
-	private AI ai_;
-	private Question question_;
+	private Question myQuestion_;
+	
 	
 	@Override
 	protected void createInitialResources() {
@@ -37,13 +37,6 @@ public class AskSingleAIJob extends GenericJob {
 	@Override
     protected void createParameters() {
 		
-		JobParameter aiParam =
-				new JobParameter(
-						0L,
-						this.id_,
-						ParameterType.AI,
-						"AI_Value");
-		
 		JobParameter questionParam =
 				new JobParameter(
 						0L,
@@ -51,7 +44,6 @@ public class AskSingleAIJob extends GenericJob {
 						ParameterType.Question,
 						"Question_Value");
 		
-		this.parameters_.put(AI_KEY, aiParam);
 		this.parameters_.put(QUESTION_KEY, questionParam);
 	}
 	
@@ -67,7 +59,6 @@ public class AskSingleAIJob extends GenericJob {
 
         super.validateParameters();
         
-        this.validateAI();
         this.validateQuestion();
     }
 	
@@ -78,57 +69,58 @@ public class AskSingleAIJob extends GenericJob {
     @Override
     public ExecutionResult startJobBasic() {
 
-    	boolean result = false;
+    	ExecutionResult execResult = new ExecutionResult();	//Default - false
+    	
+    	List<GenericJob> childJobs = new ArrayList<GenericJob>();
     	
         super.startJobBasic();
 
         this.getLogger().fine(".startJobBasic starting " + this.toString());
         
-        //Ping the AI
-        AI ai = this.getAI();
-
-        if(ai.pingAI()) {
-
-        	result = ai.askQuestion(this.getQuestion());
-        }
         
-        if(result) {
+        //TODO - Move this to a singleton
+        DocumentClient documentClient = new DocumentClient();
+        
+        Question question = this.getMyQuestion();
+        
+        try {
+	        List<AI> relevantAIs = documentClient.getAIForChannels(question.channels);
+	        
+	        for(AI ai : relevantAIs) {
+	        	
+				GenericJob job = new AskSingleAIJob(0, ai, question);
+				childJobs.add(job);
+			}
+	        
+	        //Passed all the previous steps
+	        execResult = new ExecutionResult(childJobs);
+	        this.state_ = JobState.WAITING_FOR_SUBJOB;
+        }
+        catch(Exception e) {
         	
-        	this.state_ = JobState.WAITING_FOR_AI_RESPONSE;
-        	this.min_ = WAITING_FOR_AI_RESPONSE_MIN;
-        	this.max_ = WAITING_FOR_AI_RESPONSE_MAX;
+        	this.getLogger().fine(" Could not create child ask AI jobs " + this.toString());
         }
         
-        return new ExecutionResult(result);
-    }
+        if(execResult.success_) {
+        	
+        	this.state_ = JobState.WAITING_FOR_SUBJOB;
+        	this.min_ = WAITING_FOR_SUBJOB_RESPONSE_MIN;
+        	this.max_ = WAITING_FOR_SUBJOB_RESPONSE_MAX;
+        }
         
-    protected void validateAI() throws ValidationException {
-    	
-    	this.getAI(); 
+        return execResult;
     }
 
     protected void validateQuestion() throws ValidationException {
     	
     	String Question = (String)this.parameters_.get(QUESTION_KEY).getValue();
-    }
-    
-    protected AI getAI() {
     	
-    	return (AI)this.parameters_.get(AI_KEY).getValue();
-    }
-    
-    protected String getQuestion() {
-    	
-    	return (String)this.parameters_.get(QUESTION_KEY).getValue();
-    }
-
-    protected AI getMyAI() {
-    	
-    	return ai_;
+    	//TODO - Add validation code here
     }
     
     protected Question getMyQuestion() {
     	
-    	return question_;
+    	return myQuestion_;
     }
 }
+

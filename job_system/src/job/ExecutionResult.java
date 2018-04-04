@@ -11,7 +11,7 @@ public class ExecutionResult {
 
 	ExecutionResult(List<GenericJob> childJobs) {
 		
-		success_ = false;
+		success_ = true;	//Success if child jobs being set
 		childJobs_ = childJobs;
 	}
 	

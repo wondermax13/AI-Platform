@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import javax.xml.bind.ValidationException;
@@ -43,8 +44,12 @@ public class GenericJob {
     
 	GenericJob(JobType type, long requestId) {
 		
+		id_ = new Random().nextInt(1000);
+		
 		type_= type;
 		requestId_ = requestId;
+		
+		state_ = JobState.NEEDS_RESOURCES;
 		
 		parentJobId = -1;
 		childJobIds = new ArrayList<Long>();
@@ -56,42 +61,48 @@ public class GenericJob {
 	
 	public boolean needsToBeChecked() {
 		
+		if(lastChecked_ == null) {
+			return true;
+		}
+		
 		long timeElapsed = new Date().getTime() - lastChecked_.getTime();
 		
 		return timeElapsed >= min_ && timeElapsed <= max_;
 	}
 	
-	public void invokeMethodForState() {
+	
+	public ExecutionResult invokeMethodForState() {
+		
+		ExecutionResult result = new ExecutionResult();
 		
 		//TODO - Use switch here
 		if(state_ == JobState.NEEDS_RESOURCES) {
 			
-			this.validateParametersAndInitializeResources();
+			result = this.validateParametersAndInitializeResources();
 		}
 		if(state_ == JobState.RUNNABLE) {
 			
-			this.startJobBasic();
+			result = this.startJobBasic();
 		}
 		if(state_ == JobState.WAITING_FOR_AI_RESPONSE) {
 			
-			this.waitingForAIResponse();
+			result = this.waitingForAIResponse();
 		}
 		if(state_ == JobState.WAITING_FOR_SUBJOB) {
 			
-			this.waitingForChildComplete();
+			result = this.waitingForChildComplete();
 		}
 		if(state_ == JobState.COMPLETED_ERROR) {
 			
-			this.handleJobCompletion();
+			result = this.handleJobCompletion();
 		}
-		if(state_ == JobState.COMPLETED_SUCCESS) {
+		if(state_ == JobState.COMPLETED_SUCCESS
+			||state_ == JobState.CANCELLED) {
 			
-			this.handleJobCompletion();
+			result = this.handleJobCompletion();
 		}
-		if(state_ == JobState.CANCELLED) {
-			
-			this.handleJobCompletion();
-		}
+		
+		return result;
 	}
 	
 	public void appendToJobData(String newData) {
@@ -99,16 +110,23 @@ public class GenericJob {
 		data_.concat(newData);
 	}
 	
-    public void validateParametersAndInitializeResources() {
+    public ExecutionResult validateParametersAndInitializeResources() {
 
+    	ExecutionResult result = new ExecutionResult();
+    	
         try {
         	this.createParameters();
             this.validateParameters();
             this.createInitialResources();
+            
+            result.success_ = true;
+            this.state_ = JobState.RUNNABLE;
         } catch (ValidationException e) {
 
             this.state_ = JobState.COMPLETED_ERROR;
         }
+        
+        return result;
     }
 	
     protected void createParameters() throws ValidationException { }

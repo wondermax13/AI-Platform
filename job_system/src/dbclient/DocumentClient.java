@@ -16,6 +16,7 @@ import com.mongodb.ServerAddress;
 
 import org.bson.*;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class DocumentClient {
 		collection.insertMany(documents);
 	}*/
 	
-	protected void createAI(AI ai) {
+    public void createAI(AI ai) {
 		
 		Document document 
 			= new Document(
@@ -55,7 +56,7 @@ public class DocumentClient {
 		collection.insertOne(document);
 	}
 	
-	protected void createQuestion(Question question) {
+	public void createQuestion(Question question) {
 		
 		Document document 
 			= new Document(
@@ -68,17 +69,49 @@ public class DocumentClient {
 	}
 	
 	//TODO
-	protected void updateQuestionWithAIAnswer(long questionId, AIAnswer aiAnswer) {
+	public void updateQuestionWithAIAnswer(long questionId, AIAnswer aiAnswer) {
 		
 		MongoCollection<Document> collection = database.getCollection("questions");
 		
-		//collection.find({_id : "54d0232ef83ea4000d2c0610"}, null, null);
+		//collection.find({"_id" : 54d0232ef83ea4000d2c0610}, null, null);
 	}
 	
-	List<AI> getAIForChannels(List<String> channels) {
+	public List<AI> getAIForChannels(List<String> channels) {
 	
 		List<AI> result = new ArrayList<AI>();
 		
+		AI singleAI = this.getDummyAI();
+		result.add(singleAI);
+		
 		return result;
 	}
+	
+	public List<Question> findNewQuestions(Date currentTime, Date lastQueryTime) {
+		
+		List<Question> newQuestions = new ArrayList<Question>();
+
+		Question singleQuestion = this.getDummyQuestion();
+		newQuestions.add(singleQuestion);
+		
+		return newQuestions;
+	}
+	
+	public AI getDummyAI() {
+		
+		List<String> channels = Arrays.asList("testChannel");
+		
+		AI result = new AI("dummyAddress", "dummyVersion", "dummyKey", channels);
+		
+		return result;
+	}
+
+	public Question getDummyQuestion() {
+		
+		List<String> channels = Arrays.asList("testChannel");
+		
+		Question result = new Question("dummyQuestion ?", new Date(), channels);
+		
+		return result;
+	}
+	
 }
