@@ -170,9 +170,7 @@ public class GenericJob {
     	return new ExecutionResult();
     }
     
-    public void createMyChildJobForType(JobType childJobType) {
-    	
-    	GenericJob childJob = new GenericJob(childJobType, requestId_);
+    public void addJobAsMyChild(GenericJob childJob) {
     	
     	childJob.parentJobId = id_;
     	childJobIds.add(childJob.id_);

@@ -10,13 +10,13 @@ import entities.AI;
 import entities.Question;
 import message.AIResponseMessage;
 
-public class AskAIJob extends GenericJob {
+public class AskSingleAIJob extends GenericJob {
 	
-	AskAIJob(JobType type, long requestId, AI ai, Question question) {
+	AskSingleAIJob(JobType type, long requestId, AI ai, Question question) {
 		super(type, requestId);
 	}
 	
-	AskAIJob(JobType type, long requestId) {
+	AskSingleAIJob(JobType type, long requestId) {
 		super(JobType.QUESTION_SINGLE_AI, requestId);
 	}
 
