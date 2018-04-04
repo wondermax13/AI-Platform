@@ -5,6 +5,11 @@ import java.net.UnknownHostException;
 //import com.mongodb.client.model.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+
+import entities.AI;
+import entities.AIAnswer;
+import entities.Question;
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
@@ -16,38 +21,64 @@ import java.util.List;
 
 public class DocumentClient {
 
-	//MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
+	private static MongoClientURI uri = new MongoClientURI("mongodb://dbuser1:ai2ai2ai@ds117469.mlab.com:17469/a01001001");
+	private static MongoClient client = new MongoClient(uri);
 	
-	MongoClientURI uri  = new MongoClientURI("mongodb://<dbuser>:<dbpassword>@ds117469.mlab.com:17469/a01001001"); //mongodb://<dbuser>:<dbpassword>@ds117469.mlab.com:17469/a01001001
-    MongoClient client = new MongoClient(uri);
-    MongoDatabase db = client.getDatabase(uri.getDatabase());
-
-    //MongoClient mongoClient = new MongoClient(new MongoClientURI(""));
-
     // get handle to "mydb" database
-    MongoDatabase database = client.getDatabase("mydb");
+    private static MongoDatabase database = client.getDatabase(uri.getDatabase());
+	
+    /*
+	public static void main(String[] args) {
 
-
-    // get a handle to the "test" collection
-    MongoCollection<Document> collection = database.getCollection("ai");
-
-    Document doc = new Document("name", "MongoDB")
-            .append("type", "database")
-            .append("count", 1)
-            .append("versions", Arrays.asList("v3.2", "v3.0", "v2.6"))
-            .append("info", new Document("x", 203).append("y", 102));
+		// get a handle to the "test" collection
+		MongoCollection<Document> collection = database.getCollection("ai");
     
-    collection.insertOne(doc);
-    
-    //System.out.println("Collection has " + collection.count() + " documents");
-
-    // close resources
-    //mongoClient.
-    //System.out.println("======= Finish =======");
-    
-    List<Document> documents = new ArrayList<Document>();
-    for (int i = 0; i < 100; i++) {
+		List<Document> documents = new ArrayList<Document>();
+		for (int i = 6; i < 7; i++) {
     	
-        documents.add(new Document("i", i));
-    }
+			documents.add(new Document(" New document i", i));
+		}
+		collection.insertMany(documents);
+	}*/
+	
+	protected void createAI(AI ai) {
+		
+		Document document 
+			= new Document(
+					"Address" , ai.address)
+			.append("Version", ai.version)
+			.append("PublicKey", ai.publicKey)
+			.append("Channels", ai.channels);
+		
+		MongoCollection<Document> collection = database.getCollection("ai");
+		
+		collection.insertOne(document);
+	}
+	
+	protected void createQuestion(Question question) {
+		
+		Document document 
+			= new Document(
+					"Text" , question.text)
+			.append("QuestionedTime", question.askTime);
+		
+		MongoCollection<Document> collection = database.getCollection("questions");
+
+		collection.insertOne(document);
+	}
+	
+	//TODO
+	protected void updateQuestionWithAIAnswer(long questionId, AIAnswer aiAnswer) {
+		
+		MongoCollection<Document> collection = database.getCollection("questions");
+		
+		//collection.find({_id : "54d0232ef83ea4000d2c0610"}, null, null);
+	}
+	
+	List<AI> getAIForChannels(List<String> channels) {
+	
+		List<AI> result = new ArrayList<AI>();
+		
+		return result;
+	}
 }

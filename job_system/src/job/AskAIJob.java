@@ -7,12 +7,17 @@ import request.Request;
 import javax.xml.bind.ValidationException;
 
 import entities.AI;
+import entities.Question;
 import message.AIResponseMessage;
 
 public class AskAIJob extends GenericJob {
 	
-	AskAIJob(JobType type, long requestId) {
+	AskAIJob(JobType type, long requestId, AI ai, Question question) {
 		super(type, requestId);
+	}
+	
+	AskAIJob(JobType type, long requestId) {
+		super(JobType.QUESTION_SINGLE_AI, requestId);
 	}
 
 	private String AI_KEY       = "AI_KEY";

@@ -2,11 +2,15 @@ package job;
 
 import java.util.*;
 
+import dbclient.DocumentClient;
+import entities.AI;
+import entities.Question;
+
 public class JobProcessor {
 
 	private long MIN_EXECUTION_TIME = 5 * 1000;
 	
-	long nextExecutionTime;
+	long nextExecutionTime = 5 * 1000;
 	
 	JobProcessor instance;
 	
@@ -15,6 +19,10 @@ public class JobProcessor {
 	
 	List<Long> newJobs;
 	Map<Long, GenericJob> jobMap;
+	
+	Date lastQueryTime;
+	
+	DocumentClient documentClient;
 	
 	JobProcessor getInstance() {
 	
@@ -39,6 +47,10 @@ public class JobProcessor {
 		jobsToBeCleared = new ArrayList<Long>();
 		newJobs = new ArrayList<Long>();
 		jobMap = new HashMap<Long, GenericJob>();
+		
+		lastQueryTime = new Date();
+		
+		documentClient = new DocumentClient();
 	}
 	
 	/**
@@ -48,6 +60,7 @@ public class JobProcessor {
 		
 		while(true) {
 			
+			this.findAndAddNewJobs();
 			this.processActiveJobs();
 		
 			try {
@@ -60,6 +73,22 @@ public class JobProcessor {
 			}
 		}
 	}
+	
+	public void findAndAddNewJobs() {
+		
+		List<Question> newQuestions = documentClient.findNewQuestions(new Date(), lastQueryTime);
+		
+		for(Question question : newQuestions) {
+		
+			List<Long> questionJobFamilyIds = createAskQuestionJob(question);
+			
+			for(long id : questionJobFamilyIds) {
+				
+				newJobs.add(id);
+			}
+		}
+	}
+
 	public void processActiveJobs() {
 		
 		long timeToWait = MIN_EXECUTION_TIME;
@@ -117,6 +146,18 @@ public class JobProcessor {
 			GenericJob childJob = jobMap.get(topLevelJob.childJobIds.get(index));
 			
 			handleJobFamilyClearing(childJob);
+		}
+	}
+	
+
+	List<Long> createAskQuestionJob(Question question)
+	{
+		List<Long> questionJobFamilyIds = new ArrayList<Long>(); 
+	
+		List<AI> relevantAIs = documentClient.getAIForChannels(question.channels);
+		
+		for(AI ai : relevantAIs) {
+			question
 		}
 	}
 }
