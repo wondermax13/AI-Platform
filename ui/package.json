@@ -64,7 +64,12 @@
     "node-sass": "^4.8.3"
   },
   "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
     "global": "^4.3.2",
+    "mongoose": "^5.0.16",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   }

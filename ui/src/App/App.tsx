@@ -17,7 +17,8 @@ import { ArtificialsDialog } from '../ArtificialsDialog';
 import { Question, Human, Artificial } from 'models';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { Feed } from '../Feed';
-// import { Header } from '../Heawader';
+
+// import { Header } from '../Header';
 initializeIcons(/* optional base url */);
 
 export interface InterfaceAppState {
