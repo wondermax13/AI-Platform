@@ -22,5 +22,18 @@ module.exports = router => {
         })
         .then(() => response.sendStatus(201))
         .catch(err => errorHandler(err, response));
-    });
+    })
+
+    .get((request, response) => {
+      console.log(`GET /answer/${request.params.questionId}`)
+      Question.findById(request.params.questionId)
+        .then(question => {
+          if (!question) {
+            throw new Error(`Path Error: Answers not found: Question not found: ${request.params.questionId}`);
+          }
+          return question;
+        })
+        .then(question => response.status(200).json(question.answers))
+        .catch(err => errorHandler(err, response));
+    })
 };
