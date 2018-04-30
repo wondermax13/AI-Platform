@@ -13,7 +13,8 @@
     "startFast": "webpack-dev-server --hot --no-inline --open",
     "test": "jest --coverage",
     "test-bail": "jest --coverage --bail",
-    "startTest": "jest --coverage --watchAll"
+    "startTest": "jest --coverage --watchAll",
+    "serve:api": "nodemon ./svc/index.js"
   },
   "jest": {
     "moduleFileExtensions": [

@@ -14,7 +14,8 @@ const MONGODB_URL = process.env.MONGODB_URL || console.error('Server error. MONG
 // MIDDLEWARE
 app.use(cors());
 app.use('/api/v1', router);
-require('../route/route-ask')(router);
+require('../route/route-question')(router);
+require('../route/route-answer')(router);
 
 app.all('/{0,}', (req, res) => {
   return errorHandler(new Error('Path error. Route not found.', res));
