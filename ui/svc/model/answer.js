@@ -3,20 +3,15 @@
 const mongoose = require('mongoose');
 const Question = require('./question');
 
-// AICommunicator / job_system / src / entities / AIAnswer.java
-// public class AIAnswer {
-//
-// 	public long aiId;
-// 	public String answer;
-// 	public Date askTime, responseTime;
-// }
-
 const Answer = mongoose.Schema({
   question: {type: mongoose.Schema.Types.ObjectId, required: true},
   answer: {type: String, required: true},
-  aiId: {type: String, required: true},
-  askTime: {type: Date},
-  responseTime: {type: Date},
+  aiId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    default: mongoose.Types.ObjectId(), // TODO: remove once we have an AI schema
+  },
+  responseTime: {type: Date, default: Date.now},
   score: {type: Number, default: 0},
 });
 

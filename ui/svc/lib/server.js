@@ -9,7 +9,7 @@ const errorHandler = require('./error-handler');
 const app = express();
 const router = express.Router();
 const PORT = process.env.PORT || '3000';
-const MONGODB_URL = process.env.MONGODB_URL || console.error('Server error. MONGODB_URI not defined');
+const MONGODB_URI = process.env.MONGODB_URI || console.error('Server error. MONGODB_URI not defined');
 
 // MIDDLEWARE
 app.use(cors());
@@ -32,7 +32,7 @@ server.start = () => {
     server.http = app.listen(PORT, () => {
       console.log(`Listening on ${PORT}`);
       server.isOn = true;
-      mongoose.connect(MONGODB_URL);
+      mongoose.connect(MONGODB_URI);
       return resolve(server);
     });
   });

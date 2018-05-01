@@ -14,7 +14,8 @@
     "test": "jest --coverage",
     "test-bail": "jest --coverage --bail",
     "startTest": "jest --coverage --watchAll",
-    "serve:api": "nodemon ./svc/index.js"
+    "serve:api": "node ./svc/index.js",
+    "watch:api": "nodemon ./svc/index.js"
   },
   "jest": {
     "moduleFileExtensions": [
