@@ -38,7 +38,6 @@ PORT="3000" // defaults to "3000"
 NODE_ENV="dev" // or "production"
 MONGODB_URI="mongodb://<dbuser>:<dbpassword>@ds012345.mlab.com:56789/mydb" //
 ```
-
 ___
 ### **SCRIPTS:**
 ```js
@@ -68,7 +67,7 @@ expected response:
 * status: `201 Created`
 * body: `Text`: `Created`
 ___
-#### GET /questions
+#### GET /api/v1/questions
 *Finds all Question documents*
 
 expected response:
@@ -78,7 +77,7 @@ expected response:
 [ "5ae7668f53e0551f8ce078f6", "5ae766d253e0551f8ce078f7" ] // Array of all Question ObjectIds
 ```
 ___
-#### GET /questions/{Question ObjectId}
+#### GET /api/v1/questions/{Question ObjectId}
 *Finds one Question document by id*
 
 exected response:
@@ -106,13 +105,13 @@ exected response:
 }
 ```
 ___
-#### DELETE /questions/{Question ObjectId}
+#### DELETE /api/v1/questions/{Question ObjectId}
 *Finds and removes one Question document by id, along with **all associated Answer documents***
 
 expected response:
 * status: `204 No Content`
 ___
-#### POST /answer/to/{Question ObjectId}
+#### POST /api/v1/answer/to/{Question ObjectId}
 *Creates and saves one Answer document, and adds it to one Question document found by id*
 
 request:
@@ -129,7 +128,7 @@ expected response:
 * status: `201 Created`
 * body: `Text`: `Created`
 ___
-#### GET /answer/{Answer ObjectId}
+#### GET /api/v1/answer/{Answer ObjectId}
 *Finds one Answer document by id*
 * status: `200 OK`
 * body: `JSON`:
@@ -146,7 +145,7 @@ ___
 }
 ```
 ___
-#### GET /answers/to/{Question ObjectId}
+#### GET /api/v1/answers/to/{Question ObjectId}
 *Finds one Question document by id, and sends an array of Answer documents*
 
 exected response:
