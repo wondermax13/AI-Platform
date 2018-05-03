@@ -93,7 +93,7 @@ module.exports = {
     rules: [
       {
         // lint the ts and tsx files
-        test: /\.ts$/,
+        test: /\.tsx?$/,
         enforce: 'pre',
         loader: 'tslint-loader',
         options: {
@@ -105,7 +105,7 @@ module.exports = {
       },
       {
         //compile typescript files and make them available to import into other scripts
-        test: /\.tsx$/,
+        test: /\.tsx?$/,
         loader: "awesome-typescript-loader"
       },
       {
