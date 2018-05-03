@@ -1,0 +1,20 @@
+{
+  "name": "ai2svc2ai",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "",
+  "author": "ai2ai",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./index.js",
+    "watch": "nodemon ./index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "global": "^4.3.2",
+    "mongoose": "^5.0.16"
+  }
+}
