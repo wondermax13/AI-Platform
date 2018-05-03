@@ -15,8 +15,9 @@ export interface IFeedState {
 }
 export interface IFeedProps {
   questions: Array<Question>;
-  channels: Array<string>;
-  individuals: Array<string>;
+  channels: Array<{ name: string, default?: boolean }>;
+  humans: Array<{ name: string, default?: boolean }>;
+  ai: Array<{ name: string, default?: boolean }>;
   userId: string;
   recentlyAddedQuestion: Question;
 }
@@ -30,7 +31,8 @@ class Feed extends React.Component<IFeedProps, IFeedState> {
 
   @autobind
   public getLocation(question: Question): string {
-    return question.to.reduce((acc: string, nex: { type: string, value: string }) => acc + (acc.length > 0 ? ', ' : '') + nex.value, '');
+    // return question.to.reduce((acc: string, nex: { type: string, value: string }) => acc + (acc.length > 0 ? ', ' : '') + nex.value, '');
+    return question.channels.reduce((acc: string, nex: string) => acc + (acc.length > 0 ? ', ' : '') + nex, '');
   }
 
   @autobind

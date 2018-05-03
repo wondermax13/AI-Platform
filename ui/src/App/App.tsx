@@ -17,6 +17,8 @@ import { ArtificialsDialog } from '../ArtificialsDialog';
 import { Question, Human, Artificial } from 'models';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { Feed } from '../Feed';
+import aiProvider from '../providers/ai-v1';
+import settings from '../providers/settings';
 
 // import { Header } from '../Header';
 initializeIcons(/* optional base url */);
@@ -25,35 +27,42 @@ export interface InterfaceAppState {
   newQuestionDialogIsOpen: boolean;
   humansDialogIsOpen: boolean;
   artificialsDialogIsOpen: boolean;
-  channels: Array<string>;
-  individuals: Array<string>;
+  channels: Array<{ name: string, default?: boolean }>;
+  humans: Array<{ name: string, default?: boolean }>;
+  ai: Array<{ name: string, default?: boolean }>;
   questions: Array<Question>;
   userId: string;
   recentlyAddedQuestion: Question;
   recentlyAddedHuman: Human;
   recentlyAddedArtificial: Artificial;
 }
-export interface InterfaceAppProps { }
+
+export interface InterfaceAppProps {
+
+}
 class App extends React.Component<InterfaceAppProps, InterfaceAppState> {
   constructor(props: InterfaceAppProps) {
     super(props);
 
     const questions: Array<Question> = [];
-    const channels: Array<string> = ['#Main', '#Test', '#Other'];
-    const individuals: Array<string> = ['@george', '@linda', '@armonio'];
 
     this.state = {
       newQuestionDialogIsOpen: false,
       humansDialogIsOpen: false,
       artificialsDialogIsOpen: false,
-      channels: channels,
-      individuals: individuals,
+      channels: settings.channels,
+      humans: settings.humans,
+      ai: settings.ai,
       questions: questions,
       recentlyAddedQuestion: null,
       recentlyAddedHuman: null,
       recentlyAddedArtificial: null,
       userId: '5aae56b8f36d284c92150e9f'
     };
+  }
+
+  public componentDidMount(): void {
+    this.updateFeed();
   }
 
   @autobind
@@ -94,31 +103,46 @@ class App extends React.Component<InterfaceAppProps, InterfaceAppState> {
   }
 
   @autobind
+  public async updateFeed(): Promise<void> {
+    const questions = await aiProvider.getFeed();
+    this.setState({ questions: questions });
+  }
+
+  @autobind
   public async createQuestion(question: string, channels: Array<string>, individuals: Array<string>): Promise<Question> {
     const newQuestion: Question = {
       question,
-      from: {
-        type: 'user',
-        value: this.state.userId
-      },
-      to: channels.map((channel: string) => {
-        return {
-          type: 'channel',
-          value: channel
-        };
-      })
+      // from: {
+      //   type: 'user',
+      //   value: this.state.userId
+      // },
+      channels: [].concat(channels, individuals) // .map((channel: string) => {
+      // return {
+      //   type: 'channel',
+      //   value: channel
+      // };
     };
-    if (individuals) {
-      individuals.forEach((individual: string) => {
-        newQuestion.to.push({
-          type: 'individual',
-          value: individual
-        });
-      });
+    // )
+    // if (individuals) {
+    //   individuals.forEach((individual: string) => {
+    //     newQuestion.to.push({
+    //       type: 'individual',
+    //       value: individual
+    //     });
+    //   });
+    // }
+
+    try {
+
+      await aiProvider.postQuestion(newQuestion.question, newQuestion.channels);
+
+      await this.updateFeed();
+
+      return newQuestion;
+
+    } catch (ex) {
+      alert('There was an error. Try again! ' + (ex.message || ex));
     }
-    const newQuestionsState = [newQuestion].concat(this.state.questions);
-    this.setState({ questions: newQuestionsState });
-    return newQuestion;
   }
 
   @autobind
@@ -139,7 +163,11 @@ class App extends React.Component<InterfaceAppProps, InterfaceAppState> {
 
   @autobind
   public getLocation(question: Question): string {
-    return question.to.reduce((acc: string, nex: { type: string, value: string }) => acc + (acc.length > 0 ? ', ' : '') + nex.value, '');
+    return question.channels.reduce((
+      acc: string,
+      nex: string
+    ) =>
+      acc + (acc.length > 0 ? ', ' : '') + nex, '');
   }
 
   @autobind
@@ -176,8 +204,8 @@ class App extends React.Component<InterfaceAppProps, InterfaceAppState> {
         <QuestionDialog
           open={this.state.newQuestionDialogIsOpen && !this.state.artificialsDialogIsOpen && !this.state.humansDialogIsOpen}
           channels={this.state.channels}
-          defaultChannel="#Main"
-          individuals={this.state.individuals}
+          defaultChannel={this.state.channels.find((c: { name: string, default?: boolean }) => c.default).name}
+          humans={this.state.humans}
           createQuestionAction={this.createQuestion}
           doneAction={this.closeNewQuestionDialog}
         />

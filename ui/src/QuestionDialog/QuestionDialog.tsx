@@ -23,16 +23,17 @@ export interface ITargetOption {
 
 export interface IQuestionDialogState {
   channelOptions: Array<ITargetOption>;
-  individualOptions: Array<ITargetOption>;
+  humanOptions: Array<ITargetOption>;
   question: string;
 }
 export interface IQuestionDialogProps extends IBaseProps<IQuestionDialogProps> {
   open: boolean;
-  channels: Array<string>;
-  individuals: Array<string>;
+  channels: Array<{ name: string, default?: boolean }>;
+  humans: Array<{ name: string, default?: boolean }>;
+  ai?: Array<{ name: string, default?: boolean }>;
   defaultChannel: string;
   doneAction: (addedQuestion?: Question) => void;
-  createQuestionAction: (question: string, channels: Array<string>, individuals: Array<string>) => Promise<Question>;
+  createQuestionAction: (question: string, channels: Array<string>, humans: Array<string>) => Promise<Question>;
 }
 class QuestionDialog extends BaseComponent<IQuestionDialogProps, IQuestionDialogState> {
   public questionTextField: TextField;
@@ -44,16 +45,16 @@ class QuestionDialog extends BaseComponent<IQuestionDialogProps, IQuestionDialog
   constructor(props: IQuestionDialogProps) {
     super(props);
 
-    if (!props.doneAction || !props.channels || !props.individuals || !props.createQuestionAction) {
-      throw new Error('channels, individuals, doneAction and channels are required');
+    if (!props.doneAction || !props.channels || !props.humans || !props.createQuestionAction) {
+      throw new Error('channels, humans, doneAction and channels are required');
     }
 
-    const individualOptions = this.createOptions(props.individuals, 'Individual');
-    const channelOptions = this.createOptions(props.channels, 'Channel', this.props.defaultChannel);
+    const humanOptions = this.createOptions(props.humans, 'Human');
+    const channelOptions = this.createOptions(props.channels, 'Channel');
 
     this.state = {
       channelOptions,
-      individualOptions,
+      humanOptions,
       question: null,
     };
   }
@@ -61,8 +62,8 @@ class QuestionDialog extends BaseComponent<IQuestionDialogProps, IQuestionDialog
   @autobind
   public reset(): void {
     this.setState({
-      channelOptions: this.createOptions(this.props.channels, 'Channel', this.props.defaultChannel),
-      individualOptions: this.createOptions(this.props.individuals, 'Individual'),
+      channelOptions: this.createOptions(this.props.channels, 'Channel'),
+      humanOptions: this.createOptions(this.props.humans, 'human'),
       question: '',
     });
   }
@@ -84,15 +85,15 @@ class QuestionDialog extends BaseComponent<IQuestionDialogProps, IQuestionDialog
       .filter((option: ITargetOption) => option.selected)
       .map((selection: ITargetOption) => selection.key);
 
-    const individuals = this.state.individualOptions
+    const humans = this.state.humanOptions
       .filter((option: ITargetOption) => option.selected)
       .map((selection: ITargetOption) => selection.key);
 
-    return this.finishCreateQuestion(this.state.question, channels, individuals);
+    return this.finishCreateQuestion(this.state.question, channels, humans);
   }
 
-  public finishCreateQuestion = async (questionText: string, channels: Array<string>, individuals: Array<string>) => {
-    const question = await this.props.createQuestionAction(questionText, channels, individuals);
+  public finishCreateQuestion = async (questionText: string, channels: Array<string>, humans: Array<string>) => {
+    const question = await this.props.createQuestionAction(questionText, channels, humans);
     this.reset();
     this.finish(question);
     return question;
@@ -163,11 +164,11 @@ class QuestionDialog extends BaseComponent<IQuestionDialogProps, IQuestionDialog
             )}
           </div>
         </div>
-        <h2>Individuals</h2>
+        <h2>Humans</h2>
         <div className="ms-Grid">
           <div className="ms-Grid-row">
-            {this.state.individualOptions.map((option: ITargetOption, index: number) =>
-              <div key={'individual_' + index} className="ms-Grid-col ms-lg2">
+            {this.state.humanOptions.map((option: ITargetOption, index: number) =>
+              <div key={'human_' + index} className="ms-Grid-col ms-lg2">
                 <Checkbox
                   key={`${option.category}_${option.key}`}
                   label={option.text}
@@ -183,12 +184,12 @@ class QuestionDialog extends BaseComponent<IQuestionDialogProps, IQuestionDialog
     );
   }
 
-  public createOptions(items: Array<string>, category: string, defaultChannel?: string): Array<ITargetOption> {
-    return items.map((value: string) => this.createOption(value, category, value === defaultChannel));
+  public createOptions(items: Array<{ name: string, default?: boolean }>, category: string): Array<ITargetOption> {
+    return items.map((value: { name: string, default?: boolean }) => this.createOption(value, category, value.default));
   }
 
-  public createOption(value: string, category: string, selected?: boolean): ITargetOption {
-    const option: ITargetOption = { key: value, text: value, category, onChangedHandler: null, selected };
+  public createOption(value: { name: string, default?: boolean }, category: string, selected?: boolean): ITargetOption {
+    const option: ITargetOption = { key: value.name, text: value.name, category, onChangedHandler: null, selected };
     option.onChangedHandler = this.getOnChangeHandler(option);
     return option;
   }
@@ -200,14 +201,14 @@ class QuestionDialog extends BaseComponent<IQuestionDialogProps, IQuestionDialog
     let handler = this.onChangeHandlers[option.key];
     if (!handler) {
       handler = ([]: React.FormEvent<HTMLElement>, isChecked: boolean) => {
-        const options = option.category === 'Channel' ? this.state.channelOptions : this.state.individualOptions;
+        const options = option.category === 'Channel' ? this.state.channelOptions : this.state.humanOptions;
         const current = this.getOption(option.key, options);
         if (current) {
           current.selected = isChecked;
         }
         this.setState({
           channelOptions: this.state.channelOptions,
-          individualOptions: this.state.individualOptions
+          humanOptions: this.state.humanOptions
         });
       };
     }
