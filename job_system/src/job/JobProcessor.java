@@ -24,6 +24,8 @@ public class JobProcessor {
 	
 	DocumentClient documentClient;
 	
+	int questionCount;
+	
 	JobProcessor getInstance() {
 	
 		if(instance == null) {
@@ -40,9 +42,11 @@ public class JobProcessor {
 		newJobs = new ArrayList<Long>();
 		jobMap = new HashMap<Long, GenericJob>();
 		
-		lastQueryTime = new Date();
+		lastQueryTime = new Date(Long.MIN_VALUE);
 		
 		documentClient = new DocumentClient();
+		
+		questionCount = 0;
 	}
 	
 	/**
@@ -54,7 +58,8 @@ public class JobProcessor {
 			
 			this.findAndAddNewJobs();
 			this.processActiveJobs();
-		
+			
+			lastQueryTime = new Date();
 			try {
 			
 				Thread.sleep(nextExecutionTime);
@@ -67,13 +72,17 @@ public class JobProcessor {
 	}
 	
 	public void findAndAddNewJobs() {
-		
+			
 		List<Question> newQuestions = documentClient.findNewQuestions(new Date(), lastQueryTime);
 		
 		for(Question question : newQuestions) {
 		
-			AskQuestionJob questionJob = new AskQuestionJob(0, question);
+			AskQuestionJob questionJob = new AskQuestionJob(this, 0, question);
 			
+			System.out.println(
+                    "Created AskQuestion job: " + questionJob.id_ + " for question: " + question.text
+                );
+		
 			this.addNewJobToProcessor(questionJob);
 		}
 	}
@@ -102,6 +111,8 @@ public class JobProcessor {
 			}
 			
 			if(job.needsToBeCleared()) {
+				
+				System.out.println(" Clearing job: " + job.toString());
 				this.handleJobFamilyClearing(job);
 			}
 			
@@ -151,6 +162,9 @@ public class JobProcessor {
 	 */
 	public void handleJobFamilyClearing(GenericJob topLevelJob) {
 		
+		
+		System.out.println(" handling job family clearing for job: " + topLevelJob.toString());
+		
 		jobsToBeCleared.add(topLevelJob.id_);
 		
 		for(int index = 0; index < topLevelJob.childJobIds.size(); index++) {
@@ -159,5 +173,17 @@ public class JobProcessor {
 			
 			handleJobFamilyClearing(childJob);
 		}
+	}
+	
+	public boolean isJobComplete(long jobId) {
+		
+		boolean result = false;
+		
+		result = jobMap.containsKey(jobId) 
+				&& (jobMap.get(jobId).state_ == JobState.COMPLETED_ERROR
+				|| jobMap.get(jobId).state_ == JobState.COMPLETED_SUCCESS);
+		
+		
+		return result;
 	}
 }

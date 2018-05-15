@@ -14,6 +14,15 @@ import message.AIResponseMessage;
 public class AskQuestionJob extends GenericJob {
 	
 	AskQuestionJob(
+			JobProcessor jobProcessor,
+			long requestId,
+			Question question) {
+		
+		super(jobProcessor, JobType.ASK_QUESTION, requestId);
+		myQuestion_ = question;
+	}
+	
+	AskQuestionJob(
 			long requestId, Question question) {
 		
 		super(JobType.ASK_QUESTION, requestId);
@@ -56,6 +65,9 @@ public class AskQuestionJob extends GenericJob {
 
         this.getLogger().fine(".validateParameters, validate parameters for "
                 + this.toString());
+        
+        System.out.println(".validateParameters, validate parameters for "
+                + this.toString());
 
         super.validateParameters();
         
@@ -76,6 +88,7 @@ public class AskQuestionJob extends GenericJob {
         super.startJobBasic();
 
         this.getLogger().fine(".startJobBasic starting " + this.toString());
+        System.out.println(".startJobBasic starting " + this.toString());
         
         
         //TODO - Move this to a singleton
@@ -88,8 +101,14 @@ public class AskQuestionJob extends GenericJob {
 	        
 	        for(AI ai : relevantAIs) {
 	        	
-				GenericJob job = new AskSingleAIJob(0, ai, question);
+				GenericJob job = new AskSingleAIJob(this.jobProcessor_, 0, ai, question);
+				
+				this.addJobAsMyChild(job);
 				childJobs.add(job);
+				
+				System.out.println(
+	                    "Created AskAI job: " + job.id_ + " for ai: " + ai.address
+	                );
 			}
 	        
 	        //Passed all the previous steps
@@ -98,7 +117,7 @@ public class AskQuestionJob extends GenericJob {
         }
         catch(Exception e) {
         	
-        	this.getLogger().fine(" Could not create child ask AI jobs " + this.toString());
+        	this.getLogger().finest(" Could not create child ask AI jobs " + this.toString());
         }
         
         if(execResult.success_) {
