@@ -24,8 +24,6 @@ public class JobProcessor {
 	
 	DocumentClient documentClient;
 	
-	int questionCount;
-	
 	JobProcessor getInstance() {
 	
 		if(instance == null) {
@@ -45,8 +43,6 @@ public class JobProcessor {
 		lastQueryTime = new Date(Long.MIN_VALUE);
 		
 		documentClient = new DocumentClient();
-		
-		questionCount = 0;
 	}
 	
 	/**
@@ -71,6 +67,9 @@ public class JobProcessor {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void findAndAddNewJobs() {
 			
 		List<Question> newQuestions = documentClient.findNewQuestions(new Date(), lastQueryTime);
@@ -87,6 +86,10 @@ public class JobProcessor {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param job
+	 */
 	public void addNewJobToProcessor(GenericJob job) {
 		
 		//TODO - Validation
@@ -95,6 +98,9 @@ public class JobProcessor {
 		newJobs.add(job.id_);
 	}
 
+	/**
+	 * 
+	 */
 	public void processActiveJobs() {
 		
 		long timeToWait = MIN_EXECUTION_TIME;
@@ -123,6 +129,10 @@ public class JobProcessor {
 		this.handleNewJobsAddition();
 	}
 	
+	/**
+	 * 
+	 * @param execResult
+	 */
 	public void processExecutionResult(ExecutionResult execResult) {
 		
 		if(execResult != null
@@ -136,6 +146,9 @@ public class JobProcessor {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void handleJobClearing() {
 		
 		for(int index = 0; index < jobsToBeCleared.size(); index++) {
@@ -146,6 +159,9 @@ public class JobProcessor {
 		jobsToBeCleared.clear();
 	}
 	
+	/**
+	 * 
+	 */
 	public void handleNewJobsAddition() {
 		
 		for(int index = 0; index < newJobs.size(); index++) {
@@ -175,6 +191,11 @@ public class JobProcessor {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param jobId
+	 * @return
+	 */
 	public boolean isJobComplete(long jobId) {
 		
 		boolean result = false;

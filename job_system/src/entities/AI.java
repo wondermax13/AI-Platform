@@ -6,20 +6,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
-
 import javax.net.ssl.HttpsURLConnection;
-
-import org.omg.CORBA.NameValuePair;
-
-import sun.net.www.http.HttpClient;
 
 public class AI {
 
+	public String name, address, version, publicKey;
+	public List<String> channels;
+	
 	public AI(String name, String address, String version, String publicKey, List<String> channels) {
 		
 		this.name = name;
@@ -28,6 +23,7 @@ public class AI {
 		this.publicKey = publicKey;
 		this.channels = channels;
 	}
+	
 	public boolean pingAI() {
 		
 		return true;
@@ -97,19 +93,4 @@ public class AI {
 		catch(Exception e) { }
 
 	}
-		
-	public boolean askDummyAI(String question) {
-		
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return true;
-	}
-	
-	public String name, address, version, publicKey;
-	public List<String> channels;
 }

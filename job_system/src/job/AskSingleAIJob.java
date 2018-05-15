@@ -133,9 +133,7 @@ public class AskSingleAIJob extends GenericJob {
     		    //write to the db the answer
     			String answer = "Persist name";
     			
-    	        //TODO - Move this to a singleton
-    	        //DocumentClient documentClient = new DocumentClient();
-    	        //documentClient.updateQuestionWithAIAnswer(question_.text, ai_.name, new Date(), answer);
+    	        //TODO - Maybe move this to a singleton
     			jobProcessor_.documentClient.updateQuestionWithAIAnswer(question_.text, ai_.name, new Date(), answer);
     			
     			

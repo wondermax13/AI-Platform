@@ -24,39 +24,12 @@ import java.util.List;
 
 public class DocumentClient {
 
+	//TODO - Move this to config
 	private static MongoClientURI uri = new MongoClientURI("mongodb://dbuser1:ai2ai2ai@ds117469.mlab.com:17469/a01001001");
 	private static MongoClient client = new MongoClient(uri);
 	
     // get handle to "mydb" database
     private static MongoDatabase database = client.getDatabase(uri.getDatabase());
-	
-    /*
-	public static void main(String[] args) {
-
-		// get a handle to the "test" collection
-		MongoCollection<Document> collection = database.getCollection("ai");
-    
-		List<Document> documents = new ArrayList<Document>();
-		for (int i = 6; i < 7; i++) {
-    	
-			documents.add(new Document(" New document i", i));
-		}
-		collection.insertMany(documents);
-	}*/
-	
-    public void createAI(AI ai) {
-		
-		Document document 
-			= new Document(
-					"Address" , ai.address)
-			.append("Version", ai.version)
-			.append("PublicKey", ai.publicKey)
-			.append("Channels", ai.channels);
-		
-		MongoCollection<Document> collection = database.getCollection("ai");
-		
-		collection.insertOne(document);
-	}
 	
 	public void createQuestion(Question question) {
 		
@@ -86,7 +59,6 @@ public class DocumentClient {
     ]
 	}
 	 */
-	
 	public List<AI> getAIForChannels(List<String> channels) {
 	
 		List<AI> result = new ArrayList<AI>();
@@ -105,7 +77,7 @@ public class DocumentClient {
                 				(String)doc.get("address"),
                 				(String)doc.get("version"),
                 				(String)doc.get("publicKey"),
-                				new ArrayList<String>()));		//TODO - Add channels to AI schema
+                				(List<String>)doc.get("channels")));		//TODO - Add channels to AI schema
                 
                 System.out.println(
                         " AI found: " + doc.get("name")
@@ -114,11 +86,6 @@ public class DocumentClient {
         } finally {
             cursor.close();
         }
-		
-		
-		
-		//AI singleAI = this.getDummyAI();
-		//result.add(singleAI);
 		
 		return result;
 	}
@@ -147,9 +114,6 @@ public class DocumentClient {
 		
 		List<Question> newQuestions = new ArrayList<Question>();
 		
-		//TODO - Include channels in the query
-		List<String> dummyChannels = new ArrayList<String>();
-
 		MongoCollection<Document> collection = database.getCollection("questions");
 		
 		Document findQuery = new Document("askTime", new Document("$gte",lastQueryTime));
@@ -165,7 +129,7 @@ public class DocumentClient {
                 		new Question(
                 				(String)doc.get("question"),
                 				(Date)doc.get("askTime"),
-                				dummyChannels)); 
+                				(List<String>)doc.get("channels"))); 
             }
         }
         catch(Exception e) {
@@ -179,7 +143,15 @@ public class DocumentClient {
 	}
 	
 	//TODO
-	public void updateQuestionWithAIAnswer(String questionText, String aiName, Date responseTime, String answer) {
+	/**
+	 * 
+	 * @param questionText
+	 * @param aiName
+	 * @param responseTime
+	 * @param answer
+	 */
+	public void updateQuestionWithAIAnswer(
+			String questionText, String aiName, Date responseTime, String answer) {
 			
 		List<String> aiAnswers = null;
 		
@@ -190,25 +162,22 @@ public class DocumentClient {
 		MongoCursor<Document> cursor = collection.find(findQuery).iterator();
 
         try {
-            //while (cursor.hasNext()) {
-                
-            	Document doc = cursor.next();
-            	aiAnswers = (List<String>) doc.get("answers");
+
+        	Document doc = cursor.next();
+            aiAnswers = (List<String>) doc.get("answers");
             	
-            	List<String> tmp = new ArrayList<String>();
+            List<String> tmp = new ArrayList<String>();
             	
-            	for(int index = 0; index < aiAnswers.size(); index++) {
+            for(int index = 0; index < aiAnswers.size(); index++) {
             		
-            		tmp.add(index, aiAnswers.get(index));
-            	}
+            	tmp.add(index, aiAnswers.get(index));
+            }
             	
-            	String newEntry = aiName + " " + responseTime  + " " + answer;
-            	tmp.add(newEntry);
+            String newEntry = aiName + " " + responseTime  + " " + answer;
+            tmp.add(newEntry);
             	
-            	Document updateQuery = new Document("question", questionText);
-        	    collection.updateOne(updateQuery, new Document("$set", new Document("answers", tmp)));
-            	int a = 5;
-            //}
+            Document updateQuery = new Document("question", questionText);
+        	collection.updateOne(updateQuery, new Document("$set", new Document("answers", tmp)));
         }
         catch(Exception e) {
         	
@@ -216,5 +185,23 @@ public class DocumentClient {
         }finally {
             cursor.close();
         }
+	}
+	
+	/**
+	 * 
+	 * @param ai
+	 */
+    public void createAI(AI ai) {
+		
+		Document document 
+			= new Document(
+					"Address" , ai.address)
+			.append("Version", ai.version)
+			.append("PublicKey", ai.publicKey)
+			.append("Channels", ai.channels);
+		
+		MongoCollection<Document> collection = database.getCollection("ai");
+		
+		collection.insertOne(document);
 	}
 }
