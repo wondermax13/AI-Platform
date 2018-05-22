@@ -1,3 +1,3 @@
 import { start as client } from './app';
 
-client();
+export = client();

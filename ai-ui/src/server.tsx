@@ -1,4 +1,4 @@
-import { start } from './svc';
+import { start as server } from './svc';
 
-exports = start();
+exports = server();
 
