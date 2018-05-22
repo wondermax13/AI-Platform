@@ -1,6 +1,0 @@
-{
-    "editor.tabSize": 2,
-    "editor.renderWhitespace": "all",
-    "window.restoreWindows": "all",
-    "eslint.packageManager": "yarn"
-}
