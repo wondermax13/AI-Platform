@@ -7,9 +7,33 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceFolder}/ui-svc/index.js",
-      "cwd": "${workspaceFolder}/ui-svc"
+      "name": "debug server",
+      "program": "${workspaceFolder}/ai-ui/src/server.tsx",
+      "cwd": "${workspaceFolder}/ai-ui",
+      "stopOnEntry": false,
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/ai-ui/dist/**/*.js"
+      ],
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceRoot}/ai-ui/src/**/*",
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "debug dist",
+      "program": "${workspaceFolder}/ai-ui/dist/server.js",
+      "cwd": "${workspaceFolder}/ai-ui",
+      "stopOnEntry": false,
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/ai-ui/dist/**/*.js"
+      ],
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceRoot}/ai-ui/src/**/*",
+      }
     }
+
   ]
 }
