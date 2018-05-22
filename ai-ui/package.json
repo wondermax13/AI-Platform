@@ -9,7 +9,7 @@
     "build": "run-s _build-client _build-server",
     "eject": "react-scripts-ts eject",
     "test": "react-scripts-ts test --env=jsdom",
-    "_copy-client": "xcopy build client /O /X /E /H /K /Y /I",
+    "_copy-client": "cpy ./build/**/*.* ./client/",
     "_spawn-service": "start cmd /c \"npm run start:service\"",
     "_ready-start": "run-p _spawn-service _watch-client _watch-server",
     "_build-client": "react-scripts-ts build && npm run _copy-client",
