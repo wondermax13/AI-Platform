@@ -1,0 +1,39 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "debug server",
+      "program": "${workspaceFolder}/ai-ui/src/server.tsx",
+      "cwd": "${workspaceFolder}/ai-ui",
+      "stopOnEntry": false,
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/ai-ui/dist/**/*.js"
+      ],
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceRoot}/ai-ui/src/**/*",
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "debug dist",
+      "program": "${workspaceFolder}/ai-ui/dist/server.js",
+      "cwd": "${workspaceFolder}/ai-ui",
+      "stopOnEntry": false,
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/ai-ui/dist/**/*.js"
+      ],
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceRoot}/ai-ui/src/**/*",
+      }
+    }
+
+  ]
+}
