@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +23,9 @@ public class GenericJob {
 	public boolean success;
 	public long requestId_;
 	
-    Logger LOGGER;
+    static Logger LOGGER;
+    static Handler handler;
+    
 	public Date lastChecked_;
 	public long min_, max_;
 	public String data_;
@@ -64,9 +67,13 @@ public class GenericJob {
 		
 		parameters_ = new HashMap<String, JobParameter>();
 		
-	    LOGGER = Logger.getLogger("AbstractJob");
-	    LOGGER.setLevel(Level.ALL);
-	    LOGGER.addHandler(new ConsoleHandler());
+		if(LOGGER == null) {
+			LOGGER = Logger.getLogger("AbstractJob");
+			handler = new ConsoleHandler();
+			handler.setLevel(Level.ALL);
+			LOGGER.setLevel(Level.ALL);
+			LOGGER.addHandler(handler);
+		}
 	}
     
     /***
@@ -116,8 +123,6 @@ public class GenericJob {
 		ExecutionResult result = new ExecutionResult();
 		
 		this.getLogger().fine(this.toString() + " current state: " + state_);
-		System.out.println(this.toString() + " current state: " + state_);
-		
 		
 		//TODO - Use switch here
 		if(state_ == JobState.NEEDS_RESOURCES) {
@@ -223,10 +228,10 @@ public class GenericJob {
     		//Don't change this state right now 
     		this.state_ = JobState.COMPLETED_SUCCESS;
     		
-    		System.out.println(" State change for job: " + this.toString());
+    		this.getLogger().fine(" State change for job: " + this.toString());
     	}
 
-    	System.out.println(" waitingForChildComplete result: " + foundIncompleteChild + "on job: " + this.toString());
+    	this.getLogger().fine(" waitingForChildComplete result: " + foundIncompleteChild + "on job: " + this.toString());
     	
     	return new ExecutionResult();
     }
@@ -254,7 +259,7 @@ public class GenericJob {
      */
     public ExecutionResult handleJobCompletion() {
     	
-    	System.out.println(" handling job completion for job: " + this.toString());
+    	this.getLogger().fine(" handling job completion for job: " + this.toString());
     			
     	//Clear job resources if any
     	

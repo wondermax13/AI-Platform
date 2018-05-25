@@ -2,6 +2,10 @@ package job;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import request.Request;
 
 import javax.xml.bind.ValidationException;
@@ -65,9 +69,6 @@ public class AskQuestionJob extends GenericJob {
 
         this.getLogger().fine(".validateParameters, validate parameters for "
                 + this.toString());
-        
-        System.out.println(".validateParameters, validate parameters for "
-                + this.toString());
 
         super.validateParameters();
         
@@ -87,9 +88,7 @@ public class AskQuestionJob extends GenericJob {
     	
         super.startJobBasic();
 
-        this.getLogger().fine(".startJobBasic starting " + this.toString());
-        System.out.println(".startJobBasic starting " + this.toString());
-        
+	    this.getLogger().fine(".startJobBasic starting " + this.toString());        
         
         //TODO - Move this to a singleton
         DocumentClient documentClient = new DocumentClient();
@@ -106,8 +105,8 @@ public class AskQuestionJob extends GenericJob {
 				this.addJobAsMyChild(job);
 				childJobs.add(job);
 				
-				System.out.println(
-	                    "Created AskAI job: " + job.id_ + " for ai: " + ai.address
+				this.getLogger().fine(
+	                    "Created AskAI job: " + job.id_ + " for ai Id: " + ai.id
 	                );
 			}
 	        
