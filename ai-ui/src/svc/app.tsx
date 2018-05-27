@@ -45,7 +45,7 @@ export async function app(server: Application) {
 
       const templateProps: ITemplateProps = {
         body: 'Connecting to AI...',// appString,
-        initialState: JSON.stringify(initialState),
+        initialState: encodeURI(JSON.stringify(initialState)),
         mainCss,
         mainJs,
         styles: allStyles,
