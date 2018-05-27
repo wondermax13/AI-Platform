@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "start",
+    "postinstall": "npm run build",
     "start": "run-s _build-client _build-server _ready-start",
     "start:client": "react-scripts-ts start ",
     "start:server": "node-dev ./server.js --all-deps --dedupe --inspector",
