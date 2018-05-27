@@ -49,7 +49,7 @@ export async function app(server: Application) {
         mainCss,
         mainJs,
         styles: allStyles,
-        title: 'AI-2-AI',
+        title: 'AI2AI',
       }
       const d = await template(templateProps);
       response.send(d);
