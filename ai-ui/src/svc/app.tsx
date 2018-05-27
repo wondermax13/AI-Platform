@@ -40,8 +40,8 @@ export async function app(server: Application) {
       }
 
       // const appString = renderToString(<App {...initialState} {...{ server: true }} />);
-      const mainJs = '_/' + manifest["main.js"];
-      const mainCss = '_/' + manifest["main.css"];
+      const mainJs = '/_/' + manifest["main.js"];
+      const mainCss = '/_/' + manifest["main.css"];
 
       const templateProps: ITemplateProps = {
         body: 'Connecting to AI...',// appString,
