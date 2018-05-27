@@ -20,8 +20,8 @@ export async function start() {
 
   const server = createServer();
 
-  services(server);
   app(server);
+  services(server);
 
   server.listen(process.env.PORT || 80);
 }
