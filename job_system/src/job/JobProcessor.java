@@ -1,6 +1,10 @@
 package job;
 
 import java.util.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import dbclient.DocumentClient;
 import entities.AI;
@@ -9,9 +13,11 @@ import entities.Question;
 public class JobProcessor {
 
 	private long MIN_EXECUTION_TIME = 5 * 1000;
-	
 	long nextExecutionTime = 5 * 1000;
 	
+	static Logger LOGGER;
+    static Handler handler;
+    
 	JobProcessor instance;
 	
 	List<Long> activeJobIds;
@@ -43,6 +49,14 @@ public class JobProcessor {
 		lastQueryTime = new Date(Long.MIN_VALUE);
 		
 		documentClient = new DocumentClient();
+		
+		if(LOGGER == null) {
+			LOGGER = Logger.getLogger("JobProcessor");
+			handler = new ConsoleHandler();
+			handler.setLevel(Level.ALL);
+			LOGGER.setLevel(Level.ALL);
+			LOGGER.addHandler(handler);
+		}
 	}
 	
 	/**
@@ -78,7 +92,7 @@ public class JobProcessor {
 		
 			AskQuestionJob questionJob = new AskQuestionJob(this, 0, question);
 			
-			System.out.println(
+			this.getLogger().fine(
                     "Created AskQuestion job: " + questionJob.id_ + " for question: " + question.text
                 );
 		
@@ -118,7 +132,7 @@ public class JobProcessor {
 			
 			if(job.needsToBeCleared()) {
 				
-				System.out.println(" Clearing job: " + job.toString());
+				this.getLogger().fine(" Clearing job: " + job.toString());
 				this.handleJobFamilyClearing(job);
 			}
 			
@@ -138,7 +152,7 @@ public class JobProcessor {
 		if(execResult != null
 			&& execResult.childJobs_ != null) {
 			
-			//This might be a lot of copying but get it working first
+			//TODO - This might be a lot of copying but get it working first
 			for(GenericJob childJob : execResult.childJobs_) {
 				
 				this.addNewJobToProcessor(childJob);
@@ -179,7 +193,7 @@ public class JobProcessor {
 	public void handleJobFamilyClearing(GenericJob topLevelJob) {
 		
 		
-		System.out.println(" handling job family clearing for job: " + topLevelJob.toString());
+		this.getLogger().fine(" handling job family clearing for job: " + topLevelJob.toString());
 		
 		jobsToBeCleared.add(topLevelJob.id_);
 		
@@ -207,4 +221,13 @@ public class JobProcessor {
 		
 		return result;
 	}
+	
+    /**
+     * 
+     * @return
+     */
+    public Logger getLogger() {
+    	
+    	return LOGGER;
+    }
 }

@@ -2,21 +2,28 @@ package entities;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HttpsURLConnection;
+import org.json.*;
+
 
 public class AI {
 
+	public String id;
 	public String name, address, version, publicKey;
 	public List<String> channels;
 	
-	public AI(String name, String address, String version, String publicKey, List<String> channels) {
+	public AI(String id, String name, String address, String version, String publicKey, List<String> channels) {
 		
+		this.id = id;
 		this.name = name;
 		this.address = address;
 		this.version = version;
@@ -33,22 +40,86 @@ public class AI {
 
 		try {
 			
-			URL url = new URL("http://www.google.com/search?q=mkyong");
-			URLConnection con = url.openConnection();
-			HttpURLConnection http = (HttpURLConnection)con;
-			http.setRequestMethod("GET"); // PUT is another valid option
-			http.setDoOutput(true);
+			String endpoint = "http://www.cleverbot.com/getreply?key=CC8ktzqcHDfaOP5T7OnM432weZA&MXYxCTh2MQlBdkFZQVNONlVUN0oJMUZ2MTUyNzE0MTMwOAk2NGlNw6RkY2hlbi4J";
 			
-			TimeUnit.SECONDS.sleep(5);
+			String encodedUrlParam = URLEncoder.encode(question.text, "UTF-8");
+			String urlEndpoint = endpoint + "&input=" + encodedUrlParam;
 			
-			//make the web call
-		    //return the answer
+			String res = getJSON(urlEndpoint);
+			
+			JSONObject jsonResponse = new JSONObject(res);
+			
+			String output = jsonResponse.getString("output");
 		        
-			return "Result of the asynchronous computation";
+			return output;//"Result of the asynchronous computation";
 		} catch (Exception e) {
 
 			throw new IllegalStateException(e);
 		}
+	}
+
+	//No connection or timeout set for async call
+	public String getJSON(String url) {
+	    HttpURLConnection c = null;
+	    try {
+	        URL u = new URL(url);
+	        c = (HttpURLConnection) u.openConnection();
+	        c.setRequestMethod("GET");
+	        c.setRequestProperty("Content-length", "0");
+			c.setRequestProperty("User-Agent", "Mozilla/5.0");
+			c.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+			
+	        c.setUseCaches(false);
+	        c.setAllowUserInteraction(false);
+	        //c.setConnectTimeout(timeout);
+	        //c.setReadTimeout(timeout);
+	        c.connect();
+	        int status = c.getResponseCode();
+
+	        switch (status) {
+	            case 200:
+	            case 201:
+	                BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
+	                StringBuilder sb = new StringBuilder();
+	                String line;
+	                while ((line = br.readLine()) != null) {
+	                    sb.append(line+"\n");
+	                }
+	                br.close();
+	                return sb.toString();
+	        }
+
+	    } catch (MalformedURLException ex) {
+	        //Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+	    } catch (IOException ex) {
+			System.out.println(ex.getMessage());
+	        //Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+	    } finally {
+	       if (c != null) {
+	          try {
+	              c.disconnect();
+	          } catch (Exception ex) {
+	             //Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+	          }
+	       }
+	    }
+	    return null;
+	}
+	
+	public void GoogleCallCode() {
+		
+		//URL url = new URL("http://www.google.com/search?q=mkyong");
+		/*URL url = new URL("https://www.cleverbot.com/getreply?key=CC8ktzqcHDfaOP5T7OnM432weZA&MXYxCTh2MQlBdkFZQVNONlVUN0oJMUZ2MTUyNzE0MTMwOAk2NGlNw6RkY2hlbi4J&input=Hello");			
+		
+		URLConnection con = url.openConnection();
+		HttpURLConnection http = (HttpURLConnection)con;
+		http.setRequestMethod("GET"); // PUT is another valid option
+		http.setDoOutput(true);
+		*/
+		//TimeUnit.SECONDS.sleep(5);
+		
+		//make the web call
+	    //return the answer
 	}
 	
 	public void sendPost() {

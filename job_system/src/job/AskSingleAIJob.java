@@ -81,9 +81,6 @@ public class AskSingleAIJob extends GenericJob {
         this.getLogger().fine(".validateParameters, validate parameters for "
                 + this.toString());
 
-        System.out.println(".validateParameters, validate parameters for "
-                + this.toString());
-        		
         super.validateParameters();
         
         //this.validateAI();
@@ -102,14 +99,15 @@ public class AskSingleAIJob extends GenericJob {
         super.startJobBasic();
 
         this.getLogger().fine(".startJobBasic starting " + this.toString());
-        System.out.println(".startJobBasic starting " + this.toString());
         
         //Ping the AI
         //AI ai = this.getAI();
 
         if(ai_.pingAI()) {
 
-        	ai_.sendPost();
+        	//ai_.sendPost();
+        	
+        	//ai_.askQuestion(question_);
         	
         	CompletableFuture<String> futureForAICall 
         		= CompletableFuture.supplyAsync(() -> {
@@ -123,21 +121,20 @@ public class AskSingleAIJob extends GenericJob {
         		return answer;
     		});
 
-    		futureForAICall.thenApplyAsync(name -> {
+    		futureForAICall.thenApplyAsync(answer -> {
 
     			this.state_ = JobState.COMPLETED_SUCCESS;
     			
     			//TODO - Remove this
-    			System.out.println(" AskAI job "+ this.toString() + " AI name: "  + ai_.name); 
+    			this.getLogger().fine(" AskAI job - Persisting answer for "+ this.toString() + " ANSWER: " + answer);
     			
     		    //write to the db the answer
-    			String answer = "Persist name";
     			
     	        //TODO - Maybe move this to a singleton
     			jobProcessor_.documentClient.updateQuestionWithAIAnswer(question_.text, ai_.name, new Date(), answer);
     			
     			
-    			return "Persist name";
+    			return answer;
     		} );
         }
         

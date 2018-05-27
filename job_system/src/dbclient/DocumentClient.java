@@ -72,7 +72,7 @@ public class DocumentClient {
                 Document doc = cursor.next();
                 
                 result.add(
-                		new AI(
+                		new AI( (String)doc.get("id"),
                 				(String)doc.get("name"),
                 				(String)doc.get("address"),
                 				(String)doc.get("version"),
@@ -173,7 +173,8 @@ public class DocumentClient {
             	tmp.add(index, aiAnswers.get(index));
             }
             	
-            String newEntry = aiName + " " + responseTime  + " " + answer;
+            //TODO - Change schema to store AI Id and response time in answer attribute of question separately
+            String newEntry = answer; //aiName + " " + responseTime  + " " + answer;
             tmp.add(newEntry);
             	
             Document updateQuery = new Document("question", questionText);
