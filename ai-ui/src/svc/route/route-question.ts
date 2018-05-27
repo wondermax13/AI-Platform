@@ -1,6 +1,6 @@
 import * as BodyParser from 'body-parser';
 import { Router } from 'express';
-import Answer, { IAnswerModel } from '../../app/models/Answer';
+// import Answer, { IAnswerModel } from '../../app/models/Answer';
 import Question from '../../app/models/Question';
 
 const bodyParser = BodyParser.json();
@@ -54,15 +54,15 @@ export default async function routeQuestion(router: Router) {
       if (!question) {
         response.status(422).json({ error: `Invalid question id: ${request.params.questionId}` });
       } else {
-        const answers = question.answers;
-        if (answers) {
-          answers.forEach(async (child: IAnswerModel) => {
-            const answer = await Answer.findById(child._id)
-            if (answer) {
-              answer.remove();
-            }
-          });
-        }
+        // const answers = question.answers;
+        // if (answers) {
+        //   answers.forEach(async (child: string) => {
+        //     const answer = await Answer.findById(child._id)
+        //     if (answer) {
+        //       answer.remove();
+        //     }
+        //   });
+        // }
         question.remove();
         response.sendStatus(204);
       }

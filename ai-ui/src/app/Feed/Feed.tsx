@@ -27,6 +27,8 @@ class Feed extends React.Component<IFeedProps, {}> {
 
     this.getLocation = this.getLocation.bind(this);
     this.onClickLocation = this.onClickLocation.bind(this);
+    this.renderQuestion = this.renderQuestion.bind(this);
+    this.renderAnswer = this.renderAnswer.bind(this);
   }
 
   public getLocation(question: IQuestionModel): string {
@@ -38,59 +40,65 @@ class Feed extends React.Component<IFeedProps, {}> {
     console.log(arguments);
   }
 
-  public render(): React.ReactNode {
+  public renderAnswer(answer: string, index: number) {
     const image1 = 'https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/persona-female.png';
-    return this.props.questions.map((item: IQuestionModel, index: number) =>
-      (
-        <DocumentCard
-          key={index}
-          type={DocumentCardType.normal}
-        >
-        <div className="ms-DocumentCard-details">
-          <DocumentCardLocation
-            location={this.getLocation(item)}
-            ariaLabel={this.getLocation(item)}
-              onClick={this.onClickLocation}
 
-          />
-          <DocumentCardTitle
-            title={item.question}
-            shouldTruncate={false}
-          />
-          <DocumentCardActions
-            actions={
-              [
-                {
-                  ariaLabel: 'share action',
-                  iconProps: { iconName: 'Share' },
-                },
-                {
-                  ariaLabel: 'pin action',
-                  iconProps: { iconName: 'Pin' },
-                },
-                {
-                  ariaLabel: 'ringer action',
-                  iconProps: { iconName: 'Ringer' },
-                },
-              ]
-            }
-            views={432}
-          />
-          <DocumentCardActivity
-            activity="Submitted a few minutes ago"
-            people={
-              [
-                {
-                  name: 'Kat Larrson',
-                  profileImageSrc: image1
-                }
-              ]
-            }
-          />
-        </div>
+    return <DocumentCardActivity
+      activity={answer}
+      people={
+        [
+          {
+            name: `Bot Anwser ${index}`,
+            profileImageSrc: image1
+          }
+        ]
+      }
+    />
 
-        </DocumentCard>
-      ));
+  }
+
+  public renderQuestion(item: IQuestionModel, index: number) {
+    return <DocumentCard
+      key={index}
+      type={DocumentCardType.normal}
+    >
+      <div className="ms-DocumentCard-details">
+        <DocumentCardLocation
+          location={this.getLocation(item)}
+          ariaLabel={this.getLocation(item)}
+          onClick={this.onClickLocation}
+
+        />
+        <DocumentCardTitle
+          title={item.question}
+          shouldTruncate={false}
+        />
+        <DocumentCardActions
+          actions={
+            [
+              {
+                ariaLabel: 'share action',
+                iconProps: { iconName: 'Share' },
+              },
+              {
+                ariaLabel: 'pin action',
+                iconProps: { iconName: 'Pin' },
+              },
+              {
+                ariaLabel: 'ringer action',
+                iconProps: { iconName: 'Ringer' },
+              },
+            ]
+          }
+          views={432}
+        />
+        {item.answers!.slice(0, 10).map(this.renderAnswer)}
+      </div>
+    </DocumentCard>
+  }
+
+  public render(): React.ReactNode {
+    return this.props.questions.slice(0, 15).map(this.renderQuestion);
   }
 }
 export default Feed;

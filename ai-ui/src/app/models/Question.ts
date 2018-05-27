@@ -1,10 +1,10 @@
 import * as mongoose from 'mongoose';
-import { AnswerSchema, IAnswer } from './Answer';
+// import { AnswerSchema, IAnswer } from './Answer';
 
 export interface IQuestionModel extends IQuestion, mongoose.Document { }
 
 export interface IQuestion {
-  answers?: IAnswer[];
+  answers?: string[];
   askTime?: Date;
   channels: string[];
   question: string;
@@ -13,7 +13,7 @@ export interface IQuestion {
 }
 
 export const QuestionSchema = new mongoose.Schema({
-  answers: [AnswerSchema],
+  answers: [String],
   askTime: { type: Date, default: Date.now },
   channels: [String],
   question: String,
