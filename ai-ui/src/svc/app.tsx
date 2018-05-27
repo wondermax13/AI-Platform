@@ -21,8 +21,8 @@ import { IAppProps } from '../app/App/App';
 import data from './manifest';
 import { getFeed } from './route/route-feed';
 
-const statics = path.resolve(__dirname, './../../client/static');
-const build = path.resolve(__dirname, './../../client');
+const build = path.resolve(__dirname, './../../build');
+const statics = path.resolve(build, 'static');
 const manifestFile = path.resolve(build, 'asset-manifest.json');
 
 export async function app(server: Application) {

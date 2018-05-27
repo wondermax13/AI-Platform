@@ -11,12 +11,14 @@ import * as dotenv from 'dotenv';
 import * as mongoose from 'mongoose';
 import * as path from 'path';
 
-if (process.env.NODE_ENV !== 'production') {
+const envFile = `.env.${process.env.NODE_ENV}`;
+
+// if (process.env.NODE_ENV !== 'production') {
   console.log(process.cwd());
-  const env = path.resolve(process.cwd(), './.env');
+  const env = path.resolve(process.cwd(), envFile);
   console.log(env);
   dotenv.config({ path: env });
-}
+// }
 
 const MONGODB_URI = process.env.MONGODB_URI || console.error('Server error. MONGODB_URI not defined');
 let mongooseConnected = false;

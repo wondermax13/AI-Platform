@@ -129,7 +129,7 @@ class QuestionDialog extends React.Component<IQuestionDialogProps, IQuestionDial
         isOpen={this.props.open}
         onDismiss={this.dismiss}
         onLightDismissClick={this.dismiss}
-        onRenderFooterContent={this.renderFooter}
+        // onRenderFooterContent={this.renderFooter}
         type={PanelType.medium}
       >
         <TextField
