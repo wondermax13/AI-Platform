@@ -43,14 +43,14 @@ export async function services(server: Application) {
 
     console.log('conncted db. configuring router');
 
-    server.use('/client/api/v1', router);
+    server.use('/api/v1', router);
     addQuestionRoute(router);
     addAnswerRoute(router);
     addFeedRoute(router);
 
   } catch (ex) {
     console.log('error occurred: ', ex.message || ex);
-    server.get('/client/api/v1/*', (request: Request, response: Response, next: (err: string) => void) => {
+    server.get('/api/v1/*', (request: Request, response: Response, next: (err: string) => void) => {
       response.send({ failed: 'cannot continue', error: ex && ex.message || ex })
     });
     // server.all('*', (request: Request, response: Response, next: (err: string) => void) => next(ex));
