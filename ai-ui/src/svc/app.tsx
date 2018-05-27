@@ -22,12 +22,13 @@ import data from './manifest';
 import { getFeed } from './route/route-feed';
 
 const build = path.resolve(__dirname, './../../client');
-// const statics = path.resolve(build, 'static');
+const statics = path.resolve(build, 'static');
 const manifestFile = path.resolve(build, 'asset-manifest.json');
 
 export async function app(server: Application) {
 
-  server.use('/_', Express.static(build));
+  server.use('/client', Express.static(build));
+  server.use('/client/static', Express.static(statics));
   server.get('/', async (request: Request, response: Response) => {
 
     try {
@@ -40,8 +41,8 @@ export async function app(server: Application) {
       }
 
       // const appString = renderToString(<App {...initialState} {...{ server: true }} />);
-      const mainJs = '/_/' + manifest["main.js"];
-      const mainCss = '/_/' + manifest["main.css"];
+      const mainJs = 'client/' + manifest["main.js"];
+      const mainCss = 'client/' + manifest["main.css"];
 
       const templateProps: ITemplateProps = {
         body: 'Connecting to AI...',// appString,
