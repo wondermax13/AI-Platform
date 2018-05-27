@@ -44,7 +44,10 @@ export async function services(server: Application) {
     addFeedRoute(router);
 
   } catch (ex) {
-    server.all('*', (request: Request, response: Response, next: (err: string) => void) => next(ex));
+    server.use('/api/v1/*', (request: Request, response: Response, next: (err: string) => void) => {
+      response.status(404).send({ failed: 'cannot continue', error: ex && ex.message || ex })
+    });
+    // server.all('*', (request: Request, response: Response, next: (err: string) => void) => next(ex));
   }
 }
 

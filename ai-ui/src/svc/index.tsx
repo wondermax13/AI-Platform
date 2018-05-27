@@ -16,7 +16,7 @@ export async function start() {
     dotenv.config({ path: env });
   }
   console.log(`MONGODB_URI: ${process.env.MONGODB_URI}`);
-  console.log(`PORT: ${process.env.PORT}`);
+  console.log(`PORT: ${process.env.PORT || 80}`);
 
   const server = createServer();
 
