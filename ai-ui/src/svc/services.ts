@@ -22,13 +22,12 @@ export async function services(server: Application) {
   const MONGODB_URI = process.env.MONGODB_URI;
   if (!MONGODB_URI) {
     console.log('Server error. MONGODB_URI not defined');
-    server.all('/{0,}', (req, res, next) => {
+    server.all('/api/{0,}', (req, res, next) => {
       res.send('Mongodb config not found');
       next();
     });
     return;
   }
-
 
   const router = Router();
 
@@ -57,16 +56,11 @@ export async function services(server: Application) {
     console.log('error occurred: ', ex.message || ex);
 
     server.all('/api/v1/{0,}', (request: Request, response: Response, next: (err?: string) => void) => {
-      response.send({ failed: 'cannot continue', error: ex && ex.message || ex });
-      next();
+      response.status(500).send({ failed: 'cannot continue', error: ex && ex.message || ex });
+      next(ex);
     });
     // server.all('*', (request: Request, response: Response, next: (err: string) => void) => next(ex));
   }
-
-  server.all('/{0,}', (req, res, next) => {
-    res.send('route not handled');
-    next();
-  });
 }
 
 export async function stop(server: Application) {
