@@ -14,16 +14,21 @@ let mongooseConnected = false;
 // SERVER CONTROLS
 export async function services(server: Application) {
 
-  const MONGODB_URI = process.env.MONGODB_URI;
-  if (!MONGODB_URI) {
-    console.log('Server error. MONGODB_URI not defined');
-    process.exit(1);
-  }
-
   console.log('setting up api');
 
   server.use(ErrorHandler);
   server.use(cors());
+
+
+  const MONGODB_URI = process.env.MONGODB_URI;
+  if (!MONGODB_URI) {
+    console.log('Server error. MONGODB_URI not defined');
+    server.all('/{0,}', (req, res) => {
+      res.send('Mongodb config not found');
+    });
+    return;
+  }
+
 
   const router = Router();
 
@@ -50,11 +55,16 @@ export async function services(server: Application) {
 
   } catch (ex) {
     console.log('error occurred: ', ex.message || ex);
-    server.get('/api/v1/*', (request: Request, response: Response, next: (err: string) => void) => {
+
+    server.all('/api/v1/*', (request: Request, response: Response, next: (err: string) => void) => {
       response.send({ failed: 'cannot continue', error: ex && ex.message || ex })
     });
     // server.all('*', (request: Request, response: Response, next: (err: string) => void) => next(ex));
   }
+
+  server.all('/{0,}', (req, res) => {
+    res.send('route not handled');
+  });
 }
 
 export async function stop(server: Application) {
