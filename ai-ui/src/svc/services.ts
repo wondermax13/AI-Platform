@@ -20,6 +20,8 @@ export async function services(server: Application) {
     process.exit(1);
   }
 
+  console.log('setting up api');
+
   server.use(ErrorHandler);
   server.use(cors());
 
@@ -30,6 +32,7 @@ export async function services(server: Application) {
     await new Promise((resolve: (result?: any) => void, reject: (error: Error | string) => void) => {
       mongoose.connect(MONGODB_URI, {}, (err: Error) => {
         if (err) {
+          console.log('failed to connect mongo');
           reject(err);
         } else {
           resolve();
@@ -38,14 +41,17 @@ export async function services(server: Application) {
     });
     mongooseConnected = true;
 
+    console.log('conncted db. configuring router');
+
     server.use('/api/v1', router);
     addQuestionRoute(router);
     addAnswerRoute(router);
     addFeedRoute(router);
 
   } catch (ex) {
-    server.use('/api/v1/*', (request: Request, response: Response, next: (err: string) => void) => {
-      response.status(404).send({ failed: 'cannot continue', error: ex && ex.message || ex })
+    console.log('error occurred: ', ex.message || ex);
+    server.get('/api/v1/*', (request: Request, response: Response, next: (err: string) => void) => {
+      response.send({ failed: 'cannot continue', error: ex && ex.message || ex })
     });
     // server.all('*', (request: Request, response: Response, next: (err: string) => void) => next(ex));
   }
