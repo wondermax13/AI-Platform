@@ -10,7 +10,7 @@ export function start() {
     // tslint:disable-next-line no-string-literal
     const serverState = window['__APP_INITIAL_STATE__'];
     if (serverState) {
-      const parsed = JSON.parse(decodeURI(serverState));
+      const parsed = JSON.parse(unescape(serverState));
       initialState = parsed || initialState;
     }
   } catch(ex) {
