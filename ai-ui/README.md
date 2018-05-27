@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-`Make sure you have the latest "LTS" version of NodeJs installed from `
+`Make sure you have the latest "LTS" version of NodeJs installed from`
 
     https://nodejs.org/en/
 
