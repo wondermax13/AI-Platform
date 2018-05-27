@@ -4,13 +4,21 @@ import App from './App/App';
 import './index.css';
 // import registerServiceWorker from './registerServiceWorker';
 
-// tslint:disable-next-line no-string-literal
-const x = (window['__APP_INITIAL_STATE__'] || { initialQuestions: [] })
-x.initialQuestions = x.initialQuestions || [];
-
 export function start() {
+  let initialState = { initialQuestions: [] };
+  try {
+    // tslint:disable-next-line no-string-literal
+    const serverState = window['__APP_INITIAL_STATE__'];
+    if (serverState) {
+      const parsed = JSON.parse(serverState);
+      initialState = parsed || initialState;
+    }
+  } catch(ex) {
+    console.log('Error loading initial state from server. Starting empty');
+  }
+
   ReactDOM.render(
-    <App {...x} />,
+    <App {...initialState} />,
     document.getElementById('root') as HTMLElement
   );
   // registerServiceWorker();

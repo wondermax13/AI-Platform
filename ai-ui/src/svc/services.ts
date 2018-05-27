@@ -7,24 +7,18 @@ import addFeedRoute from './route/route-feed';
 import addQuestionRoute from './route/route-question';
 
 import * as cors from 'cors';
-import * as dotenv from 'dotenv';
 import * as mongoose from 'mongoose';
-import * as path from 'path';
 
-const envFile = `.env.${process.env.NODE_ENV}`;
-
-// if (process.env.NODE_ENV !== 'production') {
-  console.log(process.cwd());
-  const env = path.resolve(process.cwd(), envFile);
-  console.log(env);
-  dotenv.config({ path: env });
-// }
-
-const MONGODB_URI = process.env.MONGODB_URI || console.error('Server error. MONGODB_URI not defined');
 let mongooseConnected = false;
 
 // SERVER CONTROLS
 export async function services(server: Application) {
+
+  const MONGODB_URI = process.env.MONGODB_URI;
+  if (!MONGODB_URI) {
+    console.log('Server error. MONGODB_URI not defined');
+    process.exit(1);
+  }
 
   server.use(ErrorHandler);
   server.use(cors());
