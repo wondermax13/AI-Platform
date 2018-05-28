@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "postinstall": "npm run build",
+    "deploy": "run-s _touch && git push -u ai2ai master",
+    "_touch": "cmd /c \"date /t >../tmp/restart.txt\" && cmd /c \"time /t >>../tmp/restart.txt\" && git commit -m \"touching for deployment\" ../tmp/restart.txt && git push -v ai2ai master" ,
     "build": "run-s build:client build:server",
     "build:watch": "run-p build:client:watch build:server:watch",
     "build:client": "react-scripts-ts build && npm run copy:client",
