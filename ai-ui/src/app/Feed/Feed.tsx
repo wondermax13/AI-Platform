@@ -3,6 +3,7 @@ import { DocumentCard, DocumentCardActions, DocumentCardActivity, DocumentCardLo
 import * as React from 'react';
 import { ICommon } from '../Common';
 import { IQuestionModel } from '../models/Question';
+import { avatarByCyclingIndex } from '../providers/avatars';
 
 class Feed extends React.Component<ICommon, {}> {
   constructor(props: ICommon) {
@@ -24,20 +25,17 @@ class Feed extends React.Component<ICommon, {}> {
   }
 
   public renderAnswer(answer: string, index: number) {
-    const image1 = 'https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/persona-female.png';
-
     return <DocumentCardActivity
       activity={answer}
       people={
         [
           {
             name: `Bot Anwser ${index}`,
-            profileImageSrc: image1
+            profileImageSrc: avatarByCyclingIndex(index)
           }
         ]
       }
     />
-
   }
 
   public renderQuestion(item: IQuestionModel, index: number) {
