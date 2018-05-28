@@ -64,6 +64,8 @@ export interface IAppProps {
 }
 
 export default class App extends React.Component<IAppProps, IAppState> {
+  private timeouts: number[] = [];
+
   constructor(props: IAppProps) {
     super(props);
 
@@ -101,9 +103,26 @@ export default class App extends React.Component<IAppProps, IAppState> {
   public openHumansDialog = () => this.setState({ currentDialog: Dialog.Humans });
   public openArtificialsDialog = () => this.setState({ currentDialog: Dialog.Artificials });
 
+  public setInterval = (delay: number, action: () => void) => {
+    this.timeouts.push(window.setInterval(action, delay));
+  };
+
+  public clearTimeouts = () => {
+    this.timeouts.forEach(timeout => clearTimeout(timeout));
+  };
+
+  public scheduleUpdate() {
+    this.setInterval(10000, this.updateFeed);
+  }
+
   public componentDidMount(): void {
     this.setState({ mounted: true })
     this.updateFeed();
+    this.scheduleUpdate();
+  }
+
+  public componentWillUnmount(): void {
+    this.clearTimeouts();
   }
 
   public closeNewQuestionDialog(newQuestion?: IQuestionModel): void {
@@ -133,7 +152,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
     });
   }
 
-  public async updateFeed(): Promise<void> {
+  public updateFeed = async (): Promise<void> => {
     const questions = await aiProvider.getFeed();
     this.setState({ questions });
   }
