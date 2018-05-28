@@ -17,7 +17,7 @@ export class AboutDialog extends React.Component<IAboutDialogProps, IAboutDialog
   public AboutTextField: TextField;
 
   public attributions = () => {
-    return (<pre style={{ textAlign: 'left' }}>{`
+    return (<pre style={{ textAlign: 'left', fontSize: '6pt' }}>{`
       Avatar Icons provided under the Creative Commons 3.0 BY
       or CC0 if mentioned below:
       - Lorc, http://lorcblog.blogspot.com
