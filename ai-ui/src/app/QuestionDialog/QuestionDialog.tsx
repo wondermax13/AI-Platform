@@ -6,7 +6,7 @@ import * as React from 'react';
 import { IQuestionModel } from '../models/Question';
 
 // import { app as appCss, section as sectionCss, column as columnCss } from './App.scss';
-import { ICommonProps } from '../Feed/Feed';
+import { ICommon } from '../Common';
 
 export interface ITargetOption {
   category?: string;
@@ -22,12 +22,13 @@ export interface IQuestionDialogState {
   question?: string;
 }
 
-export interface IQuestionDialogProps extends ICommonProps {
+export interface IQuestionDialogProps extends ICommon {
   open: boolean;
   defaultChannel?: string;
   doneAction: (addedQuestion?: IQuestionModel) => void;
   createQuestionAction: (question: string, channels: string[], individuals?: string[]) => Promise<IQuestionModel | undefined>;
 }
+
 class QuestionDialog extends React.Component<IQuestionDialogProps, IQuestionDialogState> {
   public questionTextField: TextField;
 

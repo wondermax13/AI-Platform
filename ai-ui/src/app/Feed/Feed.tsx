@@ -1,28 +1,11 @@
 // import { app as appCss, section as sectionCss, column as columnCss } from './App.scss';
-import {
-  DocumentCard,
-  DocumentCardActions,
-  DocumentCardActivity,
-  DocumentCardLocation,
-  DocumentCardTitle,
-  DocumentCardType,
-} from 'office-ui-fabric-react';
+import { DocumentCard, DocumentCardActions, DocumentCardActivity, DocumentCardLocation, DocumentCardTitle, DocumentCardType } from 'office-ui-fabric-react';
 import * as React from 'react';
+import { ICommon } from '../Common';
 import { IQuestionModel } from '../models/Question';
 
-export interface ICommonProps {
-  channels: Array<{ name: string, default?: boolean }>;
-  recentlyAddedQuestion?: IQuestionModel;
-  humans: Array<{ name: string, default?: boolean }>;
-}
-
-export interface IFeedProps extends ICommonProps {
-  userId: string;
-  ai: Array<{ name: string, default?: boolean }>;
-  questions: IQuestionModel[];
-}
-class Feed extends React.Component<IFeedProps, {}> {
-  constructor(props: IFeedProps) {
+class Feed extends React.Component<ICommon, {}> {
+  constructor(props: ICommon) {
     super(props);
 
     this.getLocation = this.getLocation.bind(this);
