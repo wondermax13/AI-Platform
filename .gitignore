@@ -8,6 +8,7 @@
 
 # production
 /build
+/ai-ui-deploy
 
 # misc
 .DS_Store
