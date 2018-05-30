@@ -197,7 +197,9 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
   public async createArtificial(): Promise<IArtificial> {
     const newArtificial: IArtificial = {
-      name: 'new artificial'
+      avatar: 'android-mask',
+      name: 'new artificial',
+      version: '1',
     };
     // const newArtificialsState = [newArtificial].concat(this.state.questions);
     // this.setState({ questions: newQuestionsState });

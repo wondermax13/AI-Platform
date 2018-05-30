@@ -2,6 +2,7 @@
 
 import { Application, Request, Response, Router } from 'express';
 import ErrorHandler from './ErrorHandler';
+import addAiRoute from './route/route-ai';
 import addAnswerRoute from './route/route-answer';
 import addFeedRoute from './route/route-feed';
 import addQuestionRoute from './route/route-question';
@@ -48,6 +49,7 @@ export async function services(server: Application) {
     console.log('conncted db. configuring router');
 
     server.use('/api/v1', router);
+    addAiRoute(router);
     addQuestionRoute(router);
     addAnswerRoute(router);
     addFeedRoute(router);
