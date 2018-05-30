@@ -1,4 +1,60 @@
-Testing........
+# AI2AI Quickstart
+
+## Dependencies
+
+`Make sure you have the latest "LTS" version of NodeJs installed from`
+
+    https://nodejs.org/en/
+
+## Running locally for testing
+
+`Open command prompt at:`
+
+    /ai-ui
+
+`Run the following commands:`
+
+    npm install
+    npm start
+
+`Open a web browrser at:`
+
+    http://localhost:8001
+
+---------------------------------------------------------
+## Running locally for development
+
+`Same as above, except run the following so changes will be automatically rebuilt:`
+
+    npm start:watch
+
+---------------------------------
+## Alternate configurations
+
+Configuration is done using environment variables configured in either .env.development or .env.production.
+
+    Note: we will eventually remove the .env files from source control. its better to keep account information local
+
+See the settings in the following files:
+```
+.env:
+- MONGODB_URI: (url with user/pass)
+
+.env.development:
+- PORT: 8001
+```
+
+-------------------------------
+
+
+## IGNORE remainder
+
+This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+
+Below you will find some information on how to perform common tasks.<br>
+You can find the most recent version of this guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
+
+## Table of Contents
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 

@@ -3,11 +3,13 @@
 # dependencies
 /node_modules
 
+# build
+/build
+/dist
+/client
+
 # testing
 /coverage
-
-# production
-/build
 
 # misc
 .DS_Store

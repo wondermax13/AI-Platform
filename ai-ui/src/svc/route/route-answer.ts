@@ -19,7 +19,7 @@ export default async function routeAnswer(router: Router) {
         answer.save();
 
         question.answers = question.answers || [];
-        question.answers.push(answer)
+        question.answers.push(answer.answer)
         question.save();
 
         response.sendStatus(201);

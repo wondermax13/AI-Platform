@@ -21,13 +21,14 @@ import { IAppProps } from '../app/App/App';
 import data from './manifest';
 import { getFeed } from './route/route-feed';
 
-const statics = path.resolve(__dirname, './../../client/static');
 const build = path.resolve(__dirname, './../../client');
+const statics = path.resolve(build, 'static');
 const manifestFile = path.resolve(build, 'asset-manifest.json');
 
 export async function app(server: Application) {
 
-  server.use('/static', Express.static(statics));
+  server.use('/client', Express.static(build));
+  server.use('/client/static', Express.static(statics));
   server.get('/', async (request: Request, response: Response) => {
 
     try {
@@ -40,8 +41,8 @@ export async function app(server: Application) {
       }
 
       // const appString = renderToString(<App {...initialState} {...{ server: true }} />);
-      const mainJs = manifest["main.js"];
-      const mainCss = manifest["main.css"];
+      const mainJs = 'client/' + manifest["main.js"];
+      const mainCss = 'client/' + manifest["main.css"];
 
       const templateProps: ITemplateProps = {
         body: 'Connecting to AI...',// appString,
@@ -49,7 +50,7 @@ export async function app(server: Application) {
         mainCss,
         mainJs,
         styles: allStyles,
-        title: 'AI-2-AI',
+        title: 'AI2AI',
       }
       const d = await template(templateProps);
       response.send(d);

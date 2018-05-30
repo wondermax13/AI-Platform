@@ -7,25 +7,27 @@ import addFeedRoute from './route/route-feed';
 import addQuestionRoute from './route/route-question';
 
 import * as cors from 'cors';
-import * as dotenv from 'dotenv';
 import * as mongoose from 'mongoose';
-import * as path from 'path';
 
-if (process.env.NODE_ENV !== 'production') {
-  console.log(process.cwd());
-  const env = path.resolve(process.cwd(), './.env');
-  console.log(env);
-  dotenv.config({ path: env });
-}
-
-const MONGODB_URI = process.env.MONGODB_URI || console.error('Server error. MONGODB_URI not defined');
 let mongooseConnected = false;
 
 // SERVER CONTROLS
 export async function services(server: Application) {
 
+  console.log('setting up api');
+
   server.use(ErrorHandler);
   server.use(cors());
+
+  const MONGODB_URI = process.env.MONGODB_URI;
+  if (!MONGODB_URI) {
+    console.log('Server error. MONGODB_URI not defined');
+    server.all('/api/{0,}', (req, res, next) => {
+      res.send('Mongodb config not found');
+      next();
+    });
+    return;
+  }
 
   const router = Router();
 
@@ -34,6 +36,7 @@ export async function services(server: Application) {
     await new Promise((resolve: (result?: any) => void, reject: (error: Error | string) => void) => {
       mongoose.connect(MONGODB_URI, {}, (err: Error) => {
         if (err) {
+          console.log('failed to connect mongo');
           reject(err);
         } else {
           resolve();
@@ -42,13 +45,21 @@ export async function services(server: Application) {
     });
     mongooseConnected = true;
 
+    console.log('conncted db. configuring router');
+
     server.use('/api/v1', router);
     addQuestionRoute(router);
     addAnswerRoute(router);
     addFeedRoute(router);
 
   } catch (ex) {
-    server.all('*', (request: Request, response: Response, next: (err: string) => void) => next(ex));
+    console.log('error occurred: ', ex.message || ex);
+
+    server.all('/api/v1/{0,}', (request: Request, response: Response, next: (err?: string) => void) => {
+      response.status(500).send({ failed: 'cannot continue', error: ex && ex.message || ex });
+      next(ex);
+    });
+    // server.all('*', (request: Request, response: Response, next: (err: string) => void) => next(ex));
   }
 }
 
