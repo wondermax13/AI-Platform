@@ -43,7 +43,7 @@ public class AI {
 			String endpoint = "http://www.cleverbot.com/getreply?key=CC8ktzqcHDfaOP5T7OnM432weZA&MXYxCTh2MQlBdkFZQVNONlVUN0oJMUZ2MTUyNzE0MTMwOAk2NGlNw6RkY2hlbi4J";
 			
 			String encodedUrlParam = URLEncoder.encode(question.text, "UTF-8");
-			String urlEndpoint = endpoint + "&input=" + encodedUrlParam;
+			String urlEndpoint = this.address + "&input=" + encodedUrlParam;
 			
 			String res = getJSON(urlEndpoint);
 			
