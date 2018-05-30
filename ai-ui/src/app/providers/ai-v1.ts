@@ -12,9 +12,14 @@ export async function postQuestion(question: string, channels: string[] = ['#Mai
 }
 
 export async function getAis(): Promise<IArtificialModel[]> {
-  const response = await call('/api/v1/ai');
-  const ai: IArtificialModel[] = await response.json();
-  return ai;
+  try {
+    const response = await call('/api/v1/ai');
+    const ai: IArtificialModel[] = await response.json();
+    return ai;
+  } catch (ex) {
+    console.log(ex);
+    return [];
+  }
 }
 
 export async function getFeed(channel: string = '#main'): Promise<IQuestionModel[]> {
