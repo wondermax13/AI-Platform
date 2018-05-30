@@ -1,6 +1,7 @@
 package job;
 
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -30,6 +31,8 @@ public class JobProcessor {
 	
 	DocumentClient documentClient;
 	
+	ReentrantLock lock;
+	
 	JobProcessor getInstance() {
 	
 		if(instance == null) {
@@ -49,6 +52,8 @@ public class JobProcessor {
 		lastQueryTime = new Date(Long.MIN_VALUE);
 		
 		documentClient = new DocumentClient();
+		
+		lock = new ReentrantLock();
 		
 		if(LOGGER == null) {
 			LOGGER = Logger.getLogger("JobProcessor");
@@ -87,6 +92,8 @@ public class JobProcessor {
 	public void findAndAddNewJobs() {
 			
 		List<Question> newQuestions = documentClient.findNewQuestions(new Date(), lastQueryTime);
+		
+		this.getLogger().fine("Found new questions: " + newQuestions.size());
 		
 		for(Question question : newQuestions) {
 		

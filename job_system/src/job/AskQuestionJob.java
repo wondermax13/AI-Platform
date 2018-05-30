@@ -100,6 +100,8 @@ public class AskQuestionJob extends GenericJob {
 	        
 	        for(AI ai : relevantAIs) {
 	        	
+	        	this.getLogger().fine(" Creating AskAI job for: " + ai.toString() + this.toString());
+	        	
 				GenericJob job = new AskSingleAIJob(this.jobProcessor_, 0, ai, question);
 				
 				this.addJobAsMyChild(job);

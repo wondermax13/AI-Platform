@@ -116,8 +116,11 @@ public class DocumentClient {
 		
 		MongoCollection<Document> collection = database.getCollection("questions");
 		
-		Document findQuery = new Document("askTime", new Document("$gte",lastQueryTime));
-
+		Document findQuery
+			= new Document(
+					"askTime", new Document("$gte",lastQueryTime))
+					.append("answered", "false");
+		
 		MongoCursor<Document> cursor = collection.find(findQuery).iterator();
 
         try {
@@ -151,9 +154,9 @@ public class DocumentClient {
 	 * @param answer
 	 */
 	public void updateQuestionWithAIAnswer(
-			String questionText, String aiName, Date responseTime, String answer) {
+			String questionText, String aiId, Date responseTime, String answer) {
 			
-		List<String> aiAnswers = null;
+		List<Document> aiAnswers = null;
 		
 		MongoCollection<Document> collection = database.getCollection("questions");
 		
@@ -164,21 +167,28 @@ public class DocumentClient {
         try {
 
         	Document doc = cursor.next();
-            aiAnswers = (List<String>) doc.get("answers");
+            aiAnswers = (List<Document>) doc.get("answers");
             	
-            List<String> tmp = new ArrayList<String>();
+            List<Document> tmp = new ArrayList<Document>();
             	
             for(int index = 0; index < aiAnswers.size(); index++) {
             		
             	tmp.add(index, aiAnswers.get(index));
             }
-            	
-            //TODO - Change schema to store AI Id and response time in answer attribute of question separately
-            String newEntry = answer; //aiName + " " + responseTime  + " " + answer;
-            tmp.add(newEntry);
+            
+            tmp.add(new Document("answer", answer).append("aiId", aiId));
             	
             Document updateQuery = new Document("question", questionText);
-        	collection.updateOne(updateQuery, new Document("$set", new Document("answers", tmp)));
+            Document updateValue
+            	= new Document(
+            			"$set", new Document("answers", tmp).append("answered", "true"));	//TODO - This should be done after the last answer
+            
+        	collection.updateOne(updateQuery, updateValue);
+        	
+        	/*updateValue = new Document(
+        					"$set", new Document("answered", "true"));*/	//TODO - This should be done after the last answer
+        	
+        	System.out.println(" DocumentClient: Persisted answer: " + answer);
         }
         catch(Exception e) {
         	
