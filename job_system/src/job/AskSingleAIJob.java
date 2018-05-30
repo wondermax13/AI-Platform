@@ -125,13 +125,24 @@ public class AskSingleAIJob extends GenericJob {
 
     			this.state_ = JobState.COMPLETED_SUCCESS;
     			
+    			
     			//TODO - Remove this
     			this.getLogger().fine(" AskAI job - Persisting answer for "+ this.toString() + " ANSWER: " + answer);
     			
-    		    //write to the db the answer
-    			
     	        //TODO - Maybe move this to a singleton
-    			jobProcessor_.documentClient.updateQuestionWithAIAnswer(question_.text, ai_.name, new Date(), answer);
+    			//synchronized(this) {
+    			
+    			this.getLogger().fine(" AskAI job - Acquiring lock: "+ this.toString());
+    			jobProcessor_.lock.lock();
+    			try {
+    				jobProcessor_.documentClient.updateQuestionWithAIAnswer(question_.text, ai_.id, new Date(), answer);
+    			}
+    			finally {
+    				
+    				this.getLogger().fine(" AskAI job - Giving up lock: "+ this.toString());
+    				jobProcessor_.lock.unlock();
+    				
+    			}
     			
     			
     			return answer;
