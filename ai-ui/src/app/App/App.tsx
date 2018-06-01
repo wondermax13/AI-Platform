@@ -157,6 +157,10 @@ export default class App extends React.Component<IAppProps, IAppState> {
     this.setState({ questions });
   }
 
+  public shouldComponentUpdate(nextProps: IAppProps, nextState: IAppState) {
+    return JSON.stringify(nextState) !== JSON.stringify(this.state);
+  }
+
   public async createQuestion(question: string, channels: string[], individuals: string[]): Promise<IQuestionModel | undefined> {
     const newQuestion: Partial<IQuestionModel> = {
       // from: {
