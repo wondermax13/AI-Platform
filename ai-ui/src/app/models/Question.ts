@@ -13,7 +13,7 @@ export interface IAnswer {
 }
 
 export interface IQuestion {
-  answered: boolean;
+  answered: string;
   answers?: IAnswer[];
   askTime?: Date;
   channels: string[];
@@ -28,7 +28,7 @@ export const AnswerSchema = new mongoose.Schema({
 }, { _id: false  });
 
 export const QuestionSchema = new mongoose.Schema({
-  answered: Boolean,
+  answered: String,
   answers: [AnswerSchema],
   askTime: { type: Date, default: Date.now },
   channels: [String],

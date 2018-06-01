@@ -167,6 +167,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
       //   type: 'user',
       //   value: this.state.userId
       // },
+      answered: 'false',
       channels: [...(channels || []), ...(individuals || [])],
       // channels: [ ...channels, ...individuals ].map(c => c), // .map((channel: string) => {
       // return {
