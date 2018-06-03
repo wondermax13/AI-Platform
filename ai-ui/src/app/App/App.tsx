@@ -1,7 +1,6 @@
 import { DefaultButton, PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
-import { ProgressIndicator } from 'office-ui-fabric-react/lib/ProgressIndicator';
 import { ScrollablePane } from 'office-ui-fabric-react/lib/ScrollablePane';
 import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
 import * as React from 'react';
@@ -167,7 +166,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
       //   type: 'user',
       //   value: this.state.userId
       // },
-      answered: 'false',
+      // answered: 'false',
       channels: [...(channels || []), ...(individuals || [])],
       // channels: [ ...channels, ...individuals ].map(c => c), // .map((channel: string) => {
       // return {
@@ -274,7 +273,6 @@ export default class App extends React.Component<IAppProps, IAppState> {
           </div>
         </div>
       </ScrollablePane>
-      {this.isDialogOpen && <ProgressIndicator />}
       <QuestionDialog
         open={isNewQuestionDialogOpen}
         defaultChannel={defaultChannel}
