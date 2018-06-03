@@ -1,4 +1,3 @@
-
 import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 
@@ -16,43 +15,6 @@ export interface IAboutDialogProps {
 export class AboutDialog extends React.Component<IAboutDialogProps, IAboutDialogState> {
   public AboutTextField: TextField;
 
-  public attributions = () => {
-    return (<pre style={{ textAlign: 'left', fontSize: '6pt' }}>{`
-      Avatar Icons provided under the Creative Commons 3.0 BY
-      or CC0 if mentioned below:
-      - Lorc, http://lorcblog.blogspot.com
-      - Delapouite, http://delapouite.com
-      - John Colburn, http://ninmunanmu.com
-      - Felbrigg, http://blackdogofdoom.blogspot.co.uk
-      - John Redman, http://www.uniquedicetowers.com
-      - Carl Olsen, https://twitter.com/unstoppableCarl
-      - Sbed, http://opengameart.org/content/95-game-icons
-      - PriorBlue
-      - Willdabeast, http://wjbstories.blogspot.com
-      - Viscious Speed, http://viscious-speed.deviantart.com - CC0
-      - Lord Berandas, http://berandas.deviantart.com
-      - Irongamer, http://ecesisllc.wix.com/home
-      - HeavenlyDog, http://www.gnomosygoblins.blogspot.com
-      - Lucas
-      - Faithtoken, http://fungustoken.deviantart.com
-      - Skoll
-      - Andy Meneely, http://www.se.rit.edu/~andy/
-      - Cathelineau
-      - Kier Heyl
-      - Aussiesim
-      - Sparker, http://citizenparker.com
-      - Zeromancer - CC0
-      - Rihlsul
-      - Quoting
-      - Guard13007, https://guard13007.com
-      - DarkZaitzev, http://darkzaitzev.deviantart.com
-      - SpencerDub
-      - GeneralAce135
-      - Zajkonur
-      More info and icons available at https://game-icons.net
-    `}</pre>);
-  };
-
   public dismiss = async (/*About?: IAbout*/) => {
     this.props.doneAction(/*About*/);
   };
@@ -63,7 +25,10 @@ export class AboutDialog extends React.Component<IAboutDialogProps, IAboutDialog
       <Dialog headerText={'About'} {...this.props} >
         <div className="ms-textAlignCenter">
 
-          {this.attributions()}
+          <h3><a href="/client/privacy.html" target="_new">Privacy Policy</a></h3>
+
+          <h3><a href="/client/attributions.html" target="_new">Attributions</a></h3>
+
           <PrimaryButton onClick={this.dismiss} style={margin}>Back</PrimaryButton>
         </div>
       </Dialog>
