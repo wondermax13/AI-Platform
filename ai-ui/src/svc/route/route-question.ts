@@ -14,6 +14,7 @@ export default async function routeQuestion(router: Router) {
         response.status(422).send(question.errors);
       } else {
         console.log(`POST /ask\n${question}`)
+        question.answered = 'false';
         const saved = await question.save();
         response.status(201).send(saved);
       }
