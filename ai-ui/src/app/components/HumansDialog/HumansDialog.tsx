@@ -5,7 +5,7 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 
 // import { app as appCss, section as sectionCss, column as columnCss } from './App.scss';
 import * as React from 'react';
-import { IHuman } from '../models/Human';
+import { IHuman } from '../../models/Human';
 
 export interface ITargetOption {
   category?: string;
@@ -23,7 +23,7 @@ export interface IHumansDialogProps {
   doneAction: (addedHuman?: IHuman) => void;
   createHumanAction: () => Promise<IHuman>;
 }
-class HumansDialog extends React.Component<IHumansDialogProps, IHumansDialogState> {
+export class HumansDialog extends React.Component<IHumansDialogProps, IHumansDialogState> {
   public HumansTextField: TextField;
 
   public onChangeHandlers: {
@@ -139,4 +139,3 @@ class HumansDialog extends React.Component<IHumansDialogProps, IHumansDialogStat
     return options.find((option: ITargetOption) => option.key === key);
   }
 }
-export default HumansDialog;

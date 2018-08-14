@@ -1,4 +1,4 @@
-import { IQuestionModel } from './models/Question';
+import { IQuestionModel } from './Question';
 
 export interface ICommon {
   channels: Array<{ name: string, default?: boolean }>;

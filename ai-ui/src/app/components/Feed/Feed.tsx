@@ -1,11 +1,11 @@
 // import { app as appCss, section as sectionCss, column as columnCss } from './App.scss';
 import { DocumentCard, DocumentCardActions, DocumentCardActivity, DocumentCardLocation, DocumentCardTitle, DocumentCardType } from 'office-ui-fabric-react';
 import * as React from 'react';
-import { ICommon } from '../Common';
-import { IAnswer, IQuestionModel } from '../models/Question';
-import { avatarByCyclingIndex } from '../providers/avatars';
+import { ICommon } from '../../models/Common';
+import { IAnswer, IQuestionModel } from '../../models/Question';
+import { avatarByCyclingIndex } from '../../providers/avatars';
 
-class Feed extends React.Component<ICommon, {}> {
+export class Feed extends React.Component<ICommon, {}> {
   constructor(props: ICommon) {
     super(props);
 
@@ -82,4 +82,3 @@ class Feed extends React.Component<ICommon, {}> {
     return this.props.questions.slice(0, 15).map(this.renderQuestion);
   }
 }
-export default Feed;

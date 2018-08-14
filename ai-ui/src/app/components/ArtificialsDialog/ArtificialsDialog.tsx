@@ -6,7 +6,7 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 
 // import { app as appCss, section as sectionCss, column as columnCss } from './App.scss';
 import * as React from 'react';
-import { IArtificial, IArtificialModel } from '../models/Artificial';
+import { IArtificial, IArtificialModel } from '../../models/Artificial';
 
 export interface ITargetOption {
   category?: string;
@@ -24,7 +24,7 @@ export interface IArtificialDialogProps {
   doneAction: (addedArtificial?: IArtificial) => void;
   createArtificialAction: () => Promise<IArtificial>;
 }
-class ArtificialDialog extends React.Component<IArtificialDialogProps, IArtificialDialogState> {
+export class ArtificialsDialog extends React.Component<IArtificialDialogProps, IArtificialDialogState> {
   public artificialTextField: TextField;
 
   public onChangeHandlers: {
@@ -148,4 +148,3 @@ class ArtificialDialog extends React.Component<IArtificialDialogProps, IArtifici
   //   return options.find((option: ITargetOption) => option.key === key);
   // }
 }
-export default ArtificialDialog;
