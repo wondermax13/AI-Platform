@@ -3,10 +3,10 @@ import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import * as React from 'react';
-import { IQuestionModel } from '../models/Question';
+import { IQuestionModel } from '../../models/Question';
 
 // import { app as appCss, section as sectionCss, column as columnCss } from './App.scss';
-import { ICommon } from '../Common';
+import { ICommon } from '../../models/Common';
 
 export interface ITargetOption {
   category?: string;
@@ -29,7 +29,7 @@ export interface IQuestionDialogProps extends ICommon {
   createQuestionAction: (question: string, channels: string[], individuals?: string[]) => Promise<IQuestionModel | undefined>;
 }
 
-class QuestionDialog extends React.Component<IQuestionDialogProps, IQuestionDialogState> {
+export class QuestionDialog extends React.Component<IQuestionDialogProps, IQuestionDialogState> {
   public questionTextField: TextField;
 
   public onChangeHandlers: {
@@ -160,7 +160,7 @@ class QuestionDialog extends React.Component<IQuestionDialogProps, IQuestionDial
             )}
           </div>
         </div>
-        <h2>Humans</h2>
+        {/* <h2>Humans</h2>
         <div className="ms-Grid">
           <div className="ms-Grid-row">
             {this.state.humanOptions.map((option: ITargetOption, index: number) =>
@@ -175,7 +175,7 @@ class QuestionDialog extends React.Component<IQuestionDialogProps, IQuestionDial
               </div>
             )}
           </div>
-        </div>
+        </div> */}
       </Panel>
     );
   }
@@ -215,4 +215,3 @@ class QuestionDialog extends React.Component<IQuestionDialogProps, IQuestionDial
     return options.find((option: ITargetOption) => option.key === key);
   }
 }
-export default QuestionDialog;

@@ -1,10 +1,20 @@
 import * as mongoose from 'mongoose';
+import { IArtificialModel } from './Artificial';
 // import { AnswerSchema, IAnswer } from './Answer';
 
+
+export interface IAnswerModel extends IAnswer, mongoose.Document { }
 export interface IQuestionModel extends IQuestion, mongoose.Document { }
 
+export interface IAnswer {
+  answer: string;
+  aiId: string;
+  ai?: IArtificialModel
+}
+
 export interface IQuestion {
-  answers?: string[];
+  answered: string;
+  answers?: IAnswer[];
   askTime?: Date;
   channels: string[];
   question: string;
@@ -12,8 +22,14 @@ export interface IQuestion {
   // public to: Array<{ type: string, value: string }>;
 }
 
+export const AnswerSchema = new mongoose.Schema({
+  aiId: String,
+  answer: String,
+}, { _id: false  });
+
 export const QuestionSchema = new mongoose.Schema({
-  answers: [String],
+  answered: String,
+  answers: [AnswerSchema],
   askTime: { type: Date, default: Date.now },
   channels: [String],
   question: String,

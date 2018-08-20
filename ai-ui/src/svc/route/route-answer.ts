@@ -19,7 +19,10 @@ export default async function routeAnswer(router: Router) {
         answer.save();
 
         question.answers = question.answers || [];
-        question.answers.push(answer.answer)
+        question.answers.push({
+          aiId: request.params.aiId,
+          answer: answer.answer,
+        });
         question.save();
 
         response.sendStatus(201);

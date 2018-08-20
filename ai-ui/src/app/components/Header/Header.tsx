@@ -8,7 +8,7 @@ import {
 } from 'office-ui-fabric-react';
 import * as React from 'react';
 
-class Header extends React.Component<{}, {}> {
+export class Header extends React.Component<{}, {}> {
   constructor(props: {}) {
     super(props);
 
@@ -137,4 +137,3 @@ class Header extends React.Component<{}, {}> {
     );
   }
 }
-export default Header;

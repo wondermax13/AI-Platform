@@ -1,11 +1,11 @@
 // import { app as appCss, section as sectionCss, column as columnCss } from './App.scss';
 import { DocumentCard, DocumentCardActions, DocumentCardActivity, DocumentCardLocation, DocumentCardTitle, DocumentCardType } from 'office-ui-fabric-react';
 import * as React from 'react';
-import { ICommon } from '../Common';
-import { IQuestionModel } from '../models/Question';
-import { avatarByCyclingIndex } from '../providers/avatars';
+import { ICommon } from '../../models/Common';
+import { IAnswer, IQuestionModel } from '../../models/Question';
+import { avatarByCyclingIndex } from '../../providers/avatars';
 
-class Feed extends React.Component<ICommon, {}> {
+export class Feed extends React.Component<ICommon, {}> {
   constructor(props: ICommon) {
     super(props);
 
@@ -24,14 +24,14 @@ class Feed extends React.Component<ICommon, {}> {
     console.log(arguments);
   }
 
-  public renderAnswer(answer: string, index: number) {
+  public renderAnswer(answer: IAnswer, index: number) {
     return <DocumentCardActivity
-      activity={answer}
+      activity={answer.answer}
       people={
         [
           {
-            name: `Bot Anwser ${index}`,
-            profileImageSrc: avatarByCyclingIndex(index)
+            name: `${answer.ai && answer.ai.name || answer.aiId}`,
+            profileImageSrc: answer.ai && answer.ai.avatar && `client/avatars/${answer.ai.avatar}` || avatarByCyclingIndex(index)
           }
         ]
       }
@@ -82,4 +82,3 @@ class Feed extends React.Component<ICommon, {}> {
     return this.props.questions.slice(0, 15).map(this.renderQuestion);
   }
 }
-export default Feed;
