@@ -30,7 +30,7 @@ export interface IQuestionDialogProps extends ICommon {
 }
 
 export class QuestionDialog extends React.Component<IQuestionDialogProps, IQuestionDialogState> {
-  public questionTextField: TextField;
+  // public questionTextField: TextField;
 
   public onChangeHandlers: {
     [key: string]: ([]: React.FormEvent<HTMLElement>, isChecked: boolean) => void;

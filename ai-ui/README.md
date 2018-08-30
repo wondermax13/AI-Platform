@@ -26,7 +26,7 @@
 
 `Same as above, except run the following so changes will be automatically rebuilt:`
 
-    npm start:watch
+    npm run start:watch
 
 ---------------------------------
 ## Alternate configurations

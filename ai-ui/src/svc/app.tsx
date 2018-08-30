@@ -18,6 +18,7 @@ import * as path from 'path';
 import { Application, Request, Response } from 'express';
 import * as Express from 'express';
 import { IAppProps } from '../app/App/App';
+import { IScoreCards } from '../app/models/ScoreCard';
 import data from './manifest';
 import { getFeed } from './route/route-feed';
 
@@ -29,6 +30,40 @@ export async function app(server: Application) {
 
   server.use('/client', Express.static(build));
   server.use('/client/static', Express.static(statics));
+  server.get('/scorecards', async (request: Request, response: Response) => {
+
+    try {
+      const manifest = JSON.parse(await data(manifestFile)) as IManifest;
+      const scoreCards: IScoreCards = {
+        sources: [],
+        time: new Date(Date.now()),
+      }; // await getScoreCards();
+
+      const initialState: IAppProps = {
+        // initialQuestions: feed,
+        initialScoreCards: scoreCards,
+        server: false
+      };
+
+      // const appString = renderToString(<App {...initialState} {...{ server: true }} />);
+      const mainJs = '/client/' + manifest["main.js"];
+      const mainCss = '/client/' + manifest["main.css"];
+
+      const templateProps: ITemplateProps = {
+        body: 'Connecting to ScoreCards...',// appString,
+        initialState: JSON.stringify(initialState),
+        mainCss,
+        mainJs,
+        styles: allStyles,
+        title: 'AI2AI',
+      }
+      const d = await template(templateProps);
+      response.send(d);
+    } catch (ex) {
+      response.send({ error: ex.message || JSON.stringify(ex), note: "reload in a few..." });
+    }
+
+  });
   server.get('/', async (request: Request, response: Response) => {
 
     try {
@@ -41,8 +76,8 @@ export async function app(server: Application) {
       }
 
       // const appString = renderToString(<App {...initialState} {...{ server: true }} />);
-      const mainJs = 'client/' + manifest["main.js"];
-      const mainCss = 'client/' + manifest["main.css"];
+      const mainJs = '/client/' + manifest["main.js"];
+      const mainCss = '/client/' + manifest["main.css"];
 
       const templateProps: ITemplateProps = {
         body: 'Connecting to AI...',// appString,
@@ -55,7 +90,7 @@ export async function app(server: Application) {
       const d = await template(templateProps);
       response.send(d);
     } catch (ex) {
-      response.send({ error: ex.message || JSON.stringify(ex), note: "reload in a few..." });
+      response.send({ error: ex.message || JSON.stringify(ex), note: "Reload in a few..." });
     }
   });
 }

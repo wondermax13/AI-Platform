@@ -1,7 +1,7 @@
 
 import { DefaultButton, PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
-import { TextField } from 'office-ui-fabric-react/lib/TextField';
+// import { TextField } from 'office-ui-fabric-react/lib/TextField';
 
 // import { app as appCss, section as sectionCss, column as columnCss } from './App.scss';
 import * as React from 'react';
@@ -24,7 +24,7 @@ export interface IHumansDialogProps {
   createHumanAction: () => Promise<IHuman>;
 }
 export class HumansDialog extends React.Component<IHumansDialogProps, IHumansDialogState> {
-  public HumansTextField: TextField;
+  // public HumansTextField: TextField;
 
   public onChangeHandlers: {
     [key: string]: ([]: React.FormEvent<HTMLElement>, isChecked: boolean) => void;

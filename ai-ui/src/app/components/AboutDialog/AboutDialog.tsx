@@ -1,5 +1,5 @@
 import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
-import { TextField } from 'office-ui-fabric-react/lib/TextField';
+// import { TextField } from 'office-ui-fabric-react/lib/TextField';
 
 import { Dialog } from '../Dialog';
 
@@ -13,7 +13,7 @@ export interface IAboutDialogProps {
   doneAction: () => void;
 }
 export class AboutDialog extends React.Component<IAboutDialogProps, IAboutDialogState> {
-  public AboutTextField: TextField;
+  // public AboutTextField: TextField;
 
   public dismiss = async (/*About?: IAbout*/) => {
     this.props.doneAction(/*About*/);

@@ -1,12 +1,14 @@
 html {
   position: relative;
+  overflow: hidden;
 }
 
 body {
   margin: 0 auto;
   padding: 0;
-  background-color: black;
+  background-color: white;
   font-family: sans-serif;
+  overflow: hidden;
 }
 
 html, body, #root {

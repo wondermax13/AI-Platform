@@ -1,11 +1,8 @@
 import { DefaultButton, PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
-import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { ScrollablePane } from 'office-ui-fabric-react/lib/ScrollablePane';
 import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
 import * as React from 'react';
-import injectSheet from 'react-jss';
-// import makeStylesheet from '../../utils/makeStylesheet';
 import { AboutDialog } from '../components/AboutDialog/AboutDialog';
 import { ArtificialsDialog } from '../components/ArtificialsDialog/ArtificialsDialog';
 import { Feed } from '../components/Feed/Feed';
@@ -15,6 +12,8 @@ import { ICommon } from '../models/Common';
 import { IArtificial, IArtificialModel } from './../models/Artificial';
 import { IHuman, IHumanModel } from './../models/Human';
 import { IQuestionModel } from './../models/Question';
+
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import aiProvider from '../providers/ai-v1';
 import settings from '../providers/settings';
@@ -41,24 +40,18 @@ export interface IChannel {
   default?: boolean;
 }
 
-initializeIcons(/* optional base url */);
-
 export interface IQAndAPageState extends ICommon {
   currentDialog: Dialog,
-  // aboutDialogIsOpen: boolean;
-  // newQuestionDialogIsOpen: boolean;
-  // humansDialogIsOpen: boolean;
-  // artificialsDialogIsOpen: boolean;
   recentlyAddedHuman?: IHumanModel;
   recentlyAddedArtificial?: IArtificialModel;
   mounted?: boolean;
 }
 
-export interface IQAndAPageProps {
-  initialQuestions: IQuestionModel[]
+export interface IQAndAPageProps extends RouteComponentProps<IQAndAPageProps> {
+  initialQuestions: IQuestionModel[],
 }
 
-export default class QAndPage extends React.Component<IQAndAPageProps, IQAndAPageState> {
+class QAndAPageBase extends React.PureComponent<IQAndAPageProps, IQAndAPageState> {
   private timeouts: number[] = [];
 
   constructor(props: IQAndAPageProps) {
@@ -97,6 +90,8 @@ export default class QAndPage extends React.Component<IQAndAPageProps, IQAndAPag
   public openNewQuestionDialog = () => this.setState({ currentDialog: Dialog.NewQuestion });
   public openHumansDialog = () => this.setState({ currentDialog: Dialog.Humans });
   public openArtificialsDialog = () => this.setState({ currentDialog: Dialog.Artificials });
+
+  public routeToScoreCards = () => this.props.history.push('/scorecards');
 
   public setInterval = (delay: number, action: () => void) => {
     this.timeouts.push(window.setInterval(action, delay));
@@ -150,10 +145,6 @@ export default class QAndPage extends React.Component<IQAndAPageProps, IQAndAPag
   public updateFeed = async (): Promise<void> => {
     const questions = await aiProvider.getFeed();
     this.setState({ questions });
-  }
-
-  public shouldComponentUpdate(nextProps: IQAndAPageProps, nextState: IQAndAPageState) {
-    return JSON.stringify(nextState) !== JSON.stringify(this.state);
   }
 
   public async createQuestion(question: string, channels: string[], individuals: string[]): Promise<IQuestionModel | undefined> {
@@ -234,7 +225,10 @@ export default class QAndPage extends React.Component<IQAndAPageProps, IQAndAPag
     return channel && channel.name || undefined;
   }
 
-  public StyleableComponent = (stylesheet: { classes: { tall: string } }, children: any) => {
+  //  public StyleableComponent = (stylesheet: { classes: { tall: string } }, children: any) => {
+
+  public render(): React.ReactNode {
+
     const defaultChannel = this.findDefault(this.state.channels);
 
     const isNewQuestionDialogOpen = this.isNewQuestionDialogOpen();
@@ -242,16 +236,16 @@ export default class QAndPage extends React.Component<IQAndAPageProps, IQAndAPag
     const isHumansDialogOpen = this.isHumansDialogOpen();
     const isAboutDialogOpen = this.isAboutDialogOpen();
 
-    return (<Fabric className={stylesheet.classes.tall}>
-      <ScrollablePane className={stylesheet.classes.tall}>
+    return (<Fabric style={styles.tall}>
+      <ScrollablePane style={styles.tall}>
         {this.state.mounted &&
           <Sticky stickyPosition={StickyPositionType.Both}>
             <div className="ms-Grid">
               <div className="ms-Grid-row">
                 <div className="ms-Grid-col ms-lg6 ms-lgOffset3 ms-md8 ms-mdOffset2 ms-sm12">
-                  <PrimaryButton style={{ width: '75%' }} onClick={this.openNewQuestionDialog}>Ask a Question</PrimaryButton>
-                  <DefaultButton style={{ width: '25%' }} onClick={this.openArtificialsDialog} >Artificials</DefaultButton>
-                  {/* <DefaultButton style={{ width: '25%', display: 'none' }} onClick={this.openHumansDialog} >Humans</DefaultButton> */}
+                  <PrimaryButton style={{ width: '50%' }} onClick={this.openNewQuestionDialog}>Ask a Question</PrimaryButton>
+                  <DefaultButton style={{ width: '50%' }} onClick={this.openArtificialsDialog} >Artificials</DefaultButton>
+                  {/* <DefaultButton style={{ width: '25%' }} onClick={this.routeToScoreCards} >ScoreCards</DefaultButton> */}
                 </div>
               </div>
             </div>
@@ -292,11 +286,7 @@ export default class QAndPage extends React.Component<IQAndAPageProps, IQAndAPag
       />
     </Fabric>);
   }
-
-  public render(): JSX.Element {
-
-    const StyledComp = injectSheet<{}, IQAndAPageState>(styles)(this.StyleableComponent);
-
-    return (<StyledComp />);
-  }
 }
+
+const QAndAPage = withRouter(QAndAPageBase);
+export { QAndAPage };

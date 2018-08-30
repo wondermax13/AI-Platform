@@ -1,7 +1,7 @@
 
 import { DefaultButton, PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
-import { TextField } from 'office-ui-fabric-react/lib/TextField';
+// import { TextField } from 'office-ui-fabric-react/lib/TextField';
 
 
 // import { app as appCss, section as sectionCss, column as columnCss } from './App.scss';
@@ -25,7 +25,7 @@ export interface IArtificialDialogProps {
   createArtificialAction: () => Promise<IArtificial>;
 }
 export class ArtificialsDialog extends React.Component<IArtificialDialogProps, IArtificialDialogState> {
-  public artificialTextField: TextField;
+  // public artificialTextField: TextField;
 
   public onChangeHandlers: {
     [key: string]: ([]: React.FormEvent<HTMLElement>, isChecked: boolean) => void;
