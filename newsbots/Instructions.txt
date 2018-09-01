@@ -1,0 +1,72 @@
+
+python -m pip install flask
+python -m pip install spacy
+python -m spacy download en
+python -m spacy download en_core_web_sm
+
+whizkid@DESKTOP-D1OM656 MINGW64 /d/AI_Comm/News_Bots
+$ /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python newspaper_spacy_1.py
+Traceback (most recent call last):
+  File "newspaper_spacy_1.py", line 1, in <module>
+    import spacy
+ModuleNotFoundError: No module named 'spacy'
+
+export PYTHONPATH="${PYTHONPATH}:/usr/local/lib/python2.7/site-packages:/usr/lib/python2.7/site-packages"
+C:\Users\whizkid\Miniconda3\Lib\site-packages
+
+/c/Users/whizkid/bin:/mingw64/bin:/usr/local/bin:/usr/bin:/bin:/mingw64/bin:/usr/bin:/c/Users/whizkid/bin:/c/ProgramData/Oracle/Java/javapath:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/System32/WindowsPowerShell/v1.0:/cmd:/c/Program Files (x86)/Yarn/bin:/c/ProgramData/chocolatey/bin:/c/Program Files/nodejs:/c/WINDOWS/System32/OpenSSH:/c/Users/whizkid/Miniconda3:/c/Users/whizkid/Miniconda3/Library/mingw-w64/bin:/c/Users/whizkid/Miniconda3/Library/usr/bin:/c/Users/whizkid/Miniconda3/Library/bin:/c/Users/whizkid/Miniconda3/Scripts:/c/Users/whizkid/AppData/Local/Microsoft/WindowsApps:/c/Users/whizkid/AppData/Local/Yarn/bin:/c/Users/whizkid/AppData/Roaming/npm:/c/Program Files/nodejs:/c/Users/whizkid/AppData/Local/Programs/Python/Python36:/c/Users/whizkid/AppData/Local/Programs/Python/Python36/Scripts:/c/Users/whizkid/AppData/Local/Programs/Python/Python36/Lib/site-packages:/usr/bin/vendor_perl:/usr/bin/core_perl
+
+
+
+$ echo $PATH | grep Miniconda
+/c/Users/whizkid/bin:/mingw64/bin:/usr/local/bin:/usr/bin:/bin:/mingw64/bin:/usr/bin:/c/Users/whizkid/bin:/c/ProgramData/Oracle/Java/javapath:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/System32/WindowsPowerShell/v1.0:/cmd:/c/Program Files (x86)/Yarn/bin:/c/ProgramData/chocolatey/bin:/c/Program Files/nodejs:/c/WINDOWS/System32/OpenSSH:/c/Users/whizkid/Miniconda3/Lib/site-packages:/c/Users/whizkid/Miniconda3/Library/mingw-w64/bin:/c/Users/whizkid/Miniconda3/Library/usr/bin:/c/Users/whizkid/Miniconda3/Library/bin:/c/Users/whizkid/Miniconda3/Scripts:/c/Users/whizkid/AppData/Local/Microsoft/WindowsApps:/c/Users/whizkid/AppData/Local/Yarn/bin:/c/Users/whizkid/AppData/Roaming/npm:/c/Program Files/nodejs:/c/Users/whizkid/AppData/Local/Programs/Python/Python36:/c/Users/whizkid/AppData/Local/Programs/Python/Python36/Scripts:/c/Users/whizkid/AppData/Local/Programs/Python/Python36/Lib/site-packages:/usr/bin/vendor_perl:/usr/bin/core_perl
+
+
+ 116  echo $PATH
+  117  echo $PATH
+  118  py
+  119  /c/Users/whizkid/AppData/Local/Programs/Python/Python36
+  120  /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python
+  121*
+  122  /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python newspaper_spacy_1.py
+  123  pip show spacy
+  124  /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python newspaper_spacy_1.py
+  125  /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python newspaper_spacy_1.py
+  126  /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python
+  127  /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python -m pip list
+  128  pip install -U spacy
+  129  pip spacy
+  130  pip show spacy
+  131  whereis python
+  132  sudo /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python newspaper_spacy_1.py
+  133  /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python newspaper_spacy_1.py
+  134  conda --help
+  135  conda --info spacy
+  136  conda -v spacy
+  137  conda list spacy
+  138  /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python newspaper_spacy_1.py -m spacy.en.download
+  139  /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python -m spacy.en.download
+  140  /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python -m spacy validate
+  141  conda -v spacy
+  142  conda list spacy
+  143  python -m spacy download en_core_web_sm
+  144  conda install Flask
+  145  conda list Flask
+  146  python -m Flask
+  147  /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python -m Flask
+  148  echo $PYTHONPATH
+  149  echo ${PYTHONPATH}
+  150  import spacy
+  151  echo $PATH
+  152  echo $PATH | grep Mini
+  153  pip install Flask
+  154  echo $PATH | grep mini
+  155  echo $PATH
+  156  ls
+  157  ls Pip_Install/
+  158  echo $PATH
+  159  path
+  160  echo $PATH
+  161  history
+
+
