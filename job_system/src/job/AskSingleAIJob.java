@@ -105,10 +105,6 @@ public class AskSingleAIJob extends GenericJob {
 
         if(ai_.pingAI()) {
 
-        	//ai_.sendPost();
-        	
-        	//ai_.askQuestion(question_);
-        	
         	CompletableFuture<String> futureForAICall 
         		= CompletableFuture.supplyAsync(() -> {
         			
@@ -135,7 +131,11 @@ public class AskSingleAIJob extends GenericJob {
     			this.getLogger().fine(" AskAI job - Acquiring lock: "+ this.toString());
     			jobProcessor_.lock.lock();
     			try {
-    				jobProcessor_.documentClient.updateQuestionWithAIAnswer(question_.text, ai_.id, new Date(), answer);
+    				jobProcessor_.documentClient.updateQuestionWithAIAnswer(
+    						question_.text,
+    						ai_.id,
+    						new Date(),
+    						answer);
     			}
     			finally {
     				

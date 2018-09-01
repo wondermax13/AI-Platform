@@ -5,6 +5,7 @@ public class ChildJobCompleteMessage extends GenericMessage {
     private long childJobId;
     private long parentJobId;
     private boolean childJobSuccess;
+    private long aiId;
     private Exception exception;
 
     /**

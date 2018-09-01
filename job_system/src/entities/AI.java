@@ -60,6 +60,24 @@ public class AI {
 			throw new IllegalStateException(e);
 		}
 	}
+	
+	public String askNews() {
+
+		String newsBotEndPoint = "http://127.0.0.1:5420/_status/latestdata";
+		try {
+			
+			String res = getJSON(newsBotEndPoint);
+			
+			JSONObject jsonResponse = new JSONObject(res);
+			
+			String output = jsonResponse.getString("output");
+		        
+			return output;//"Result of the asynchronous computation";
+		} catch (Exception e) {
+
+			throw new IllegalStateException(e);
+		}
+	}
 
 	/**
 	 * 
