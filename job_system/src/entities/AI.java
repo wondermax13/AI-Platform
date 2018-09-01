@@ -70,7 +70,7 @@ public class AI {
 			
 			JSONObject jsonResponse = new JSONObject(res);
 			
-			String output = jsonResponse.getString("output");
+			String output = jsonResponse.getString("stock");
 		        
 			return output;//"Result of the asynchronous computation";
 		} catch (Exception e) {
