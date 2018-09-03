@@ -93,4 +93,5 @@ export async function app(server: Application) {
       response.send({ error: ex.message || JSON.stringify(ex), note: "Reload in a few..." });
     }
   });
+  server.get('/*', Express.static(build));
 }
