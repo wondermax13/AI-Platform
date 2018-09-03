@@ -86,8 +86,8 @@ export class Feed extends React.Component<ICommon, {}> {
           <Persona
             size={PersonaSize.size32}
             styles={{ root: { gridArea: 'picon' } }}
-            // imageUrl='https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/persona-female.png'
-            imageInitials='A3'
+            imageUrl='https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/persona-female.png'
+            imageInitials='AL'
           />
           <div style={{ gridArea: 'pname' }} className='ms-font-s ms-fontWeight-bold'>
             <text className='ms-font-xs' style={{ float: 'right' }}>
