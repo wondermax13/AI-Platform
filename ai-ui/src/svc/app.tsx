@@ -23,11 +23,13 @@ import data from './manifest';
 import { getFeed } from './route/route-feed';
 
 const build = path.resolve(__dirname, './../../client');
+const wellknown = path.resolve(__dirname, './../../.well-known');
 const statics = path.resolve(build, 'static');
 const manifestFile = path.resolve(build, 'asset-manifest.json');
 
 export async function app(server: Application) {
 
+  server.get('/.well-known', Express.static(wellknown));
   server.use('/client', Express.static(build));
   server.use('/client/static', Express.static(statics));
   server.get('/scorecards', async (request: Request, response: Response) => {
