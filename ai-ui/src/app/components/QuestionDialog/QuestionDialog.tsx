@@ -145,20 +145,18 @@ export class QuestionDialog extends React.Component<IQuestionDialogProps, IQuest
         />
         {this.renderFooter()}
         <h2>Channels</h2>
-        <div className="ms-Grid">
-          <div className="ms-Grid-row">
-            {this.state.channelOptions.map((option: ITargetOption, index: number) =>
-              <div className="ms-Grid-col ms-lg2" key={'channel_' + index}>
-                <Checkbox
-                  key={`${option.category}_${option.key}`}
-                  label={option.text}
-                  value={option.key}
-                  checked={option.selected}
-                  onChange={option.onChangedHandler}
-                />
-              </div>
-            )}
-          </div>
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${this.state.channelOptions.length}, 1fr)` }}>
+          {this.state.channelOptions.map((option: ITargetOption, index: number) =>
+            <div key={'channel_' + index}>
+              <Checkbox
+                key={`${option.category}_${option.key}`}
+                label={option.text}
+                value={option.key}
+                checked={option.selected}
+                onChange={option.onChangedHandler}
+              />
+            </div>
+          )}
         </div>
         {/* <h2>Humans</h2>
         <div className="ms-Grid">
