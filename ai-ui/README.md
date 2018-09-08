@@ -1,5 +1,10 @@
 # AI2AI Quickstart
 
+## Deploy:
+
+setup git remote to a2hosting
+git push ai2ai2 master
+
 ## Dependencies
 
 `Make sure you have the latest "LTS" version of NodeJs installed from`
