@@ -1,16 +1,11 @@
 import { configureLoadStyles } from '@microsoft/load-themed-styles';
-    // const sheets = new SheetsRegistry()
     // Store registered styles in a variable used later for injection.
     let allStyles = '';
-
     // Push styles into variables for injecting later.
     configureLoadStyles((styles: string) => {
       allStyles += styles;
     });
 
-// import * as React from 'react';
-// import { renderToString } from 'react-dom/server';
-// import { App } from '../app/App';
 import { ITemplateProps, template } from './template';
 
 import * as path from 'path';
@@ -18,9 +13,9 @@ import * as path from 'path';
 import { Application, Request, Response } from 'express';
 import * as Express from 'express';
 import { IAppProps } from '../app/App/App';
-import { IScoreCards } from '../app/models/ScoreCard';
 import data from './manifest';
 import { getFeed } from './route/route-feed';
+import { getScoreCards } from './route/route-scorecards';
 
 const build = path.resolve(__dirname, './../../client');
 const wellknown = path.resolve(__dirname, './../../.well-known');
@@ -36,15 +31,10 @@ export async function app(server: Application) {
 
     try {
       const manifest = JSON.parse(await data(manifestFile)) as IManifest;
-      const scoreCards: IScoreCards = {
-        sources: [],
-        time: new Date(Date.now()),
-      }; // await getScoreCards();
+      const scoreCards = (await getScoreCards() || undefined);
 
       const initialState: IAppProps = {
-        // initialQuestions: feed,
         initialScoreCards: scoreCards,
-        server: false
       };
 
       // const appString = renderToString(<App {...initialState} {...{ server: true }} />);
@@ -52,7 +42,7 @@ export async function app(server: Application) {
       const mainCss = '/client/' + manifest["main.css"];
 
       const templateProps: ITemplateProps = {
-        body: 'Connecting to ScoreCards...',// appString,
+        body: '.',
         initialState: JSON.stringify(initialState),
         mainCss,
         mainJs,
@@ -74,7 +64,6 @@ export async function app(server: Application) {
 
       const initialState: IAppProps = {
         initialQuestions: feed,
-        server: false
       }
 
       // const appString = renderToString(<App {...initialState} {...{ server: true }} />);
@@ -82,7 +71,7 @@ export async function app(server: Application) {
       const mainCss = '/client/' + manifest["main.css"];
 
       const templateProps: ITemplateProps = {
-        body: 'Connecting to AI...',// appString,
+        body: '.',
         initialState: JSON.stringify(initialState),
         mainCss,
         mainJs,

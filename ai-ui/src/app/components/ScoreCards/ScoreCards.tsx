@@ -1,11 +1,9 @@
-import { DetailsList } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList';
-
 import * as React from 'react';
-
-import { IScoreCards, IScoreCard } from '../../models/ScoreCard';
+import { DetailsList } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList';
+import { IScoreCards, IScoreCard } from '../../models/ScoreCards';
 import { IColumn, CheckboxVisibility, IDetailsHeaderProps } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList.types';
 import { Icon } from 'office-ui-fabric-react/lib/components/Icon/Icon';
-import { SelectionMode/*, Selection */ } from 'office-ui-fabric-react/lib/utilities/selection';
+import { SelectionMode, Selection, IObjectWithKey } from 'office-ui-fabric-react/lib/utilities/selection';
 import { ScrollablePane, Sticky, StickyPositionType } from 'office-ui-fabric-react';
 export interface IScoreCardsProps {
   selected?: IScoreCard;
@@ -20,10 +18,10 @@ export class ScoreCards extends React.PureComponent<IScoreCardsProps, {}> {
       key: 'NewsSource',
       name: 'News Source',
       fieldName: 'name',
-      minWidth: 100,
+      minWidth: 40,
       isResizable: true,
       data: 'string',
-      isPadded: true,
+      isPadded: false,
     },
     {
       key: 'bottomicon',
@@ -42,7 +40,7 @@ export class ScoreCards extends React.PureComponent<IScoreCardsProps, {}> {
       key: 'bottomscore',
       name: 'Low Scores',
       ariaLabel: 'Bottom Stock Pick',
-      minWidth: 100,
+      minWidth: 60,
       fieldName: 'bottom',
       isPadded: false,
       isCollapsable: true,
@@ -74,7 +72,7 @@ export class ScoreCards extends React.PureComponent<IScoreCardsProps, {}> {
       ariaLabel: 'Top Stock Pick',
       isPadded: false,
       fieldName: 'top',
-      minWidth: 100,
+      minWidth: 60,
       isCollapsable: false,
       onRender: (item: IScoreCard) => {
         return (
@@ -87,6 +85,7 @@ export class ScoreCards extends React.PureComponent<IScoreCardsProps, {}> {
   ];
 
   public domRef = React.createRef<HTMLDivElement>();
+  private selector: Selection = new Selection();
 
   public onActiveItemChanged = (item: IScoreCard) => {
     if (this.props.onOpenScoreCard) {
@@ -102,17 +101,63 @@ export class ScoreCards extends React.PureComponent<IScoreCardsProps, {}> {
     );
   }
 
+  public getCurrentlySelectedKey = (): string | number | undefined => {
+    const selections = this.selector.getSelection();
+    return selections.length && selections[0].key || undefined;
+  }
+
+  public currentItems = (): IScoreCard[] & IObjectWithKey[] => {
+    return this.props.scoreCards.sources.map((card: IScoreCard) => {
+      return {
+        key: card.name,
+        ...card,
+      };
+    });
+  }
+
+  public getItemsKey = (items: Array<{ name?: string, key?: string | number }>) => {
+    return `${this.props.scoreCards.time}:${items.map(item => item.key || item.name || 'n/a').join(',')}`;
+  }
+
+  public currentSelector = (): Selection => {
+    const items = this.currentItems();
+    const oldItems = this.selector.getItems();
+    const thisKey = this.getItemsKey(items);
+    const oldKey = this.getItemsKey(oldItems);
+    if (thisKey !== oldKey) {
+      this.selector.setItems(items, true);
+      console.log('new', thisKey, 'old', oldKey);
+    }
+
+    return this.selector;
+  }
+
+  public componentDidMount(): void {
+    this.setDefaultSelectedIfNeeded();
+  }
+  public componentDidUpdate(): void {
+    this.setDefaultSelectedIfNeeded();
+  }
+
+  public setDefaultSelectedIfNeeded = (): void => {
+    const currentKey = this.getCurrentlySelectedKey();
+    const currentScoreCardKey = this.props.selected && this.props.selected.name || undefined;
+    if (!currentKey && currentScoreCardKey) {
+      const items = this.currentItems();
+      const index = items.findIndex(item => item.name === currentScoreCardKey);
+      this.selector.setIndexSelected(index, true, true);
+      console.log('set index seleectedxx');
+    }
+  }
+
   public render(): React.ReactNode {
-    // const selection: Selection = new Selection({ selectionMode: SelectionMode.single });
-    // if (this.props.selected) {
-    //   const index = this.props.scoreCards.sources.findIndex((item: IScoreCard) => this.props.selected === item);
-    //   selection.setIndexSelected(index, true, true);
-    // }
+    const selector = this.currentSelector();
 
     return (
       <div ref={this.domRef}>
         <ScrollablePane >
           <DetailsList
+            selection={selector}
             selectionMode={SelectionMode.single}
             items={this.props.scoreCards.sources}
             columns={this.columns}
@@ -121,6 +166,7 @@ export class ScoreCards extends React.PureComponent<IScoreCardsProps, {}> {
             checkboxVisibility={CheckboxVisibility.hidden}
             styles={{ root: { color: 'white', backgroundColor: 'rgb(0, 120, 212)' } }}
             data-is-focusable='true'
+
             onActiveItemChanged={this.onActiveItemChanged}
             onRenderDetailsHeader={this.renderHeader}
           />

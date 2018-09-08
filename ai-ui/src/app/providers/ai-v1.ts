@@ -1,8 +1,14 @@
 import { IArtificialModel } from '../models/Artificial';
 import { IQuestionModel } from '../models/Question';
 import { call } from './api';
+import { IScoreCards } from '../models/ScoreCards';
 
-// tslint:disable-next-line
+export async function getScoreCards(): Promise<IScoreCards> {
+  const response = await call('/api/v1/scorecards');
+  const scorecards: IScoreCards = await response.json();
+  return scorecards;
+}
+
 export async function postQuestion(question: string, channels: string[] = ['#Main']): Promise<Response> {
   // POST the token to your backend server from where you can retrieve it to send push notifications.
   return call('/api/v1/question/ask', {
@@ -52,4 +58,5 @@ export async function getFeed(channel: string = '#main'): Promise<IQuestionModel
 export default {
   getFeed,
   postQuestion,
+  getScoreCards,
 };

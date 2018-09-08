@@ -6,6 +6,7 @@ import addAiRoute from './route/route-ai';
 import addAnswerRoute from './route/route-answer';
 import addFeedRoute from './route/route-feed';
 import addQuestionRoute from './route/route-question';
+import addScoreCardsRoute from './route/route-scorecards';
 
 import * as cors from 'cors';
 import * as mongoose from 'mongoose';
@@ -53,6 +54,7 @@ export async function services(server: Application) {
     addQuestionRoute(router);
     addAnswerRoute(router);
     addFeedRoute(router);
+    addScoreCardsRoute(router);
 
   } catch (ex) {
     console.log('error occurred: ', ex.message || ex);
@@ -61,7 +63,6 @@ export async function services(server: Application) {
       response.status(500).send({ failed: 'cannot continue', error: ex && ex.message || ex });
       next(ex);
     });
-    // server.all('*', (request: Request, response: Response, next: (err: string) => void) => next(ex));
   }
 }
 

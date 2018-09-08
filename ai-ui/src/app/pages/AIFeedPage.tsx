@@ -1,31 +1,19 @@
-import { DefaultButton, PrimaryButton } from 'office-ui-fabric-react/lib/Button';
-import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
-import { ScrollablePane } from 'office-ui-fabric-react/lib/ScrollablePane';
-import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
+import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 import * as React from 'react';
-import { AboutDialog } from '../components/AboutDialog/AboutDialog';
 import { ArtificialsDialog } from '../components/ArtificialsDialog/ArtificialsDialog';
 import { Feed } from '../components/Feed/Feed';
 import { HumansDialog } from '../components/HumansDialog/HumansDialog';
 import { QuestionDialog } from '../components/QuestionDialog/QuestionDialog';
 import { ICommon } from '../models/Common';
-import { IArtificial, IArtificialModel } from './../models/Artificial';
-import { IHuman, IHumanModel } from './../models/Human';
-import { IQuestionModel } from './../models/Question';
+import { IArtificial, IArtificialModel } from '../models/Artificial';
+import { IHuman, IHumanModel } from '../models/Human';
+import { IQuestionModel } from '../models/Question';
 
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import aiProvider from '../providers/ai-v1';
 import settings from '../providers/settings';
 
-const styles = {
-  tall: {
-    height: '100%',
-    position: 'relative',
-  }
-} as {
-    tall: React.CSSProperties
-  };
 
 enum Dialog {
   None,
@@ -40,21 +28,21 @@ export interface IChannel {
   default?: boolean;
 }
 
-export interface IQAndAPageState extends ICommon {
+export interface IAIFeedPageState extends ICommon {
   currentDialog: Dialog,
   recentlyAddedHuman?: IHumanModel;
   recentlyAddedArtificial?: IArtificialModel;
   mounted?: boolean;
 }
 
-export interface IQAndAPageProps extends RouteComponentProps<IQAndAPageProps> {
+export interface IAIFeedPageProps extends RouteComponentProps<IAIFeedPageProps> {
   initialQuestions: IQuestionModel[],
 }
 
-class QAndAPageBase extends React.PureComponent<IQAndAPageProps, IQAndAPageState> {
+class AIFeedPageBase extends React.PureComponent<IAIFeedPageProps, IAIFeedPageState> {
   private timeouts: number[] = [];
 
-  constructor(props: IQAndAPageProps) {
+  constructor(props: IAIFeedPageProps) {
     super(props);
 
     const questions: IQuestionModel[] = props.initialQuestions || [];
@@ -225,8 +213,6 @@ class QAndAPageBase extends React.PureComponent<IQAndAPageProps, IQAndAPageState
     return channel && channel.name || undefined;
   }
 
-  //  public StyleableComponent = (stylesheet: { classes: { tall: string } }, children: any) => {
-
   public render(): React.ReactNode {
 
     const defaultChannel = this.findDefault(this.state.channels);
@@ -234,59 +220,34 @@ class QAndAPageBase extends React.PureComponent<IQAndAPageProps, IQAndAPageState
     const isNewQuestionDialogOpen = this.isNewQuestionDialogOpen();
     const isArtificialsDialogOpen = this.isArtificialsDialogOpen();
     const isHumansDialogOpen = this.isHumansDialogOpen();
-    const isAboutDialogOpen = this.isAboutDialogOpen();
 
-    return (<Fabric style={styles.tall}>
-      <ScrollablePane style={styles.tall}>
-        {this.state.mounted &&
-          <Sticky stickyPosition={StickyPositionType.Both}>
-            <div className="ms-Grid">
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg6 ms-lgOffset3 ms-md8 ms-mdOffset2 ms-sm12">
-                  <PrimaryButton style={{ width: '50%' }} onClick={this.openNewQuestionDialog}>Ask a Question</PrimaryButton>
-                  <DefaultButton style={{ width: '50%' }} onClick={this.openArtificialsDialog} >Artificials</DefaultButton>
-                  {/* <DefaultButton style={{ width: '25%' }} onClick={this.routeToScoreCards} >ScoreCards</DefaultButton> */}
-                </div>
-              </div>
-            </div>
-          </Sticky>}
-        <div className="ms-Grid">
-          <div className="ms-Grid-row">
-            <div className="ms-Grid-col ms-lg6 ms-lgOffset3 ms-md8 ms-mdOffset2 ms-sm12 feed">
-              <Feed {...this.state} />
-            </div>
-          </div>
-          <div className="ms-Grid-row">
-            <div className="ms-Grid-col ms-lg6 ms-lgOffset3 ms-md8 ms-mdOffset2 ms-sm12">
-              <PrimaryButton style={{ width: '100%' }} onClick={this.openAboutDialog}>About</PrimaryButton>
-            </div>
-          </div>
+    return (
+      <div style={{ display: 'grid', gridTemplateRows: 'min-content auto', height: '100%' }}>
+        <PrimaryButton style={{ width: '100%' }} onClick={this.openNewQuestionDialog}>Ask a Question</PrimaryButton>
+        <div style={{ overflow: 'auto', paddingBottom: 20 }}>
+          <Feed {...this.state} />
         </div>
-      </ScrollablePane>
-      <QuestionDialog
-        open={isNewQuestionDialogOpen}
-        defaultChannel={defaultChannel}
-        createQuestionAction={this.createQuestion}
-        doneAction={this.closeNewQuestionDialog}
-        {...this.state}
-      />
-      <HumansDialog
-        open={isHumansDialogOpen}
-        createHumanAction={this.createHuman}
-        doneAction={this.closeHumansDialog}
-      />
-      <ArtificialsDialog
-        open={isArtificialsDialogOpen}
-        createArtificialAction={this.createArtificial}
-        doneAction={this.closeArtificialsDialog}
-      />
-      <AboutDialog
-        open={isAboutDialogOpen}
-        doneAction={this.closeAboutDialog}
-      />
-    </Fabric>);
+        <QuestionDialog
+          open={isNewQuestionDialogOpen}
+          defaultChannel={defaultChannel}
+          createQuestionAction={this.createQuestion}
+          doneAction={this.closeNewQuestionDialog}
+          {...this.state}
+        />
+        <HumansDialog
+          open={isHumansDialogOpen}
+          createHumanAction={this.createHuman}
+          doneAction={this.closeHumansDialog}
+        />
+        <ArtificialsDialog
+          open={isArtificialsDialogOpen}
+          createArtificialAction={this.createArtificial}
+          doneAction={this.closeArtificialsDialog}
+        />
+      </div>
+    );
   }
 }
 
-const QAndAPage = withRouter(QAndAPageBase);
-export { QAndAPage };
+const AIFeedPage = withRouter(AIFeedPageBase);
+export { AIFeedPage };

@@ -107,10 +107,6 @@ export class Feed extends React.Component<ICommon, {}> {
   }
 
   public render(): React.ReactNode {
-    return (
-      <div style={{ boxShadow: '#333 1px -1px 67px' }}>
-        {this.props.questions.slice(0, 15).map(this.renderQuestion)}
-      </div>
-    )
+    return this.props.questions.slice(0, 15).map(this.renderQuestion);
   }
 }

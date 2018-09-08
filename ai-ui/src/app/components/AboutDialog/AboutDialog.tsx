@@ -23,11 +23,11 @@ export class AboutDialog extends React.Component<IAboutDialogProps, IAboutDialog
     const margin = { margin: '5px' };
     return (
       <Dialog headerText={'About'} {...this.props} >
-        <div className="ms-textAlignCenter">
+        <div className="ms-textAlignCenter" style={{ height: '100%', alignSelf: 'center' }}>
 
-          <h3><a href="/client/privacy.html" target="_new">Privacy Policy</a></h3>
+          <h3 className='ms-font-l'><a href="/client/privacy.html" target="_new">Privacy Policy</a></h3>
 
-          <h3><a href="/client/attributions.html" target="_new">Attributions</a></h3>
+          <h3 className='ms-font-l'><a href="/client/attributions.html" target="_new">Attributions</a></h3>
 
           <PrimaryButton onClick={this.dismiss} style={margin}>Back</PrimaryButton>
         </div>
