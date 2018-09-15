@@ -6,7 +6,7 @@ describe('<App />', () => {
   it('renders', () => {
 
     const component = renderer.create(
-      <App initialQuestions={[]} />
+      <App questions={[]} />
     );
 
     const tree = component.toJSON();

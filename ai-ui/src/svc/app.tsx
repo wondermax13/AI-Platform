@@ -1,26 +1,38 @@
 import { configureLoadStyles } from '@microsoft/load-themed-styles';
-    // Store registered styles in a variable used later for injection.
-    let allStyles = '';
-    // Push styles into variables for injecting later.
-    configureLoadStyles((styles: string) => {
-      allStyles += styles;
-    });
-
-import { ITemplateProps, template } from './template';
-
-import * as path from 'path';
-
-import { Application, Request, Response } from 'express';
 import * as Express from 'express';
+import { Application, Request, Response } from 'express';
+import * as path from 'path';
 import { IAppProps } from '../app/App/App';
 import data from './manifest';
+import { getAis } from './route/route-ai';
 import { getFeed } from './route/route-feed';
 import { getScoreCards } from './route/route-scorecards';
+import { ITemplateProps, template } from './template';
+
+// Store registered styles in a variable used later for injection.
+let allStyles = '';
+// Push styles into variables for injecting later.
+configureLoadStyles((styles: string) => {
+  allStyles += styles;
+});
 
 const build = path.resolve(__dirname, './../../client');
 const wellknown = path.resolve(__dirname, './../../.well-known');
 const statics = path.resolve(build, 'static');
 const manifestFile = path.resolve(build, 'asset-manifest.json');
+
+export async function getInitialState(): Promise<IAppProps> {
+  const scoreCards = (await getScoreCards() || undefined);
+  const questions = (await getFeed('#main') || undefined);
+  const ais = (await getAis() || undefined);
+
+  const initialState: IAppProps = {
+    scoreCards,
+    questions,
+    ais,
+  }
+  return initialState;
+}
 
 export async function app(server: Application) {
 
@@ -31,11 +43,7 @@ export async function app(server: Application) {
 
     try {
       const manifest = JSON.parse(await data(manifestFile)) as IManifest;
-      const scoreCards = (await getScoreCards() || undefined);
-
-      const initialState: IAppProps = {
-        initialScoreCards: scoreCards,
-      };
+      const initialState = await getInitialState();
 
       // const appString = renderToString(<App {...initialState} {...{ server: true }} />);
       const mainJs = '/client/' + manifest["main.js"];
@@ -60,11 +68,7 @@ export async function app(server: Application) {
 
     try {
       const manifest = JSON.parse(await data(manifestFile)) as IManifest;
-      const feed = await getFeed('#main');
-
-      const initialState: IAppProps = {
-        initialQuestions: feed,
-      }
+      const initialState = await getInitialState();
 
       // const appString = renderToString(<App {...initialState} {...{ server: true }} />);
       const mainJs = '/client/' + manifest["main.js"];

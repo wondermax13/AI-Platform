@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { DetailsList } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList';
-import { IScoreCards, IScoreCard } from '../../models/ScoreCards';
-import { IColumn, CheckboxVisibility, IDetailsHeaderProps } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList.types';
-import { Icon } from 'office-ui-fabric-react/lib/components/Icon/Icon';
-import { SelectionMode, Selection, IObjectWithKey } from 'office-ui-fabric-react/lib/utilities/selection';
 import { ScrollablePane, Sticky, StickyPositionType } from 'office-ui-fabric-react';
+import { DetailsList } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList';
+import { CheckboxVisibility, IColumn, IDetailsHeaderProps } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList.types';
+import { Icon } from 'office-ui-fabric-react/lib/components/Icon/Icon';
+import { IObjectWithKey, Selection, SelectionMode } from 'office-ui-fabric-react/lib/utilities/selection';
+import * as React from 'react';
+import { IScoreCard, IScoreCards } from '../../models/ScoreCards';
 export interface IScoreCardsProps {
   selected?: IScoreCard;
   scoreCards: IScoreCards;
@@ -142,11 +142,10 @@ export class ScoreCards extends React.PureComponent<IScoreCardsProps, {}> {
   public setDefaultSelectedIfNeeded = (): void => {
     const currentKey = this.getCurrentlySelectedKey();
     const currentScoreCardKey = this.props.selected && this.props.selected.name || undefined;
-    if (!currentKey && currentScoreCardKey) {
+    if (currentScoreCardKey !== currentKey) {
       const items = this.currentItems();
       const index = items.findIndex(item => item.name === currentScoreCardKey);
-      this.selector.setIndexSelected(index, true, true);
-      console.log('set index seleectedxx');
+      this.selector.setIndexSelected(index, true, false);
     }
   }
 

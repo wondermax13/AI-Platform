@@ -9,7 +9,7 @@ export async function getFeed(channel: string) {
     .exec();
 }
 
-export default async function routeFeed(router: Router) {
+export default function routeFeed(router: Router) {
   router.param('channel', (req, res, next, channel) => {
     req.params.channel = `#${channel}`;
     console.log(`loaded param: ${channel}`);

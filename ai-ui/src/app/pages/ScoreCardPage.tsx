@@ -1,9 +1,9 @@
+import { Selection } from 'office-ui-fabric-react/lib/utilities/selection';
 import * as React from 'react';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { ScoreCardDialog } from '../components/ScoreCards/ScoreCardDialog';
 import { ScoreCards } from '../components/ScoreCards/ScoreCards';
 import { IScoreCard, IScoreCards } from '../models/ScoreCards';
-import { Selection } from 'office-ui-fabric-react/lib/utilities/selection';
-import { ScoreCardDialog } from '../components/ScoreCards/ScoreCardDialog';
-import { RouteComponentProps, withRouter } from 'react-router';
 import aiProvider from '../providers/ai-v1';
 
 enum Dialog {
@@ -23,7 +23,7 @@ export interface IScoreCardPageState {
 const selection = new Selection();
 
 export interface IScoreCardPageProps extends RouteComponentProps<IScoreCardPageProps> {
-  initialScoreCards?: IScoreCards;
+  scoreCards?: IScoreCards;
 }
 
 class ScoreCardPageBase extends React.PureComponent<IScoreCardPageProps, IScoreCardPageState> {
@@ -52,9 +52,8 @@ class ScoreCardPageBase extends React.PureComponent<IScoreCardPageProps, IScoreC
   };
 
   public currentScoreCards = () => {
-    return this.state.scoreCards || this.props.initialScoreCards || {
+    return this.state.scoreCards || this.props.scoreCards || {
       sources: [],
-      time: new Date(),
     };
   }
 
@@ -71,8 +70,8 @@ class ScoreCardPageBase extends React.PureComponent<IScoreCardPageProps, IScoreC
       this.setState({
         error: ex.message,
         scoreCards: {
+          ...this.state.scoreCards,
           sources: [],
-          time: new Date(),
         }
       })
     }
@@ -125,3 +124,4 @@ class ScoreCardPageBase extends React.PureComponent<IScoreCardPageProps, IScoreC
 
 const ScoreCardPage = withRouter(ScoreCardPageBase);
 export { ScoreCardPage };
+

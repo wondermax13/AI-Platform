@@ -1,19 +1,16 @@
 import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 import * as React from 'react';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { ArtificialsDialog } from '../components/ArtificialsDialog/ArtificialsDialog';
 import { Feed } from '../components/Feed/Feed';
 import { HumansDialog } from '../components/HumansDialog/HumansDialog';
 import { QuestionDialog } from '../components/QuestionDialog/QuestionDialog';
-import { ICommon } from '../models/Common';
 import { IArtificial, IArtificialModel } from '../models/Artificial';
+import { ICommon } from '../models/Common';
 import { IHuman, IHumanModel } from '../models/Human';
 import { IQuestionModel } from '../models/Question';
-
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-
 import aiProvider from '../providers/ai-v1';
 import settings from '../providers/settings';
-
 
 enum Dialog {
   None,
@@ -36,7 +33,8 @@ export interface IAIFeedPageState extends ICommon {
 }
 
 export interface IAIFeedPageProps extends RouteComponentProps<IAIFeedPageProps> {
-  initialQuestions: IQuestionModel[],
+  questions?: IQuestionModel[],
+  ais?: IArtificialModel[],
 }
 
 class AIFeedPageBase extends React.PureComponent<IAIFeedPageProps, IAIFeedPageState> {
@@ -45,14 +43,13 @@ class AIFeedPageBase extends React.PureComponent<IAIFeedPageProps, IAIFeedPageSt
   constructor(props: IAIFeedPageProps) {
     super(props);
 
-    const questions: IQuestionModel[] = props.initialQuestions || [];
-
     this.state = {
       ai: settings.ai,
+      ais: [],
       channels: settings.channels,
       currentDialog: Dialog.None,
       humans: settings.humans,
-      questions,
+      questions: [],
       userId: '5aae56b8f36d284c92150e9f',
     };
 
@@ -131,8 +128,17 @@ class AIFeedPageBase extends React.PureComponent<IAIFeedPageProps, IAIFeedPageSt
   }
 
   public updateFeed = async (): Promise<void> => {
-    const questions = await aiProvider.getFeed();
-    this.setState({ questions });
+    const ais = this.state.ais || this.props.ais;
+    const updateAis = !ais || ais.length < 1;
+
+    const aisPromise = updateAis ? aiProvider.getAis() : Promise.resolve(ais || []);
+    const questionsPromise = aiProvider.getFeed(undefined, ais);
+
+    const results = await Promise.all([aisPromise, questionsPromise]);
+    this.setState({
+      ais: results[0],
+      questions: results[1],
+    });
   }
 
   public async createQuestion(question: string, channels: string[], individuals: string[]): Promise<IQuestionModel | undefined> {
@@ -225,7 +231,7 @@ class AIFeedPageBase extends React.PureComponent<IAIFeedPageProps, IAIFeedPageSt
       <div style={{ display: 'grid', gridTemplateRows: 'min-content auto', height: '100%' }}>
         <PrimaryButton style={{ width: '100%' }} onClick={this.openNewQuestionDialog}>Ask a Question</PrimaryButton>
         <div style={{ overflow: 'auto', paddingBottom: 20 }}>
-          <Feed {...this.state} />
+          <Feed {...this.state} {...this.props} />
         </div>
         <QuestionDialog
           open={isNewQuestionDialogOpen}

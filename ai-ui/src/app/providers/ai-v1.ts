@@ -1,7 +1,7 @@
 import { IArtificialModel } from '../models/Artificial';
 import { IQuestionModel } from '../models/Question';
-import { call } from './api';
 import { IScoreCards } from '../models/ScoreCards';
+import { call } from './api';
 
 export async function getScoreCards(): Promise<IScoreCards> {
   const response = await call('/api/v1/scorecards');
@@ -10,7 +10,6 @@ export async function getScoreCards(): Promise<IScoreCards> {
 }
 
 export async function postQuestion(question: string, channels: string[] = ['#Main']): Promise<Response> {
-  // POST the token to your backend server from where you can retrieve it to send push notifications.
   return call('/api/v1/question/ask', {
     channels,
     question,
@@ -28,11 +27,8 @@ export async function getAis(): Promise<IArtificialModel[]> {
   }
 }
 
-export async function getFeed(channel: string = '#main'): Promise<IQuestionModel[]> {
-  // POST the token to your backend server from where you can retrieve it to send push notifications.
+export async function getFeed(channel: string = '#main', knownAis: IArtificialModel[]): Promise<IQuestionModel[]> {
   try {
-    const ais = await getAis();
-
     const channelKey = channel.replace('#', '');
     const response = await call(`/api/v1/feed/channel/${channelKey}`);
     if (!response.ok) {
@@ -41,13 +37,6 @@ export async function getFeed(channel: string = '#main'): Promise<IQuestionModel
       throw new Error(`${response.statusText} (2)`);
     }
     const questions: IQuestionModel[] = await response.json();
-    questions.forEach(q => {
-      if (q.answers) {
-        q.answers.forEach(a => {
-          a.ai = ais.find(ai => ai.id === a.aiId);
-        });
-      }
-    })
     return questions;
   } catch (ex) {
     console.error(ex.message || ex);
@@ -56,6 +45,7 @@ export async function getFeed(channel: string = '#main'): Promise<IQuestionModel
 }
 
 export default {
+  getAis,
   getFeed,
   postQuestion,
   getScoreCards,

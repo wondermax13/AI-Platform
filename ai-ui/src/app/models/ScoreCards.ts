@@ -18,7 +18,7 @@ export interface IScoreCard {
 }
 
 export interface IScoreCards {
-  time: Date;
+  time?: Date;
   sources: IScoreCard[];
 }
 

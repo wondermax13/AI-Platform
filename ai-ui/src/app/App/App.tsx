@@ -1,16 +1,17 @@
+import { Fabric } from 'office-ui-fabric-react/lib/components/Fabric/Fabric';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import * as React from 'react';
+import { IArtificialModel } from '../models/Artificial';
 import { IQuestionModel } from '../models/Question';
 import { IScoreCards } from '../models/ScoreCards';
-
 import { Routes } from './Routes';
-import { Fabric } from 'office-ui-fabric-react/lib/components/Fabric/Fabric';
 
 initializeIcons(/* optional base url */);
 
 export interface IAppProps {
-  initialQuestions?: IQuestionModel[];
-  initialScoreCards?: IScoreCards;
+  ais?: IArtificialModel[];
+  questions?: IQuestionModel[];
+  scoreCards?: IScoreCards;
 }
 
 export default class App extends React.Component<IAppProps, {}> {

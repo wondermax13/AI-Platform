@@ -1,15 +1,12 @@
-import * as React from 'react';
-import { AIFeedPage } from '../pages/AIFeedPage';
-import { History } from './History';
-
 import { Pivot } from 'office-ui-fabric-react/lib/components/Pivot/Pivot';
 import { PivotItem } from 'office-ui-fabric-react/lib/components/Pivot/PivotItem';
-
-import { Route, Router } from 'react-router';
-import { IAppProps } from './App';
-
-import { ScoreCardPage } from '../pages/ScoreCardPage';
 import { IPivotItemProps } from 'office-ui-fabric-react/lib/components/Pivot/PivotItem.types';
+import * as React from 'react';
+import { Route, Router } from 'react-router';
+import { AIFeedPage } from '../pages/AIFeedPage';
+import { ScoreCardPage } from '../pages/ScoreCardPage';
+import { IAppProps } from './App';
+import { History } from './History';
 
 export const AppRouter = { history: History.current };
 
@@ -48,15 +45,14 @@ export class Routes extends React.PureComponent<IAppProps> {
           headerText="Social AI"
           style={style}
         >
-          <AIFeedPage initialQuestions={this.props.initialQuestions || []} />
-
+          <AIFeedPage questions={this.props.questions} ais={this.props.ais} />
         </PivotItem>
 
         <PivotItem
           headerText="Financial AI"
           style={style}
         >
-          <ScoreCardPage initialScoreCards={this.props.initialScoreCards} />
+          <ScoreCardPage scoreCards={this.props.scoreCards} />
         </PivotItem>
 
         <PivotItem
@@ -78,5 +74,4 @@ export class Routes extends React.PureComponent<IAppProps> {
   public renderScoreCardPage = (): React.ReactNode => {
     return this.renderMenu(1);
   }
-
 }

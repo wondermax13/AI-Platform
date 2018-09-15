@@ -1,11 +1,7 @@
-import {
-  Persona,
-  PersonaSize
-} from 'office-ui-fabric-react';
+import { Persona, PersonaSize, Shimmer } from 'office-ui-fabric-react';
 import * as React from 'react';
 import { ICommon } from '../../models/Common';
 import { IAnswer, IQuestionModel } from '../../models/Question';
-import { avatarByCyclingIndex } from '../../providers/avatars';
 
 const personaGrid: React.CSSProperties = {
   display: 'grid',
@@ -18,17 +14,6 @@ const personaGrid: React.CSSProperties = {
   marginTop: 10,
   marginBottom: 10,
 };
-
-// const rightPersonaGrid: React.CSSProperties = {
-//   ...personaGrid,
-//   gridTemplateAreas: `
-//     'pname . picon'
-//     'ptext . picon'
-//   `,
-//   gridTemplateColumns: 'auto 10px 40px',
-//   gridTemplateRows: 'min-content min-content',
-//   textAlign: 'right',
-// }
 
 export class Feed extends React.Component<ICommon, {}> {
   constructor(props: ICommon) {
@@ -48,20 +33,47 @@ export class Feed extends React.Component<ICommon, {}> {
     console.log(arguments);
   }
 
-  public renderAnswer(answer: IAnswer, index: number) {
+  public renderAnswerShimmer() {
+    const name = <Shimmer width={100} />;
+    const answer = <Shimmer width={200} />;
+    const persona = (
+      <Persona
+        styles={{ root: { gridArea: 'picon' } }}
+        coinProps={{ style: { backgroundColor: 'black' } }}
+        size={PersonaSize.size32}
+        imageUrl={undefined}
+        initialsColor='#efefef'
+        imageInitials=' '
+      />
+    );
     return (
       <div style={personaGrid}>
-        <Persona
-          styles={{ root: { gridArea: 'picon' } }}
-          size={PersonaSize.size32}
-          // imageUrl='https://static2.sharepointonline.com/files/fabric/office-ui-fabric-react-assets/persona-female.png'
-          imageUrl={answer.ai && answer.ai.avatar && `client/avatars/${answer.ai.avatar}` || avatarByCyclingIndex(index)}
-          imageInitials='A3'
-        />
-        <text style={{ gridArea: 'pname' }} className='ms-font-xs  ms-fontWeight-bold'>{answer.ai && answer.ai.name || answer.aiId}</text>
-        <text style={{ gridArea: 'ptext' }} className='ms-font-s'>
-          {answer.answer}
-        </text>
+        {persona}
+        <text style={{ gridArea: 'pname', marginBottom: 10 }} className='ms-font-xs  ms-fontWeight-bold'>{name}</text>
+        <text style={{ gridArea: 'ptext' }} className='ms-font-s'>{answer}</text>
+      </div>
+    );
+  }
+
+  public renderAnswer(answer: IAnswer, index: number) {
+    const artificial = this.props.ais.find(ai => ai.id === answer.aiId);
+    const name = artificial && artificial.name || <Shimmer width={75} />;
+    const avatar = artificial && artificial.avatar && `client/avatars/${artificial.avatar}` || undefined;
+    const persona = (
+      <Persona
+        styles={{ root: { gridArea: 'picon' } }}
+        coinProps={{ style: { backgroundColor: 'black' } }}
+        size={PersonaSize.size32}
+        imageUrl={avatar}
+        initialsColor='#efefef'
+        imageInitials=' '
+      />
+    );
+    return (
+      <div style={personaGrid}>
+        {persona}
+        <text style={{ gridArea: 'pname' }} className='ms-font-xs  ms-fontWeight-bold'>{name}</text>
+        <text style={{ gridArea: 'ptext' }} className='ms-font-s'>{answer.answer}</text>
       </div>
     )
   }
@@ -78,7 +90,7 @@ export class Feed extends React.Component<ICommon, {}> {
     // };
 
     const answerItems = item.answers && item.answers.slice(0, 10) || [];
-    const answers = answerItems.map(this.renderAnswer);
+    const answers = answerItems.length > 0 ? answerItems.map(this.renderAnswer) : this.renderAnswerShimmer();
 
     return (
       <div key={index} style={{ borderBottom: '1pt solid #eee', padding: 10 }}>
