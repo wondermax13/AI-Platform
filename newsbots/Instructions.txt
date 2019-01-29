@@ -1,8 +1,20 @@
+Heroku CLI: https://devcenter.heroku.com/articles/heroku-cli
+
+Clone Heroku Python app:
+heroku git:clone -a boiling-tundra-26669
+
+Commit changes:
+git commit -a
+git push heroku master
+
 
 python -m pip install flask
 python -m pip install spacy
 python -m spacy download en
 python -m spacy download en_core_web_sm
+
+Gunicorn WS: python -m pip install gunicorn
+
 
 whizkid@DESKTOP-D1OM656 MINGW64 /d/AI_Comm/News_Bots
 $ /c/Users/whizkid/AppData/Local/Programs/Python/Python36/python newspaper_spacy_1.py
