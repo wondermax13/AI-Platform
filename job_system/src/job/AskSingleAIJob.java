@@ -107,8 +107,18 @@ public class AskSingleAIJob extends GenericJob {
 
         	CompletableFuture<String> futureForAICall 
         		= CompletableFuture.supplyAsync(() -> {
+
+        			String answer;
         			
-        			String answer = ai_.askQuestion(question_);
+    				if(question_.text.equalsIgnoreCase("NewsChannel")) {
+
+    					answer = ai_.askNews();
+    				}
+    				else {
+
+    					answer = ai_.askQuestion(question_);
+    				}
+        			
         			//make the web call
         			//return the answer
         			
@@ -131,19 +141,32 @@ public class AskSingleAIJob extends GenericJob {
     			this.getLogger().fine(" AskAI job - Acquiring lock: "+ this.toString());
     			jobProcessor_.lock.lock();
     			try {
-    				jobProcessor_.documentClient.updateQuestionWithAIAnswer(
-    						question_.text,
-    						ai_.id,
-    						new Date(),
-    						answer);
+    				if(question_.text.equalsIgnoreCase("NewsChannel")) {
+    					
+    					jobProcessor_.documentClient.insertFinancialNewsAIResponse(
+    							answer);
+    					
+    					jobProcessor_.documentClient.deleteQuestionForQuestionText(question_.text);
+    				}
+    				else {
+
+    					jobProcessor_.documentClient.updateQuestionWithAIAnswer(
+    							question_.text,
+    							ai_.id,
+    							new Date(),
+    							answer);
+    				}
     			}
+    			catch(Exception e) {
+    	        	
+    				this.getLogger().fine(e.getMessage());
+    	        }
     			finally {
     				
     				this.getLogger().fine(" AskAI job - Giving up lock: "+ this.toString());
     				jobProcessor_.lock.unlock();
     				
     			}
-    			
     			
     			return answer;
     		} );

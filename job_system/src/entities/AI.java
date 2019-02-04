@@ -55,6 +55,7 @@ public class AI {
 			String output = jsonResponse.getString("output");
 		        
 			return output;//"Result of the asynchronous computation";
+			
 		} catch (Exception e) {
 
 			throw new IllegalStateException(e);
@@ -63,16 +64,14 @@ public class AI {
 	
 	public String askNews() {
 
-		String newsBotEndPoint = "http://127.0.0.1:5420/_status/latestdata";
 		try {
 			
-			String res = getJSON(newsBotEndPoint);
+			String urlEndpoint = this.address;
 			
-			JSONObject jsonResponse = new JSONObject(res);
+			String res = getJSON(urlEndpoint);
+
+			return res;//"Result of the asynchronous computation";
 			
-			String output = jsonResponse.getString("stock");
-		        
-			return output;//"Result of the asynchronous computation";
 		} catch (Exception e) {
 
 			throw new IllegalStateException(e);

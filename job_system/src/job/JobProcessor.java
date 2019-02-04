@@ -90,7 +90,9 @@ public class JobProcessor {
 	 * 
 	 */
 	public void findAndAddNewJobs() {
-			
+		
+		this.getLogger().fine("\nlastQueryTime: " + lastQueryTime);
+		
 		List<Question> newQuestions = documentClient.findNewQuestions(new Date(), lastQueryTime);
 		
 		this.getLogger().fine("Found new questions: " + newQuestions.size());
@@ -100,7 +102,7 @@ public class JobProcessor {
 			AskQuestionJob questionJob = new AskQuestionJob(this, 0, question);
 			
 			this.getLogger().fine(
-                    "Created AskQuestion job: " + questionJob.id_ + " for question: " + question.text
+                    "Created AskQuestion job: " + questionJob.id_ + " for question: " + question.text + " askTime: " + question.askTime.toString()
                 );
 		
 			this.addNewJobToProcessor(questionJob);

@@ -17,6 +17,8 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
 
 import org.bson.*;
+import org.bson.types.ObjectId;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.ArrayList;
@@ -61,9 +63,16 @@ public class DocumentClient {
 	 */
 	public List<AI> getAIForChannels(List<String> channels) {
 	
+		String targetCollection = "ai";
+
+		if(channels.size() > 0 && channels.contains("FinancialNewsAI") ) {	//TODO - This is a hack to separate the flows for news and text AIs
+			
+			targetCollection = "financialNewsAI";
+		}
+		
 		List<AI> result = new ArrayList<AI>();
 		
-		MongoCollection<Document> collection = database.getCollection("ai");
+		MongoCollection<Document> collection = database.getCollection(targetCollection);
 		
 		MongoCursor<Document> cursor = collection.find().iterator();	//TODO - This has to use channels
 		
@@ -88,7 +97,9 @@ public class DocumentClient {
         }
 		
 		return result;
-	}
+	}	
+
+	
 	/**
 	 * Sample question document
 	 * 
@@ -116,12 +127,20 @@ public class DocumentClient {
 		
 		MongoCollection<Document> collection = database.getCollection("questions");
 		
-		Document findQuery
+		/*Document findQuery
 			= new Document(
 					"askTime", new Document("$gte",lastQueryTime))
-					.append("answered", "false");
+					.append("answered", "false");*/
+		
+		Document findQuery
+		= new Document(
+				"__v", 0)
+				.append("answered", "false");
+
 		
 		MongoCursor<Document> cursor = collection.find(findQuery).iterator();
+		
+		List<ObjectId> toBeUpdatedDocs = new ArrayList<ObjectId>();
 
         try {
             while (cursor.hasNext()) {
@@ -132,7 +151,9 @@ public class DocumentClient {
                 		new Question(
                 				(String)doc.get("question"),
                 				(Date)doc.get("askTime"),
-                				(List<String>)doc.get("channels"))); 
+                				(List<String>)doc.get("channels")));
+                
+                toBeUpdatedDocs.add((ObjectId)doc.get("_id"));
             }
         }
         catch(Exception e) {
@@ -141,8 +162,27 @@ public class DocumentClient {
         }finally {
             cursor.close();
         }
+        
+        updatedRetrievedDocs(collection, toBeUpdatedDocs);
 
 		return newQuestions;
+	}
+	
+	void updatedRetrievedDocs(MongoCollection<Document> collection, List<ObjectId> toBeUpdatedDocIds) {
+		
+		Document updateValue
+    	= new Document(
+    			"$set", new Document("__v", 1));	//TODO - This should be done after the last answer
+    	
+		for(ObjectId docId : toBeUpdatedDocIds) {
+			
+			Document findQuery = new Document("_id", docId);
+			
+			//MongoCursor<Document> cursor = collection.find(findQuery).iterator();
+			
+			collection.updateOne(findQuery, updateValue);
+			//cursor.close();
+		}
 	}
 	
 	//TODO
@@ -196,6 +236,52 @@ public class DocumentClient {
         }finally {
             cursor.close();
         }
+	}
+	
+	
+	public void insertFinancialNewsAIResponse(
+			String answer) {
+		
+		MongoCollection<Document> collection = database.getCollection("newsAIResponses");
+		
+		Document aiRespDoc = new Document("response", answer);
+
+        try {
+
+        	collection.insertOne(aiRespDoc);
+        	
+        	System.out.println(" DocumentClient: Persisted answer: " + answer);
+        }
+        catch(Exception e) {
+        	
+        	System.out.println(e.getMessage());
+        	
+        }finally {
+            
+        }
+	}
+	
+	/**
+	 * Delete question for question text
+	 * @param questionText
+	 */
+	public void deleteQuestionForQuestionText(
+			String questionText) {
+		
+		MongoCollection<Document> collection = database.getCollection("questions");
+		
+		try {
+			
+			Document findQuery = new Document("question", questionText);
+			collection.deleteOne(findQuery);
+			
+			System.out.println(" DocumentClient: Deleting question for text: " + questionText);
+		}
+		catch(Exception e) {
+        	
+        	System.out.println(e.getMessage());
+        }
+		finally { }        
 	}
 	
 	/**

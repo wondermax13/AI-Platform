@@ -95,7 +95,14 @@ public class AskQuestionJob extends GenericJob {
         
         Question question = this.getMyQuestion();
         
+        if(question.text.equalsIgnoreCase("NewsChannel")) {
+        	
+        	question.channels.clear();
+        	question.channels.add("FinancialNewsAI");	//This changes the relevant AIs for the channels
+        }
+        
         try {
+        	
 	        List<AI> relevantAIs = documentClient.getAIForChannels(question.channels);
 	        
 	        for(AI ai : relevantAIs) {
@@ -112,14 +119,15 @@ public class AskQuestionJob extends GenericJob {
 	                );
 			}
 	        
-	        //Passed all the previous steps
-	        execResult = new ExecutionResult(childJobs);
-	        this.state_ = JobState.WAITING_FOR_SUBJOB;
         }
         catch(Exception e) {
         	
         	this.getLogger().finest(" Could not create child ask AI jobs " + this.toString());
         }
+        
+        //Passed all the previous steps
+        execResult = new ExecutionResult(childJobs);
+        this.state_ = JobState.WAITING_FOR_SUBJOB;
         
         if(execResult.success_) {
         	
