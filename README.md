@@ -1,3 +1,10 @@
+To run locally through command line
+
+In Eclipse -> File -> Export -> Provide jar location
+
+java -jar 
+
+
 # AICommunicator
 
 Data Model
