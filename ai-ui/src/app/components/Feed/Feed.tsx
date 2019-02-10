@@ -119,6 +119,6 @@ export class Feed extends React.Component<ICommon, {}> {
   }
 
   public render(): React.ReactNode {
-    return this.props.questions.slice(0, 15).map(this.renderQuestion);
+    return this.props.questions.slice(0, 30).map(this.renderQuestion);
   }
 }
