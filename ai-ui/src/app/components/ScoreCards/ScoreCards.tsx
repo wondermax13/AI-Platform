@@ -5,6 +5,7 @@ import { Icon } from 'office-ui-fabric-react/lib/components/Icon/Icon';
 import { IObjectWithKey, Selection, SelectionMode } from 'office-ui-fabric-react/lib/utilities/selection';
 import * as React from 'react';
 import { IScoreCard, IScoreCards } from '../../models/ScoreCards';
+
 export interface IScoreCardsProps {
   selected?: IScoreCard;
   scoreCards: IScoreCards;

@@ -7,6 +7,7 @@ import addAnswerRoute from './route/route-answer';
 import addFeedRoute from './route/route-feed';
 import addQuestionRoute from './route/route-question';
 import addScoreCardsRoute from './route/route-scorecards';
+import addNewsCardsRoute from './route/route-newscards';
 
 import * as cors from 'cors';
 import * as mongoose from 'mongoose';
@@ -55,6 +56,7 @@ export async function services(server: Application) {
     addAnswerRoute(router);
     addFeedRoute(router);
     addScoreCardsRoute(router);
+    addNewsCardsRoute(router);
 
   } catch (ex) {
     console.log('error occurred: ', ex.message || ex);
