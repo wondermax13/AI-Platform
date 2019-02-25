@@ -1,46 +1,25 @@
 import * as mongoose from 'mongoose';
 
-export interface ISingleNewsCardScoreModel extends ISingleNewsCardScore, mongoose.Document { }
-export interface INewsCardModel extends INewsCard, mongoose.Document { }
 export interface INewsCardsModel extends INewsCards, mongoose.Document { }
+export interface INewsCardModel extends INewsCard, mongoose.Document { }
 
-/* Single news response */
-export interface ISingleNewsCardScore {
+export interface INewsCard {
   response: string;
 }
 
-/* List of records for news responses */
-export interface INewsCard {
-  news: ISingleNewsCardScore[];
-}
-
-
-/* Schema for MLAB single news */
-export const SingleNewsCardScoreSchema = new mongoose.Schema({
-  response: String
-}, { _id: false  });
-
-const MongooseSingleNewsCard = mongoose.model<ISingleNewsCardScoreModel>('newscard', SingleNewsCardScoreSchema, 'newsAIResponses');
-
-export default MongooseSingleNewsCard;
-
-
-
-/* List of list of news responses */
 export interface INewsCards {
+  time?: Date;
   sources: INewsCard[];
 }
 
-
-
-/* Not used currently */
 export const NewsCardSchema = new mongoose.Schema({
-  news: [SingleNewsCardScoreSchema]
-}, { _id: false  });
+  response: String
+});
 
 export const NewsCardsSchema = new mongoose.Schema({
+  time: { type: Date, default: Date.now },
   sources: [NewsCardSchema],
 }, { _id: false  });
 
-
-
+const NewsCards = mongoose.model<INewsCardsModel>('newscard', NewsCardsSchema, 'newsAIResponses');
+export default NewsCards;

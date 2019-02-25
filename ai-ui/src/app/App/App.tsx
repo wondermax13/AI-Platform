@@ -4,7 +4,7 @@ import * as React from 'react';
 import { IArtificialModel } from '../models/Artificial';
 import { IQuestionModel } from '../models/Question';
 import { IScoreCards } from '../models/ScoreCards';
-import { ISingleNewsCardScore } from '../models/NewsCards';
+import { INewsCards } from '../models/NewsCards';
 import { Routes } from './Routes';
 
 initializeIcons(/* optional base url */);
@@ -13,7 +13,7 @@ export interface IAppProps {
   ais?: IArtificialModel[];
   questions?: IQuestionModel[];
   scoreCards?: IScoreCards;
-  newsCards?: ISingleNewsCardScore;
+  newsCards?: INewsCards;
 }
 
 export default class App extends React.Component<IAppProps, {}> {

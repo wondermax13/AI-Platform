@@ -1,9 +1,9 @@
 import { Selection } from 'office-ui-fabric-react/lib/utilities/selection';
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-// import { NewsCardDialog } from '../components/NewsCards/NewsCardDialog';
-// import { NewsCards } from '../components/NewsCards/NewsCards';
-import { ISingleNewsCardScore } from '../models/NewsCards';
+import { NewsCardDialog } from '../components/NewsCards/NewsCardDialog';
+import { NewsCards } from '../components/NewsCards/NewsCards';
+import { INewsCard, INewsCards } from '../models/NewsCards';
 import aiProvider from '../providers/ai-v1';
 
 enum Dialog {
@@ -14,8 +14,8 @@ enum Dialog {
 
 export interface INewsCardPageState {
   currentDialog: Dialog,
-  newsCards?: ISingleNewsCardScore,
-  newsCard?: string,  // string instead of IScoreCard
+  newsCards?: INewsCards,
+  newsCard?: INewsCard,
   selection: Selection,
   error?: string,
 }
@@ -23,7 +23,7 @@ export interface INewsCardPageState {
 const selection = new Selection();
 
 export interface INewsCardPageProps extends RouteComponentProps<INewsCardPageProps> {
-  newsCards?: ISingleNewsCardScore;
+  newsCards?: INewsCards;
 }
 
 class NewsCardPageBase extends React.PureComponent<INewsCardPageProps, INewsCardPageState> {
@@ -32,7 +32,7 @@ class NewsCardPageBase extends React.PureComponent<INewsCardPageProps, INewsCard
     selection,
   }
 
-  public newsCardsRef: React.RefObject<ISingleNewsCardScore> = React.createRef<ISingleNewsCardScore>();
+  public newsCardsRef: React.RefObject<NewsCards> = React.createRef<NewsCards>();
 
   public routeToAi = () => this.props.history.push('/');
   public isAboutDialogOpen = () => this.state.currentDialog === Dialog.About;
@@ -44,7 +44,7 @@ class NewsCardPageBase extends React.PureComponent<INewsCardPageProps, INewsCard
     });
   }
 
-  public onOpenNewsCard = (newsCard: string) => {
+  public onOpenNewsCard = (newsCard: INewsCard) => {
     this.setState({
       newsCard,
       currentDialog: Dialog.NewsCard
@@ -53,31 +53,27 @@ class NewsCardPageBase extends React.PureComponent<INewsCardPageProps, INewsCard
 
   public currentNewsCards = () => {
     return this.state.newsCards || this.props.newsCards || {
-      response: "default response",
+      sources: [],
     };
   }
 
   public currentNewsCard = () => {
-    return this.state.newsCard || this.currentNewsCards().response || undefined;
+    return this.state.newsCard || this.currentNewsCards().sources.length && this.currentNewsCards().sources[0] || undefined;
   }
 
   public updateNewsCards = async (): Promise<void> => {
     try {
       const newsCards = await aiProvider.getNewsCards();
-      const newsCard = newsCards.response || "undefined UpdateNewsCards";
-
+      const newsCard = newsCards.sources.length && newsCards.sources[0] || undefined;
       this.setState({ newsCards, newsCard });
-
     } catch (ex) {
-    /*
       this.setState({
         error: ex.message,
-        newsCard: {
+        newsCards: {
           ...this.state.newsCards,
-          response: "default response",
+          sources: [],
         }
       })
-      */
     }
   }
 
@@ -85,7 +81,6 @@ class NewsCardPageBase extends React.PureComponent<INewsCardPageProps, INewsCard
     this.updateNewsCards();
   }
 
-/*
   public currentNewsCardsTimeFormatted() {
     const cards = this.currentNewsCards();
     if (cards.time) {
@@ -94,31 +89,34 @@ class NewsCardPageBase extends React.PureComponent<INewsCardPageProps, INewsCard
     }
     return '';
   }
-*/
 
   public render(): React.ReactNode {
-    
-    console.log(' Rendering ')
+    const cards = this.currentNewsCards();
+    const newsCard = this.currentNewsCard();
 
-     // const cards = this.currentNewsCards();
-     // const newsCard = this.currentNewsCard();
-
-    // const newsCardHeight = newsCard ? 'minmax(100px, max-content)' : '0px';
+    const newsCardHeight = newsCard ? 'minmax(100px, max-content)' : '0px';
     const layout: React.CSSProperties = {
       display: 'grid',
-      gridTemplateRows: `min-content min-content 0px minmax(100px, 80vh) 1px`,
+      gridTemplateRows: `min-content min-content ${newsCardHeight} minmax(100px, 80vh) 1px`,
     };
-
-    const dateTime = new Date();
+    const dateTime = this.currentNewsCardsTimeFormatted();
 
     return (
-          <div style={layout}>
-            <h1 className='ms-font-xl' style={{ padding: 10 }}>
-              Score Cards as of {dateTime}
-            </h1>
+      <div style={layout}>
+        <h1 className='ms-font-xl' style={{ padding: 10 }}>
+          News AI Responses as of {dateTime}
+        </h1>
 
-          </div >
-        );
+        <div style={{ position: 'relative', overflow: 'hidden' }}>
+          <NewsCardDialog
+            newsCard={newsCard}
+          />
+        </div>
+        <div style={{ position: 'relative' }}>
+          <NewsCards selected={newsCard} newsCards={cards} onOpenNewsCard={this.onOpenNewsCard} ref={this.newsCardsRef} />
+        </div>
+      </div >
+    );
   }
 
   public dismissNewsCard = () => this.setState({ currentDialog: Dialog.None, newsCard: undefined });
