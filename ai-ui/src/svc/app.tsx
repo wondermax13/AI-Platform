@@ -7,6 +7,7 @@ import data from './manifest';
 import { getAis } from './route/route-ai';
 import { getFeed } from './route/route-feed';
 import { getScoreCards } from './route/route-scorecards';
+import { getNewsCards } from './route/route-newscards';
 import { ITemplateProps, template } from './template';
 
 // Store registered styles in a variable used later for injection.
@@ -23,6 +24,7 @@ const manifestFile = path.resolve(build, 'asset-manifest.json');
 
 export async function getInitialState(): Promise<IAppProps> {
   const scoreCards = (await getScoreCards() || undefined);
+  const newsCards = (await getNewsCards() || undefined);
   const questions = (await getFeed('#main') || undefined);
   const ais = (await getAis() || undefined);
 
@@ -30,6 +32,7 @@ export async function getInitialState(): Promise<IAppProps> {
     scoreCards,
     questions,
     ais,
+    newsCards
   }
   return initialState;
 }
@@ -39,6 +42,7 @@ export async function app(server: Application) {
   server.get('/.well-known', Express.static(wellknown));
   server.use('/client', Express.static(build));
   server.use('/client/static', Express.static(statics));
+
   server.get('/scorecards', async (request: Request, response: Response) => {
 
     try {
@@ -64,6 +68,33 @@ export async function app(server: Application) {
     }
 
   });
+
+    server.get('/newscards', async (request: Request, response: Response) => {
+
+    try {
+      const manifest = JSON.parse(await data(manifestFile)) as IManifest;
+      const initialState = await getInitialState();
+
+      // const appString = renderToString(<App {...initialState} {...{ server: true }} />);
+      const mainJs = '/client/' + manifest["main.js"];
+      const mainCss = '/client/' + manifest["main.css"];
+
+      const templateProps: ITemplateProps = {
+        body: '.',
+        initialState: JSON.stringify(initialState),
+        mainCss,
+        mainJs,
+        styles: allStyles,
+        title: 'AI2AI',
+      }
+      const d = await template(templateProps);
+      response.send(d);
+    } catch (ex) {
+      response.send({ error: ex.message || JSON.stringify(ex), note: "reload in a few..." });
+    }
+
+  });
+
   server.get('/', async (request: Request, response: Response) => {
 
     try {

@@ -1,96 +1,36 @@
 import { ScrollablePane, Sticky, StickyPositionType } from 'office-ui-fabric-react';
 import { DetailsList } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList';
 import { CheckboxVisibility, IColumn, IDetailsHeaderProps } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList.types';
-import { Icon } from 'office-ui-fabric-react/lib/components/Icon/Icon';
 import { IObjectWithKey, Selection, SelectionMode } from 'office-ui-fabric-react/lib/utilities/selection';
 import * as React from 'react';
-import { IScoreCard, IScoreCards } from '../../models/ScoreCards';
+import { INewsCard, INewsCards } from '../../models/NewsCards';
 
-export interface IScoreCardsProps {
-  selected?: IScoreCard;
-  scoreCards: IScoreCards;
-  onOpenScoreCard: (scoreCard: IScoreCard) => void;
+export interface INewsCardsProps {
+  selected?: INewsCard;
+  newsCards: INewsCards;
+  onOpenNewsCard: (newsCard: INewsCard) => void;
   style?: React.CSSProperties;
 }
 
-export class ScoreCards extends React.PureComponent<IScoreCardsProps, {}> {
+export class NewsCards extends React.PureComponent<INewsCardsProps, {}> {
   public columns: IColumn[] = [
     {
       key: 'NewsSource',
-      name: 'News Source',
-      fieldName: 'name',
+      name: 'Articles',
+      fieldName: 'response',
       minWidth: 40,
       isResizable: true,
       data: 'string',
       isPadded: false,
-    },
-    {
-      key: 'bottomicon',
-      name: '',
-      fieldName: 'bottom',
-      ariaLabel: 'bottom pick icon',
-      isPadded: false,
-      minWidth: 12,
-      maxWidth: 12,
-      isCollapsable: true,
-      onRender: (item: IScoreCard) => {
-        return <Icon iconName='ArrowDownRight8' style={{ width: 12, height: 12, color: 'red' }} />;
-      }
-    },
-    {
-      key: 'bottomscore',
-      name: 'Low Scores',
-      ariaLabel: 'Bottom Stock Pick',
-      minWidth: 60,
-      fieldName: 'bottom',
-      isPadded: false,
-      isCollapsable: true,
-      onRender: (item: IScoreCard) => {
-        return (
-          <React.Fragment>
-            {item.bottom.stock} {item.bottom.score}
-          </React.Fragment>
-        );
-      }
-    },
-    {
-      key: 'topicon',
-      name: '',
-      fieldName: 'top',
-      ariaLabel: 'top pick icon',
-      isPadded: false,
-      minWidth: 12,
-      maxWidth: 12,
-      className: 'noMargin noPadding',
-      isCollapsable: false,
-      onRender: (item: IScoreCard) => {
-        return <Icon iconName='ArrowUpRight8' style={{ color: 'lightgreen' }} />;
-      }
-    },
-    {
-      key: 'topscore',
-      name: 'Top Scores',
-      ariaLabel: 'Top Stock Pick',
-      isPadded: false,
-      fieldName: 'top',
-      minWidth: 60,
-      isCollapsable: false,
-      onRender: (item: IScoreCard) => {
-        return (
-          <React.Fragment>
-            {item.top.stock} {item.top.score}
-          </React.Fragment>
-        );
-      }
-    },
+    }
   ];
 
   public domRef = React.createRef<HTMLDivElement>();
   private selector: Selection = new Selection();
 
-  public onActiveItemChanged = (item: IScoreCard) => {
-    if (this.props.onOpenScoreCard) {
-      this.props.onOpenScoreCard(item);
+  public onActiveItemChanged = (item: INewsCard) => {
+    if (this.props.onOpenNewsCard) {
+      this.props.onOpenNewsCard(item);
     }
   }
 
@@ -107,17 +47,17 @@ export class ScoreCards extends React.PureComponent<IScoreCardsProps, {}> {
     return selections.length && selections[0].key || undefined;
   }
 
-  public currentItems = (): IScoreCard[] & IObjectWithKey[] => {
-    return this.props.scoreCards.sources.map((card: IScoreCard) => {
+  public currentItems = (): INewsCard[] & IObjectWithKey[] => {
+    return this.props.newsCards.sources.map((card: INewsCard) => {
       return {
-        key: card.name,
+        key: card.response,
         ...card,
       };
     });
   }
 
   public getItemsKey = (items: Array<{ name?: string, key?: string | number }>) => {
-    return `${this.props.scoreCards.time}:${items.map(item => item.key || item.name || 'n/a').join(',')}`;
+    return `${this.props.newsCards.time}:${items.map(item => item.key || item.name || 'n/a').join(',')}`;
   }
 
   public currentSelector = (): Selection => {
@@ -142,10 +82,10 @@ export class ScoreCards extends React.PureComponent<IScoreCardsProps, {}> {
 
   public setDefaultSelectedIfNeeded = (): void => {
     const currentKey = this.getCurrentlySelectedKey();
-    const currentScoreCardKey = this.props.selected && this.props.selected.name || undefined;
-    if (currentScoreCardKey !== currentKey) {
+    const currentNewsCardKey = this.props.selected && this.props.selected.response || undefined;
+    if (currentNewsCardKey !== currentKey) {
       const items = this.currentItems();
-      const index = items.findIndex(item => item.name === currentScoreCardKey);
+      const index = items.findIndex(item => item.response === currentNewsCardKey);
       this.selector.setIndexSelected(index, true, false);
     }
   }
@@ -159,7 +99,7 @@ export class ScoreCards extends React.PureComponent<IScoreCardsProps, {}> {
           <DetailsList
             selection={selector}
             selectionMode={SelectionMode.single}
-            items={this.props.scoreCards.sources}
+            items={this.props.newsCards.sources}
             columns={this.columns}
             compact={true}
             // selection={selection}

@@ -1,6 +1,7 @@
 import { IArtificialModel } from '../models/Artificial';
 import { IQuestionModel } from '../models/Question';
 import { IScoreCards } from '../models/ScoreCards';
+import { INewsCards } from '../models/NewsCards';
 import { call } from './api';
 
 export async function getScoreCards(): Promise<IScoreCards> {
@@ -8,6 +9,13 @@ export async function getScoreCards(): Promise<IScoreCards> {
   const scorecards: IScoreCards = await response.json();
   return scorecards;
 }
+
+export async function getNewsCards(): Promise<INewsCards> {
+  const response = await call('/api/v1/newscards');
+  const newscards: INewsCards = await response.json();
+  return newscards;
+}
+
 
 export async function postQuestion(question: string, channels: string[] = ['#Main']): Promise<Response> {
   return call('/api/v1/question/ask', {
@@ -49,4 +57,5 @@ export default {
   getFeed,
   postQuestion,
   getScoreCards,
+  getNewsCards
 };

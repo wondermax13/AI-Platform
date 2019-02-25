@@ -10,7 +10,7 @@ export async function getScoreCards() {
 export default async function routeScorecards(router: Router) {
 
   router.get('/scorecards', async (request, response, next) => {
-    console.log(`GET /scorecards`);
+    console.log(`GETTING /scorecards`);
     try {
       const scorecards = await getScoreCards();
       response.status(200).json(scorecards);

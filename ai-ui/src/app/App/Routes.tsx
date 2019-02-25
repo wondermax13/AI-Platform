@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Route, Router } from 'react-router';
 import { AIFeedPage } from '../pages/AIFeedPage';
 import { ScoreCardPage } from '../pages/ScoreCardPage';
+import { NewsCardPage } from '../pages/NewsCardPage';
 import { IAppProps } from './App';
 import { History } from './History';
 
@@ -17,6 +18,7 @@ export class Routes extends React.PureComponent<IAppProps> {
         <React.Fragment>
           <Route exact={true} path='/' render={this.renderAIFeedPage} />
           <Route exact={true} path='/scorecards' render={this.renderScoreCardPage} />
+          <Route exact={true} path='/newscards' render={this.renderNewsCardPage} />
         </React.Fragment>
       </Router>
     );
@@ -56,6 +58,13 @@ export class Routes extends React.PureComponent<IAppProps> {
         </PivotItem>
 
         <PivotItem
+          headerText="News AI"
+          style={style}
+        >
+          <NewsCardPage newsCards={this.props.newsCards} />
+        </PivotItem>
+
+        <PivotItem
           headerText="About"
           style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}
         >
@@ -73,5 +82,9 @@ export class Routes extends React.PureComponent<IAppProps> {
 
   public renderScoreCardPage = (): React.ReactNode => {
     return this.renderMenu(1);
+  }
+
+  public renderNewsCardPage = (): React.ReactNode => {
+    return this.renderMenu(2);
   }
 }
