@@ -12,8 +12,7 @@ pool:
 variables:
   Docker.registry: "$(Docker.registry)"
   Docker.server: "$(Docker.registry).azurecr.io"
-  Docker.image: "$(Docker.server)/ai2ai/ux:$(TAG)"
-  TAG: "$(Build.BuildNumber)"
+  Docker.image: "$(Docker.server)/ai2ai/ux:$(Build.BuildNumber)"
   MONGODB_URI: "$(MONGODB_URI)"
 
 steps:
@@ -24,26 +23,26 @@ steps:
       yarn build:final
     displayName: "build app"
 
-  # -
-  #  task: Docker@0
-  #  inputs: 
-  #     command: build
-  #     addDefaultLabels: true
-  #     azureContainerRegistry: $(Docker.server)
-  #     azureSubscriptionEndpoint: "arm-connection-rg-acr"
-  #     context: $(System.DefaultWorkingDirectory)/ai-ui
-  #     defaultContext: false
-  #     dockerFile: ai-ui/Dockerfile
-  #     imageName: $(Docker.image)
-  #     includeLatestTag: false
-  #     includeSourceTags: true
-  #     qualifyImageName: true
-  #     workingDirectory: $(System.DefaultWorkingDirectory)/ai-ui
-  #  displayName: "Build image $(Docker.image)"
+  -
+   task: Docker@0
+   inputs: 
+      command: build
+      addDefaultLabels: true
+      azureContainerRegistry: $(Docker.server)
+      azureSubscriptionEndpoint: "arm-connection-rg-acr"
+      context: $(System.DefaultWorkingDirectory)/ai-ui
+      defaultContext: false
+      dockerFile: ai-ui/Dockerfile
+      imageName: $(Docker.image)
+      includeLatestTag: false
+      includeSourceTags: true
+      qualifyImageName: true
+      workingDirectory: $(System.DefaultWorkingDirectory)/ai-ui
+   displayName: "Build image $(Docker.image)"
 
   -
     task: Docker@0
-    displayName: "Push Image to $(Docker.server) registry"
+    displayName: "Push Image to registry"
     inputs:
       command: push
       addDefaultLabels: true
