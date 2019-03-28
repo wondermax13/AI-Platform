@@ -17,7 +17,7 @@ data:
 #   labels:
 #     service/ai2ai: ux-ai2ai
 # data:
-#   GUESTMEMBEREXPERIENCE_HOST: ${GUESTMEMBEREXPERIENCE_HOST}
+#   X:
 ---
 apiVersion: v1
 kind: Service
