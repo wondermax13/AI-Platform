@@ -32,7 +32,7 @@ export interface IAIFeedPageState extends ICommon {
   mounted?: boolean;
 }
 
-export interface IAIFeedPageProps extends RouteComponentProps<IAIFeedPageProps> {
+export interface IAIFeedPageProps extends RouteComponentProps {
   questions?: IQuestionModel[],
   ais?: IArtificialModel[],
 }

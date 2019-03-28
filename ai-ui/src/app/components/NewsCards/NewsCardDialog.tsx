@@ -27,7 +27,7 @@ export class NewsCardDialog extends React.Component<INewsCardDialogProps> {
     return (
       <div style={cardStyle}>
         <div style={{ gridArea: 'title', display: 'grid', gridTemplateColumns: 'auto min-content', alignItems: 'baseline', }}>
-          <h1 className='ms-font-xxl' style={{ margin: 0 }}>{this.props.newsCard.response}</h1>
+          <div style={{ margin: 0 }}>{this.props.newsCard}</div>
         </div>
       </div>
     );

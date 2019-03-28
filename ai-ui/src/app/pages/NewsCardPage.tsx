@@ -1,7 +1,7 @@
 import { Selection } from 'office-ui-fabric-react/lib/utilities/selection';
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { NewsCardDialog } from '../components/NewsCards/NewsCardDialog';
+// import { NewsCardDialog } from '../components/NewsCards/NewsCardDialog';
 import { NewsCards } from '../components/NewsCards/NewsCards';
 import { INewsCard, INewsCards } from '../models/NewsCards';
 import aiProvider from '../providers/ai-v1';
@@ -22,7 +22,7 @@ export interface INewsCardPageState {
 
 const selection = new Selection();
 
-export interface INewsCardPageProps extends RouteComponentProps<INewsCardPageProps> {
+export interface INewsCardPageProps extends RouteComponentProps {
   newsCards?: INewsCards;
 }
 
@@ -45,10 +45,13 @@ class NewsCardPageBase extends React.PureComponent<INewsCardPageProps, INewsCard
   }
 
   public onOpenNewsCard = (newsCard: INewsCard) => {
-    this.setState({
-      newsCard,
-      currentDialog: Dialog.NewsCard
-    })
+
+    if (this.state.newsCard !== newsCard) {
+      this.setState({
+        newsCard,
+      });
+      window.open(newsCard.response, newsCard.response);
+    }
   };
 
   public currentNewsCards = () => {
@@ -97,7 +100,7 @@ class NewsCardPageBase extends React.PureComponent<INewsCardPageProps, INewsCard
     const newsCardHeight = newsCard ? 'minmax(100px, max-content)' : '0px';
     const layout: React.CSSProperties = {
       display: 'grid',
-      gridTemplateRows: `min-content min-content ${newsCardHeight} minmax(100px, 80vh) 1px`,
+      gridTemplateRows: `min-content minmax(max-content, 200px) ${newsCardHeight} minmax(100px, 80vh) 1px`,
     };
     const dateTime = this.currentNewsCardsTimeFormatted();
 
@@ -107,14 +110,15 @@ class NewsCardPageBase extends React.PureComponent<INewsCardPageProps, INewsCard
           News AI Responses as of {dateTime}
         </h1>
 
-        <div style={{ position: 'relative', overflow: 'hidden' }}>
-          <NewsCardDialog
-            newsCard={newsCard}
-          />
-        </div>
         <div style={{ position: 'relative' }}>
           <NewsCards selected={newsCard} newsCards={cards} onOpenNewsCard={this.onOpenNewsCard} ref={this.newsCardsRef} />
         </div>
+
+        {/* <div style={{ position: 'relative', overflow: 'hidden' }}>
+          <NewsCardDialog
+            newsCard={newsCard}
+          />
+        </div> */}
       </div >
     );
   }

@@ -10,6 +10,9 @@ import { getScoreCards } from './route/route-scorecards';
 import { getNewsCards } from './route/route-newscards';
 import { ITemplateProps, template } from './template';
 
+// tslint:disable-next-line:no-var-requires
+const findup = require('find-up');
+
 // Store registered styles in a variable used later for injection.
 let allStyles = '';
 // Push styles into variables for injecting later.
@@ -17,10 +20,15 @@ configureLoadStyles((styles: string) => {
   allStyles += styles;
 });
 
-const build = path.resolve(__dirname, './../../client');
-const wellknown = path.resolve(__dirname, './../../.well-known');
+const build = findup.sync('client');
+const wellknown = findup.sync('.well-known');
 const statics = path.resolve(build, 'static');
 const manifestFile = path.resolve(build, 'asset-manifest.json');
+
+console.log('build', build);
+console.log('wellknown', wellknown);
+console.log('statics', statics);
+console.log('manifestFile', manifestFile);
 
 export async function getInitialState(): Promise<IAppProps> {
   const scoreCards = (await getScoreCards() || undefined);
@@ -39,7 +47,9 @@ export async function getInitialState(): Promise<IAppProps> {
 
 export async function app(server: Application) {
 
-  server.get('/.well-known', Express.static(wellknown));
+  if (wellknown) {
+    server.get('/.well-known', Express.static(wellknown));
+  }
   server.use('/client', Express.static(build));
   server.use('/client/static', Express.static(statics));
 
@@ -69,7 +79,7 @@ export async function app(server: Application) {
 
   });
 
-    server.get('/newscards', async (request: Request, response: Response) => {
+  server.get('/newscards', async (request: Request, response: Response) => {
 
     try {
       const manifest = JSON.parse(await data(manifestFile)) as IManifest;

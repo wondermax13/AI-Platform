@@ -1,6 +1,6 @@
 import { ScrollablePane, Sticky, StickyPositionType } from 'office-ui-fabric-react';
 import { DetailsList } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList';
-import { CheckboxVisibility, IColumn, IDetailsHeaderProps } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList.types';
+import { CheckboxVisibility, IColumn, IDetailsHeaderProps, IDetailsGroupRenderProps } from 'office-ui-fabric-react/lib/components/DetailsList/DetailsList.types';
 import { IObjectWithKey, Selection, SelectionMode } from 'office-ui-fabric-react/lib/utilities/selection';
 import * as React from 'react';
 import { INewsCard, INewsCards } from '../../models/NewsCards';
@@ -15,10 +15,10 @@ export interface INewsCardsProps {
 export class NewsCards extends React.PureComponent<INewsCardsProps, {}> {
   public columns: IColumn[] = [
     {
-      key: 'NewsSource',
+      key: 'Articles',
       name: 'Articles',
-      fieldName: 'response',
-      minWidth: 40,
+      fieldName: 'name',
+      minWidth: 100,
       isResizable: true,
       data: 'string',
       isPadded: false,
@@ -28,9 +28,12 @@ export class NewsCards extends React.PureComponent<INewsCardsProps, {}> {
   public domRef = React.createRef<HTMLDivElement>();
   private selector: Selection = new Selection();
 
-  public onActiveItemChanged = (item: INewsCard) => {
+  public onActiveItemChanged = (item: { key: string }) => {
     if (this.props.onOpenNewsCard) {
-      this.props.onOpenNewsCard(item);
+      const card = this.props.newsCards.sources.find(n => n.response === item.key);
+      if (card) {
+        this.props.onOpenNewsCard(card);
+      }
     }
   }
 
@@ -93,26 +96,48 @@ export class NewsCards extends React.PureComponent<INewsCardsProps, {}> {
   public render(): React.ReactNode {
     const selector = this.currentSelector();
 
+    const links = this.props.newsCards.sources.map(s => {
+      const url = new URL(s.response);
+      return {
+        key: s.response,
+        group: url.hostname,
+        name: url.pathname
+      };
+    }).sort((a, b) => a.group > b.group ? 1 : a.group < b.group ? -1: 0);
+
+    const groupNames = [...new Set(links.map(l => l.group))];
+    const groups = groupNames.map(g => ({
+      key: g,
+      name: g,
+      startIndex: links.findIndex(v => v.group === g),
+      count: links.filter(l => l.group === g).length
+    }));
+
+    const groupProps: IDetailsGroupRenderProps = {
+      showEmptyGroups: true,
+    };
+
     return (
       <div ref={this.domRef}>
         <ScrollablePane >
           <DetailsList
             selection={selector}
             selectionMode={SelectionMode.single}
-            items={this.props.newsCards.sources}
+            items={links}
+            groups={groups}
             columns={this.columns}
             compact={true}
             // selection={selection}
             checkboxVisibility={CheckboxVisibility.hidden}
-            styles={{ root: { color: 'white', backgroundColor: 'rgb(0, 120, 212)' } }}
-            data-is-focusable='true'
-
+            // styles={{ root: { color: 'white', backgroundColor: 'rgb(0, 120, 212)' } }}
+            // data-is-focusable='true'
+            groupProps={groupProps}
             onActiveItemChanged={this.onActiveItemChanged}
             onRenderDetailsHeader={this.renderHeader}
           />
-          <Sticky stickyPosition={StickyPositionType.Footer}>
+          {/* <Sticky stickyPosition={StickyPositionType.Footer}>
             <div style={{ height: '1px' }} />
-          </Sticky>
+          </Sticky> */}
         </ScrollablePane>
       </div>
     );

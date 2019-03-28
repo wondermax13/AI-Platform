@@ -22,7 +22,7 @@ export interface IScoreCardPageState {
 
 const selection = new Selection();
 
-export interface IScoreCardPageProps extends RouteComponentProps<IScoreCardPageProps> {
+export interface IScoreCardPageProps extends RouteComponentProps {
   scoreCards?: IScoreCards;
 }
 
