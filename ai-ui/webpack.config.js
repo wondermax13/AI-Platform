@@ -6,7 +6,7 @@ module.exports = {
   mode: NODE_ENV,
   target: 'node',
   output: {
-    path: path.resolve(__dirname, 'server'),
+    path: path.resolve(__dirname, 'build-final/server'),
     filename: 'index.js',
   },
 };

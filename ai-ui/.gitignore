@@ -7,7 +7,7 @@
 /build
 /dist
 /client
-/server
+/build-final
 
 # testing
 /coverage
