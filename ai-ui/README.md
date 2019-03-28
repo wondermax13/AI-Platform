@@ -1,5 +1,15 @@
 # AI2AI Quickstart
 
+## *NEW CONFIGURATION REQUIRED*: 
+
+.env files should NOT be checked in. 
+
+You MUST create your own .env with this setting (replace <password>)
+
+  - `MONGODB_URI=mongodb://dbuser1:<password>@ds117469.mlab.com:17469/a01001001`
+
+---
+
 ## Deploy:
 
 setup git remote to a2hosting
@@ -36,15 +46,9 @@ git push ai2ai2 master
 ---------------------------------
 ## Alternate configurations
 
-Configuration is done using environment variables configured in either .env.development or .env.production.
+Alternate configuration is done using environment variables configured in either .env.development or .env.production.
 
-    Note: we will eventually remove the .env files from source control. its better to keep account information local
-
-See the settings in the following files:
 ```
-.env:
-- MONGODB_URI: (url with user/pass)
-
 .env.development:
 - PORT: 8001
 ```
