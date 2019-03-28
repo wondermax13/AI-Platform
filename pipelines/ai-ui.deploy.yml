@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ux-ai2ai
+  labels:
+    deployment/ai2ai: ux-ai2ai
+    service/ai2ai: ux-ai2ai
+type: Opaque
+data:
+  MONGODB_URI: ${MONGODB_URI}
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: ux-ai2ai
+#   labels:
+#     service/ai2ai: ux-ai2ai
+# data:
+#   GUESTMEMBEREXPERIENCE_HOST: ${GUESTMEMBEREXPERIENCE_HOST}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service/ui-ai2ai
+  labels:
+    service/ai2ai: ux-ai2ai
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: web
+    # - port: 4300
+    #   targetPort: 4300
+    #   protocol: TCP
+    #   name: api
+  selector:
+    deployment/ai2ai: ux-ai2ai
+---
+apiVersion: v1
+kind: deployment
+metadata:
+  name: deployment/ai2ai
+  labels:
+    deployment/ai2ai: ux-ai2ai
+spec:
+  containers:
+    - name: web-ux-ai2ai
+      image: fuulatlive.azurecr.io/ai2ai/ux:${TAG}
+      ports:
+        - containerPort: 80
+      resources:
+        limits:
+          cpu: "0.75"
+      env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: ux-ai2ai
+              key: MONGODB_URI
