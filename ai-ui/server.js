@@ -1,5 +1,5 @@
 try {
-  require('./dist/server.js');
+  require('./server/index.js');
 } catch (ex) {
   console.error(ex);
 }
