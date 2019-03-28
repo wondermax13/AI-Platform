@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "yarn build",
-    "clean": "rimraf build-final client build build-final/**",
+    "clean": "rimraf dist build client build-final",
     "build:final": "yarn clean && yarn build:server && yarn build:client && yarn mkdir:build-final && ncp client build-final/client && webpack",
     "mkdir:build-final": "mkdir -p build-final",
     "docker": "yarn build:final && docker image build -t fuulatlive.azurecr.io/ai2ai/ux:1 .",

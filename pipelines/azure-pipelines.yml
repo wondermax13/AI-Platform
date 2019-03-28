@@ -24,10 +24,28 @@ steps:
       yarn build:final
     displayName: "build app"
 
+  # -
+  #  task: Docker@0
+  #  inputs: 
+  #     command: build
+  #     addDefaultLabels: true
+  #     azureContainerRegistry: $(Docker.server)
+  #     azureSubscriptionEndpoint: "arm-connection-rg-acr"
+  #     context: $(System.DefaultWorkingDirectory)/ai-ui
+  #     defaultContext: false
+  #     dockerFile: ai-ui/Dockerfile
+  #     imageName: $(Docker.image)
+  #     includeLatestTag: false
+  #     includeSourceTags: true
+  #     qualifyImageName: true
+  #     workingDirectory: $(System.DefaultWorkingDirectory)/ai-ui
+  #  displayName: "Build image $(Docker.image)"
+
   -
-   task: Docker@0
-   inputs: 
-      command: build
+    task: Docker@0
+    inputs:
+      command: push
+      action: "Push image $(Docker.image)"
       addDefaultLabels: true
       azureContainerRegistry: $(Docker.server)
       azureSubscriptionEndpoint: "arm-connection-rg-acr"
@@ -39,19 +57,6 @@ steps:
       includeSourceTags: true
       qualifyImageName: true
       workingDirectory: $(System.DefaultWorkingDirectory)/ai-ui
-   displayName: "Build image $(Docker.image)"
-
-  -
-    task: Docker@0
-    inputs:
-      command: push
-      action: "Push image $(Docker.image)"
-      azureContainerRegistry: $(Docker.server)
-      azureSubscriptionEndpoint: "arm-connection-rg-acr"
-      imageName: $(Docker.image)
-      includeLatestTag: false
-      includeSourceTags: true
-      qualifyImageName: true
     displayName: "Push Image to $(Docker.server) registry"
 
   - task: PublishPipelineArtifact@0
