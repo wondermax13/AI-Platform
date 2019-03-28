@@ -1,0 +1,62 @@
+# Docker image
+# Build a Docker image to deploy, run, or push to a container registry.
+# Add steps that use Docker Compose, TAG images, push to a registry, run an image, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+  - master
+
+pool:
+  vmImage: "Ubuntu-16.04"
+
+variables:
+  Docker.user: "fuulatlive"
+  Docker.server: "$(Docker.user).azurecr.io"
+  Docker.image: "$(Docker.server)/ai2ai/ux:$(TAG)"
+  TAG: "$(Build.BuildNumber)"
+  MONGODB_URI: "mongodb://dbuser1:<password>@ds117469.mlab.com:17469/a01001001"
+
+steps:
+  - script: |
+      echo -n "MONGODB_URI=$(MONGODB_URI)" > "ai-ui/.env"
+    displayName: "write env files"
+
+  - script: |
+      yarn install --ignore-scripts --no-optional --frozen-lockfile
+      yarn build:final
+    displayName: "build final"
+
+  -
+   task: Docker@0
+   inputs: 
+      command: build
+      addDefaultLabels: true
+      azureContainerRegistry: $(Docker.server)
+      azureSubscriptionEndpoint: "arm-connection-rg-acr"
+      context: $(System.DefaultWorkingDirectory)/ai-ui
+      defaultContext: false
+      dockerFile: ai-ui/Dockerfile
+      imageName: $(Docker.image)
+      includeLatestTag: false
+      includeSourceTags: true
+      qualifyImageName: true
+      workingDirectory: $(System.DefaultWorkingDirectory)/ai-ui
+   displayName: "Build image $(Docker.image)"
+
+  -
+    task: Docker@0
+    inputs:
+      command: push
+      action: "Push image $(Docker.image)"
+      azureContainerRegistry: $(Docker.server)
+      azureSubscriptionEndpoint: "arm-connection-rg-acr"
+      imageName: $(Docker.image)
+      includeLatestTag: false
+      includeSourceTags: true
+      qualifyImageName: true
+    displayName: "Push Image to $(Docker.server) registry"
+
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: "build-final"
+      targetPath: "ai-ui/build-final"
