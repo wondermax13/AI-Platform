@@ -10,21 +10,19 @@ pool:
   vmImage: "Ubuntu-16.04"
 
 variables:
-  Docker.user: "fuulatlive"
-  Docker.server: "$(Docker.user).azurecr.io"
+  Docker.registry: "$(Docker.registry)"
+  Docker.server: "$(Docker.registry).azurecr.io"
   Docker.image: "$(Docker.server)/ai2ai/ux:$(TAG)"
   TAG: "$(Build.BuildNumber)"
-  MONGODB_URI: "mongodb://dbuser1:<password>@ds117469.mlab.com:17469/a01001001"
+  MONGODB_URI: "$(MONGODB_URI)"
 
 steps:
   - script: |
-      echo -n "MONGODB_URI=$(MONGODB_URI)" > "ai-ui/.env"
-    displayName: "write env files"
-
-  - script: |
+      cd ai-ui
+      echo -n "MONGODB_URI=$(MONGODB_URI)" > ".env"
       yarn install --ignore-scripts --no-optional --frozen-lockfile
       yarn build:final
-    displayName: "build final"
+    displayName: "build app"
 
   -
    task: Docker@0
