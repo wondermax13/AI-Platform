@@ -24,7 +24,7 @@ steps:
     displayName: "build app"
 
   -
-   task: Docker@0
+   task: Docker@1
    displayName: "Build Image"
    inputs: 
       command: build
@@ -40,13 +40,12 @@ steps:
       qualifyImageName: true
       workingDirectory: $(System.DefaultWorkingDirectory)/ai-ui
 
-  -
-    task: Docker@0
-    displayName: "Push Image to registry"
+  - task: Docker@1
+    displayName: Push image
     inputs:
       command: push
-      azureContainerRegistry: $(Docker.server)
       azureSubscriptionEndpoint: "arm-connection-rg-acr"
+      azureContainerRegistry: $(Docker.server)
       imageName: $(Docker.image)
       qualifyImageName: true
 
