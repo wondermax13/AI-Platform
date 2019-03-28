@@ -25,6 +25,7 @@ steps:
 
   -
    task: Docker@0
+   displayName: "Build Image"
    inputs: 
       command: build
       addDefaultLabels: true
@@ -38,24 +39,16 @@ steps:
       includeSourceTags: true
       qualifyImageName: true
       workingDirectory: $(System.DefaultWorkingDirectory)/ai-ui
-   displayName: "Build image $(Docker.image)"
 
   -
     task: Docker@0
     displayName: "Push Image to registry"
     inputs:
       command: push
-      addDefaultLabels: true
       azureContainerRegistry: $(Docker.server)
       azureSubscriptionEndpoint: "arm-connection-rg-acr"
-      context: $(System.DefaultWorkingDirectory)/ai-ui
-      defaultContext: false
-      dockerFile: ai-ui/Dockerfile
       imageName: $(Docker.image)
-      includeLatestTag: false
-      includeSourceTags: true
       qualifyImageName: true
-      workingDirectory: $(System.DefaultWorkingDirectory)/ai-ui
 
   - task: PublishPipelineArtifact@0
     inputs:
