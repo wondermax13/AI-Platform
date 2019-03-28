@@ -53,3 +53,8 @@ steps:
     inputs:
       artifactName: "build-final"
       targetPath: "ai-ui/build-final"
+
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: "pipelines"
+      targetPath: "pipelines"
