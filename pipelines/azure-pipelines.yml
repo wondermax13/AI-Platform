@@ -11,10 +11,10 @@ pool:
   vmImage: "Ubuntu-16.04"
 
 variables:
-  Docker.registry: "$(Docker.registry)"
+  # from pipeline config: MONGODB_URI: "$(MONGODB_URI)"
+  # from pipeline config: Docker.registry: "$(Docker.registry)"
   Docker.server: "$(Docker.registry).azurecr.io"
   Docker.image: "$(Docker.server)/ai2ai/ux:$(Build.BuildNumber)"
-  MONGODB_URI: "$(MONGODB_URI)"
 
 steps:
   - script: |
