@@ -39,24 +39,33 @@ spec:
   selector:
     deployment/ai2ai: ux-ai2ai
 ---
-apiVersion: v1
+apiVersion: apps/v1beta1
 kind: deployment
 metadata:
   name: ux-ai2ai
   labels:
     deployment/ai2ai: ux-ai2ai
 spec:
-  containers:
-    - name: web-ux-ai2ai
-      image: fuulatlive.azurecr.io/ai2ai/ux:${TAG}
-      ports:
-        - containerPort: 80
-      resources:
-        limits:
-          cpu: "0.75"
-      env:
-        - name: MONGODB_URI
-          valueFrom:
-            secretKeyRef:
-              name: ux-ai2ai
-              key: MONGODB_URI
+  replicas: 2
+  selector:
+    matchLabels:
+      deployment/ai2ai: ux-ai2ai
+  template:
+    metadata:
+      labels:
+        deployment/ai2ai: ux-ai2ai
+    spec:
+      containers:
+        - name: web-ux-ai2ai
+          image: fuulatlive.azurecr.io/ai2ai/ux:${TAG}
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: "0.05"
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: ux-ai2ai
+                  key: MONGODB_URI
