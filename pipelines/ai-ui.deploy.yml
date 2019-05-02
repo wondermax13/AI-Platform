@@ -22,7 +22,7 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service/ui-ai2ai
+  name: ui-ai2ai
   labels:
     service/ai2ai: ux-ai2ai
 spec:
@@ -42,7 +42,7 @@ spec:
 apiVersion: v1
 kind: deployment
 metadata:
-  name: deployment/ai2ai
+  name: ux-ai2ai
   labels:
     deployment/ai2ai: ux-ai2ai
 spec:
