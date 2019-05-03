@@ -66,3 +66,5 @@ spec:
                 secretKeyRef:
                   name: ux-ai2ai
                   key: MONGODB_URI
+      imagePullSecrets:
+      - name: acr-auth
