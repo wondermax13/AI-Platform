@@ -39,7 +39,7 @@ spec:
   selector:
     deployment/ai2ai: ux-ai2ai
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: deployment
 metadata:
   name: ux-ai2ai
