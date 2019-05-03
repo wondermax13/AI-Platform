@@ -9,6 +9,14 @@ metadata:
 type: Opaque
 data:
   MONGODB_URI: ${MONGODB_URI}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: acr-auth
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: ${DOCKER_ACR_AUTH}
 # ---
 # apiVersion: v1
 # kind: ConfigMap
@@ -55,6 +63,10 @@ spec:
       containers:
         - name: web-ux-ai2ai
           image: fuulatlive.azurecr.io/ai2ai/ux:${TAG}
+          livenessProbe:
+            initialDelaySeconds: 10
+            path: /
+            periodSeconds: 10
           ports:
             - containerPort: 80
           resources:
