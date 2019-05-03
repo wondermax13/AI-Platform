@@ -22,25 +22,22 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ui-ai2ai
+  name: ux-ai2ai
   labels:
     service/ai2ai: ux-ai2ai
 spec:
+#  loadBalancerIP: {LOADBALANCER_IP}
   type: LoadBalancer
   ports:
     - port: 80
       targetPort: 80
       protocol: TCP
       name: web
-    # - port: 4300
-    #   targetPort: 4300
-    #   protocol: TCP
-    #   name: api
   selector:
     deployment/ai2ai: ux-ai2ai
 ---
 apiVersion: apps/v1
-kind: deployment
+kind: Deployment
 metadata:
   name: ux-ai2ai
   labels:
@@ -62,7 +59,7 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: "0.05"
+              cpu: '0.05'
           env:
             - name: MONGODB_URI
               valueFrom:
