@@ -26,7 +26,7 @@ metadata:
   labels:
     service/ai2ai: ux-ai2ai
 spec:
-#  loadBalancerIP: {LOADBALANCER_IP}
+  loadBalancerIP: 104.211.60.60
   type: LoadBalancer
   ports:
     - port: 80
