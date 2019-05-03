@@ -43,7 +43,7 @@ metadata:
   labels:
     deployment/ai2ai: ux-ai2ai
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       deployment/ai2ai: ux-ai2ai
