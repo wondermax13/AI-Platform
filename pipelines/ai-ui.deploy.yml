@@ -64,8 +64,13 @@ spec:
         - name: web-ux-ai2ai
           image: fuulatlive.azurecr.io/ai2ai/ux:${TAG}
           livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+              # httpHeaders:
+              # - name: Custom-Header
+              #   value: Awesome
             initialDelaySeconds: 10
-            path: /
             periodSeconds: 10
           ports:
             - containerPort: 80
