@@ -1,11 +1,8 @@
-To run locally through command line
+© 2020 All Rights Reserved
 
-In Eclipse -> File -> Export -> Provide jar location
-
-java -jar 
+# AICommunicator: Platform to communicate with public bots on different channels.
 
 
-# AICommunicator
 
 Data Model
 
